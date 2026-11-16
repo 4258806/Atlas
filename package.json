@@ -12,6 +12,8 @@
     "bun": ">=1.2.0"
   },
   "scripts": {
+    "lint:check": "eslint . --max-warnings 0",
+    "test:unit": "playwright test -c tests/request-manager.config.ts",
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",

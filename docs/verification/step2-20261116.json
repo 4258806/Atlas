@@ -15,9 +15,9 @@
     "identified_user_agent_result": "redirected to finance/unsupported, not counted as success",
     "desktop_user_agent_result": "expected currency pages and main quotes extracted",
     "results": [
-      {"pair": "USD-CNY", "http_status": 200, "expected_destination": true, "extraction_success": true, "quote_time_present": true, "compressed_response_bytes": 189197},
-      {"pair": "EUR-CNY", "http_status": 200, "expected_destination": true, "extraction_success": true, "quote_time_present": true, "compressed_response_bytes": 203113},
-      {"pair": "JPY-CNY", "http_status": 200, "expected_destination": true, "extraction_success": true, "quote_time_present": true, "compressed_response_bytes": 209531}
+      { "pair": "USD-CNY", "http_status": 200, "expected_destination": true, "extraction_success": true, "quote_time_present": true, "compressed_response_bytes": 189197 },
+      { "pair": "EUR-CNY", "http_status": 200, "expected_destination": true, "extraction_success": true, "quote_time_present": true, "compressed_response_bytes": 203113 },
+      { "pair": "JPY-CNY", "http_status": 200, "expected_destination": true, "extraction_success": true, "quote_time_present": true, "compressed_response_bytes": 209531 }
     ],
     "planned_schedule": "daily 00:00 UTC",
     "scheduler_installed": false,
