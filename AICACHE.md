@@ -1,5 +1,22 @@
 # AI Cache / Agent Handoff Log
 
+## 2026-11-16 汇率范围及现有缓存补充核查（M6）
+
+- 用户优先沿用现有两个汇率 API，并要求换算仅在全部服务器的首页顶栏汇总使用；节点自己的价格、月均费用和剩余价值保持本币。原样维持缓存以满足使用准确性为条件，不能承诺每次打开都是最新已公布汇率。
+- 当前是浏览器挂载时按本地日期读写 localStorage，不是 UTC 定时更新，也不会因持续打开跨日而自动取新值。发现 InstanceDetail 的剩余价值仍走全局币种，旧 Frankfurter 缺 RUB/VND 被完整性校验整体拒绝；正式使用还需补齐首选接口要求的署名。
+- 已将只读源码审计和三个 API 的覆盖核查补充至 docs/feasibility-step2.md，并更新同一研究 PR；未修改运行代码、配置、缓存策略或部署。后续不可在未修正/验收前宣称换算已完全限定顶栏或备用源完整可用。
+
+## 2026-11-16 第二步可行性验证（M6，非生产交付）
+
+- 用户本轮只要求验证 Google 汇率读取、日更新需求、现成回程模块和多来源许可；汇率计划明确为每天 UTC 00:00，一天一次，不需要短周期历史。
+- 研究分支 research/step2-fx-routes，以 115e1a1 为起点；一次性标准库脚本 scripts/feasibility/read_google_fx.py 通过 SSH stdin 在 CA 普通用户内存中运行，没有上传远端文件或安装任务。
+- CA 三种货币对 USD/CNY、EUR/CNY、JPY/CNY 的页面、主报价、UTC 时间均提取成功。普通标识被跳转 unsupported，桌面 UA 对照成功；旧 data-last-price 属性已消失。网页取值不是稳定官方 API，Google/Morningstar 数据再利用授权未解决，不能把技术成功当公共行情服务许可。
+- Transit v1.4.5 / ee9f31c 已有插件 ZIP、Helper 和 collector。当前 Enhanced 已继承 0.3.0 组件及 MIT 来源声明，优先审计适配已有链路。backtrace 为 Apache-2.0，实际引入对应代码时需逐项保留许可/声明及修改记录；不需要第二个 Fork。
+- 回程 Node 协议 16 项在 Windows 通过 15 项，POSIX 0600 断言一项失败；Python Helper 因 fcntl 无法启动，没有掩盖或降低测试。尚未运行真实 traceroute/ASN、完整 Linux Helper 或当前生产版本兼容验收。
+- 结论和已脱敏的技术记录位于 docs/feasibility-step2.md、docs/verification/step2-20261116.json，不提交即时行情、整页 HTML、私有节点信息或凭据。
+- 新增汇率诊断解析防错用例 6/6 通过；Python 语法、技术记录 JSON 和 git diff --check 通过。未改前端运行源码/依赖，不为一次性标准库诊断安装 Bun 依赖或运行无关前端构建。研究结果通过本账号分支和草稿 PR 留档，不合并为已验收生产功能。
+- 本轮只提交研究脚本和记录，不修改 src、主题版本、许可证、依赖、现有伴生模块、生产服务或自动工作流；不创建软件 Release、不安装日程。后续实现和回程单机试用等待对应步骤指示。
+
 ## 2026-11-16 用户长期开发与发布约束（M6）
 
 - 用户明确要求记住本项目后续更新、整体验收、使用和发布约束：只在自己的 GitHub Fork 维护，保留对应 diff 和多版本打包 Release，以可上传的 ZIP 交付，按最终可供公众使用的项目标准维护。
