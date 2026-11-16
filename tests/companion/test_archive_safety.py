@@ -43,6 +43,8 @@ installer = load('helper_file_installer', 'companion/helper/install.py')
 class HelperArchiveSafetyTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        # Build real current-source bytes; fresh CI has no prior release output.
+        packager.main()
         records = json.loads((ROOT / 'test-results/release/artifacts.json').read_text())['artifacts']
         version = json.loads((ROOT / 'companion/helper/helper-version.json').read_text())['version']
         candidates = [row for row in records if Path(row['path']).name == f'enhanced-route-helper-{version}.tar.gz']
