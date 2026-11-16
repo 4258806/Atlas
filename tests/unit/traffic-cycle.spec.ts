@@ -1,8 +1,9 @@
 import { expect, test } from '@playwright/test'
+import { formatScheduleTime, schedulePeriod, validSchedule, validTimeZone } from '../../src/utils/resetSchedule'
 import { compactReturnRoute, premiumManualRoute, returnRouteTime } from '../../src/utils/returnRouteDisplay'
 import { ENHANCED_SETTINGS_GROUPS, settingGroup, THEME_FIELDS } from '../../src/utils/themeSettings'
 import { trafficAccounting } from '../../src/utils/trafficAccounting'
-import { changeTrafficReset, parseTrafficCycleConfig, resolveTrafficMetrics, TRAFFIC_METRICS, trafficByMode, trafficPeriod } from '../../src/utils/trafficCycle'
+import { changeTrafficReset, combineTrafficSnapshots, parseTrafficCycleConfig, resolveTrafficMetrics, TRAFFIC_METRICS, trafficByMode, trafficPeriod, trafficQueryRanges } from '../../src/utils/trafficCycle'
 
 const A = '00000000-0000-4000-8000-000000000001'
 const B = '00000000-0000-4000-8000-000000000002'
@@ -60,10 +61,80 @@ for (const invalid of [0, 32, -1, 1.5, Number.NaN, Number.POSITIVE_INFINITY]) {
   })
 }
 test('corrupt or unsupported historical config cannot be overwritten as an empty map', () => {
-  for (const raw of ['{bad', { version: 1, timeZone: 'UTC', nodes: {} }, { version: 1, timeZone: 'Asia/Shanghai', nodes: { Wendy: { resetDay: 5 } } }]) {
+  for (const raw of ['{bad', { version: 1, timeZone: 'Not/AZone', nodes: {} }, { version: 1, timeZone: 'Asia/Shanghai', nodes: { Wendy: { resetDay: 5 } } }]) {
     expect(parseTrafficCycleConfig(raw).error).not.toBeNull()
     expect(() => changeTrafficReset(raw, A, 5)).toThrow()
   }
+})
+
+for (const [zone, day, hour, minute, instant] of [
+  ['Asia/Shanghai', 8, 23, 10, '2026-12-08T15:10:00Z'],
+  ['UTC', 1, 0, 0, '2026-12-01T00:00:00Z'],
+  ['America/Los_Angeles', 1, 0, 0, '2026-07-01T07:00:00Z'],
+  ['America/Los_Angeles', 1, 0, 0, '2026-12-01T08:00:00Z'],
+  ['America/New_York', 1, 0, 0, '2026-12-01T05:00:00Z'],
+  ['America/Los_Angeles', 8, 2, 30, '2026-03-08T10:30:00Z'],
+  ['America/Los_Angeles', 1, 1, 30, '2026-11-01T08:30:00Z'],
+  ['Europe/Berlin', 29, 2, 30, '2026-03-29T01:30:00Z'],
+  ['Australia/Lord_Howe', 4, 2, 15, '2026-10-03T15:45:00Z'],
+  ['Pacific/Apia', 30, 0, 0, '2011-12-30T10:00:00Z'],
+  ['Asia/Kathmandu', 1, 0, 0, '2026-11-30T18:15:00Z'],
+  ['+08:00', 8, 23, 10, '2026-12-08T15:10:00Z'],
+] as const) {
+  test(`independent boundary ${zone} ${instant}`, () => {
+    const schedule = { resetDay: day, timeZone: zone, hour, minute }
+    const timestamp = at(instant)
+    expect(schedulePeriod(schedule, timestamp - 1).end).toBe(timestamp)
+    expect(schedulePeriod(schedule, timestamp).start).toBe(timestamp)
+    expect(schedulePeriod(schedule, timestamp + 1).start).toBe(timestamp)
+  })
+}
+
+test('all runtime IANA zones accept independent minute schedules', () => {
+  const zones = Intl.supportedValuesOf('timeZone')
+  expect(zones.length).toBeGreaterThan(300)
+  const now = at('2026-12-08T15:10:00Z')
+  for (const timeZone of zones) {
+    const period = schedulePeriod({ resetDay: 8, timeZone, hour: 23, minute: 10 }, now)
+    expect(period.start, timeZone).toBeLessThanOrEqual(now)
+    expect(period.end, timeZone).toBeGreaterThan(now)
+    expect(period.end - period.start, timeZone).toBeGreaterThan(27 * 86400000)
+  }
+})
+
+test('v1 migration preserves timezone patches, hidden seconds and other nodes', () => {
+  const legacy = { version: 1, timeZone: 'UTC', future: { preserved: true }, nodes: {
+    [A]: { resetDay: 1 },
+    [B]: { resetDay: 8, timeZone: 'Asia/Shanghai', hour: 23, minute: 10, second: 17, future: 'preserved' },
+  } }
+  const before = JSON.stringify(legacy)
+  const migrated = parseTrafficCycleConfig(legacy)
+  expect(migrated.error).toBeNull()
+  expect(migrated.document.nodes[A]).toMatchObject({ resetDay: 1, timeZone: 'UTC', hour: 0, minute: 0 })
+  const updated = parseTrafficCycleConfig(changeTrafficReset(legacy, A, { resetDay: 5, timeZone: 'America/Los_Angeles', hour: 12, minute: 34 }))
+  expect(updated.document.nodes[B]).toEqual(legacy.nodes[B])
+  expect(updated.document.future).toEqual(legacy.future)
+  expect(JSON.stringify(legacy)).toBe(before)
+  const changedDay = parseTrafficCycleConfig(changeTrafficReset(legacy, B, 9)).document.nodes[B]!
+  expect(changedDay.second).toBe(17)
+  expect(formatScheduleTime(schedulePeriod(changedDay, at('2026-12-10T00:00:00Z')).start, changedDay.timeZone)).toBe('2026-12-09 23:10 Asia/Shanghai (UTC+08:00)')
+})
+
+test('month end is clamped without drifting the retained requested day or local minute', () => {
+  const schedule = { resetDay: 31, timeZone: 'America/Los_Angeles', hour: 23, minute: 10 }
+  expect(schedulePeriod(schedule, at('2026-02-28T23:10:00-08:00'))).toEqual({ start: at('2026-02-28T23:10:00-08:00'), end: at('2026-03-31T23:10:00-07:00') })
+  expect(schedule.resetDay).toBe(31)
+})
+
+test('invalid zones and local times fail closed', () => {
+  const schedule = { resetDay: 8, timeZone: 'UTC', hour: 23, minute: 10 }
+  for (const timeZone of ['', 'Not/AZone', '+25:00', ' UTC', 'UTC+8']) {
+    expect(validTimeZone(timeZone)).toBe(false)
+    expect(() => schedulePeriod({ ...schedule, timeZone })).toThrow()
+  }
+  for (const patch of [{ hour: 24 }, { minute: 60 }, { minute: 1.5 }, { second: 60 }])
+    expect(validSchedule({ ...schedule, ...patch })).toBe(false)
+  expect(parseTrafficCycleConfig({ version: 3, nodes: {} }).error).not.toBeNull()
 })
 const now = at('2026-11-18T00:01:00+08:00')
 const period = trafficPeriod(18, now)
@@ -145,6 +216,40 @@ test('rollups must sum increments, not average or endpoint-difference counters',
   expect(resolveTrafficMetrics(data, A, period, now).status).toBe('ready')
   data.series[0]!.downsample_algorithm = 'avg'
   expect(resolveTrafficMetrics(data, A, period, now).status).toBe('insufficient')
+})
+
+test('hour rollups crossing a minute boundary are insufficient, never prorated', () => {
+  const end = at('2026-12-08T15:11:00Z')
+  const p = schedulePeriod({ resetDay: 8, timeZone: 'Asia/Shanghai', hour: 23, minute: 10 }, end)
+  const series = TRAFFIC_METRICS.map(key => ({
+    metric_key: key,
+    entity_id: A,
+    downsampled: true,
+    downsample_algorithm: key.startsWith('traffic.') ? 'sum' : 'last',
+    interval_seconds: 3600,
+    points: [{ time: iso(p.start), value: 10, count: 1 }],
+  }))
+  expect(resolveTrafficMetrics({ series }, A, p, end)).toMatchObject({ status: 'insufficient', up: null })
+  for (const row of series) row.interval_seconds = 60
+  expect(resolveTrafficMetrics({ series }, A, p, end).status).toBe('ready')
+})
+
+test('minute edge and hourly body form a bounded, contiguous query plan', () => {
+  const start = at('2026-12-08T15:10:00Z')
+  const end = at('2027-01-07T15:11:00Z')
+  const p = { start, end: at('2027-01-08T15:10:00Z') }
+  const ranges = trafficQueryRanges(p, end)
+  expect(ranges).toHaveLength(2)
+  expect(ranges[0]).toEqual({ start, end: at('2026-12-08T16:00:00Z'), maxPoints: 110 })
+  expect(ranges[1]!.start).toBe(ranges[0]!.end)
+  expect(ranges[1]!.end).toBe(end)
+  expect(ranges[1]!.maxPoints).toBeLessThan(800)
+  const parts = ranges.map(range => ({ status: 'ready' as const, period: { start: range.start, end: range.end }, asOf: range.end, up: 10, down: 20, reason: 'explicit offline segment' }))
+  expect(combineTrafficSnapshots(parts, p, end)).toMatchObject({ status: 'ready', up: 20, down: 40 })
+  expect(combineTrafficSnapshots([parts[0]!, parts[0]!], p, end).status).toBe('insufficient')
+  expect(combineTrafficSnapshots([], p, start).status).toBe('insufficient')
+  expect(combineTrafficSnapshots([{ ...parts[0]!, status: 'insufficient', up: null, down: null }], p, end).up).toBeNull()
+  expect(trafficQueryRanges({ start: ranges[1]!.start, end: p.end }, end)).toHaveLength(1)
 })
 test('duplicate samples and unsupported coarse aggregation cannot double count', () => {
   const data = metrics()

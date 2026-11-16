@@ -12,7 +12,10 @@ Public development records only. Do not add deployment addresses, identifiers, c
 - Manifest remains inherited 1.2.1. No own Release or runtime deployment has occurred.
 - CLI credentials cannot write workflows; use the authenticated GitHub website for workflow file commits without expanding credentials. No SSH trust changes were made.
 - Automatic review rejected uploading the inherited operational log. This public handoff replaces it with development-only information.
-- Remaining: validate and commit workflows, run remote CI, configure required checks, then stages 2–9 in order.
+- Stage 1 passed: PR #2 merged as bb5e51e; Code Quality run 43913694261 and Visual Regression run 43913695122 succeeded. Both contexts now required on personal/main, bound to GitHub Actions app 15368. Original no-delete/no-force-push/PR rules and empty bypass list preserved.
+- Stage 2 in progress on feat/node-reset-schedule: schema 2 independent IANA/fixed-offset schedule, minute UI, DST/month-end handling and conservative v1 migration. Temporal 0.5.1 and jsbi licenses bundled. Local 89 initial schedule/traffic tests and type-check passed; browser persistence validation continues.
+- Native minute history retention may not cover a full month. Do not claim precise cycle usage when only cross-boundary hourly rollups remain; inspect retention/storage and resolve before production acceptance. No production writes have occurred.
+- Remaining: finish stage 2 verification, then stages 3–9 in order.
 
 ## 2026-11-16 Prior work
 

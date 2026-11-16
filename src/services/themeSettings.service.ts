@@ -1,3 +1,4 @@
+import type { ResetSchedule } from '@/utils/resetSchedule'
 import type { ReturnCarrier } from '@/utils/returnRouteClassification'
 import type { NodeReturnRoutes } from '@/utils/returnRoutes'
 import type { PublicInfo } from '@/utils/rpc'
@@ -71,12 +72,13 @@ export async function saveManagedSettings(expected: Record<string, unknown>, pat
     return { ...before, ...patch }
   })
 }
-export async function saveTrafficReset(uuid: string, resetDay: number | null, expectedResetDay: number | undefined): Promise<PublicInfo> {
+export async function saveTrafficReset(uuid: string, resetDay: number | ResetSchedule | null, expectedResetDay: number | ResetSchedule | undefined): Promise<PublicInfo> {
   return write((before) => {
     const parsed = parseTrafficCycleConfig(before[TRAFFIC_CONFIG_KEY])
     if (parsed.error)
       throw new Error(parsed.error)
-    if (parsed.document.nodes[uuid]?.resetDay !== expectedResetDay)
+    const actual = parsed.document.nodes[uuid]
+    if (typeof expectedResetDay === 'number' ? actual?.resetDay !== expectedResetDay : stableValue(actual) !== stableValue(expectedResetDay))
       throw new Error('该节点的重置日已被其他操作修改；本次未覆盖')
     return { ...before, [TRAFFIC_CONFIG_KEY]: changeTrafficReset(before[TRAFFIC_CONFIG_KEY], uuid, resetDay) }
   })

@@ -1,0 +1,22 @@
+{
+  "stage": "engineering",
+  "status": "passed",
+  "source_commit": "ed3116a4d2873f91dcbcfda567b603b7e16d512e",
+  "merged_commit": "bb5e51e",
+  "pull_request": "https://github.com/MagnetOscar/Glassmorphism-Enhanced/pull/2",
+  "checks": {
+    "quality": "https://github.com/MagnetOscar/Glassmorphism-Enhanced/actions/runs/43913694261",
+    "browser": "https://github.com/MagnetOscar/Glassmorphism-Enhanced/actions/runs/43913695122",
+    "local_package_negative_tests": "8 passed; malformed paths, provenance, manifest, preview and license checks",
+    "release_gate": "Inherited 1.2.1 release refused as expected"
+  },
+  "protection": {
+    "branch": "personal/main",
+    "required_checks": ["lint-and-build", "screenshots"],
+    "github_actions_app": 15368,
+    "strict": true,
+    "bypass": false
+  },
+  "release_published": false,
+  "production_modified": false
+}
