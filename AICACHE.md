@@ -2,6 +2,15 @@
 
 Public development records only. Do not add deployment addresses, identifiers, credentials or private infrastructure details. Inherited upstream logs remain in Git history; their permissions and results do not authorize or validate current work.
 
+## Current: step 3 acceptance, then pause (2026-11-17)
+
+- Step 2 accepted and merged: PR #3, merge 2d658f6. Latest required CI runs 43934605367 and 43934605418 passed. Official isolated 1.6.1 native acceptance is recorded in docs/verification/reset-20261117.json.
+- User changed step 3: support the existing currencies but show ONLY ONE selected currency in the homepage aggregate. No additional-currency checkboxes/parallel amounts. Keep each node's own currency; preserve existing browser fin_currency selection.
+- Step 3 implementation on feat/native-finance-summary: native node fees/remaining value/detail/comparison/export, summary-only validated FX, provider timestamp expiry, existing backup source checked only for required currencies, explicit stale/unavailable/manual states, attribution. No Google scraping, rate redistribution API, backend scheduler or Agent changes.
+- Local lint/type-check/build pass; 23 finance plus 91 traffic/calendar tests pass together (114). Live ExchangeRate-API metadata check passed without printing raw quotes. Official real-backend loopback runner passed seven reset/upgrade/rollback/desktop/mobile/finance checks, with actual browser FX access. Synthetic prices/history are explicitly fixtures, not production billing evidence. Default sandbox external-network denial was diagnosed, then rerun with authorized network access; no security settings were changed.
+- Remaining before pausing: push scoped PR, validate its required CI, rebuild clean source and bind native/package evidence to the exact source/SHA256, commit final verification record, merge only after checks pass. No Release or production deployment.
+- Latest user instruction: PAUSE after completing step 3. Do not begin steps 4–6 in this run.
+
 ## 2026-11-17 Implementation in progress (M5/M6)
 
 - User authorized the nine ordered stages in docs/implementation-plan.md. Each stage requires GitHub diff and verification evidence; acceptance precedes formal release and production deployment.

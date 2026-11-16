@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { NodeData } from '@/stores/nodes'
 import { Icon } from '@iconify/vue'
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { Button } from '@/components/ui/button'
 import { CardX } from '@/components/ui/card-x'
 import { Input } from '@/components/ui/input'
@@ -46,7 +46,7 @@ interface SnapshotRow {
   price: number
   currency: string
   billingCycleDays: number
-  monthlyCostCNY: number
+  monthlyCostNative: number
   expiredAt: string
   tags: string
 }
@@ -62,7 +62,6 @@ const props = defineProps<{
 
 const appStore = useAppStore()
 const { record: recordVisitorEvent } = useVisitorAudit()
-const exchangeRates = ref(financeHelper.DEFAULT_EXCHANGE_RATES)
 const exportPasswordInput = ref('')
 const exporting = ref<null | 'json' | 'csv'>(null)
 
@@ -72,11 +71,6 @@ const { getNodeProviderMetadata } = useNodeProviderMetadata({
   enabled: () => appStore.privateFeaturesAllowed,
   allowGeoLookup: () => appStore.privateFeaturesAllowed,
   geoPermission: 'snapshotExport',
-})
-
-onMounted(async () => {
-  const { rates } = await financeHelper.getDailyExchangeRates()
-  exchangeRates.value = rates
 })
 
 function formatBytes(bytes: number): string {
@@ -131,29 +125,27 @@ function formatPrice(row: SnapshotRow): string {
 }
 
 function formatMonthlyCost(row: SnapshotRow): string {
-  const amount = financeHelper.formatFinanceAmount(row.monthlyCostCNY, 'CNY')
-  return `${amount.symbol}${amount.value} CNY`
+  return financeHelper.formatNativeAmount(row.monthlyCostNative, row.currency)
 }
 
 function getCostPerCore(row: SnapshotRow): number | null {
-  return row.cpuCores > 0 ? row.monthlyCostCNY / row.cpuCores : null
+  return row.cpuCores > 0 ? row.monthlyCostNative / row.cpuCores : null
 }
 
 function getCostPerMemoryGb(row: SnapshotRow): number | null {
   const memoryGb = row.memoryTotalBytes / 1024 ** 3
-  return memoryGb > 0 ? row.monthlyCostCNY / memoryGb : null
+  return memoryGb > 0 ? row.monthlyCostNative / memoryGb : null
 }
 
 function getCostPerTrafficGb(row: SnapshotRow): number | null {
   const trafficGb = row.trafficLimitBytes / 1024 ** 3
-  return trafficGb > 0 ? row.monthlyCostCNY / trafficGb : null
+  return trafficGb > 0 ? row.monthlyCostNative / trafficGb : null
 }
 
-function formatValueCost(value: number | null): string {
+function formatValueCost(value: number | null, currency: string): string {
   if (value === null || !Number.isFinite(value))
     return '-'
-  const amount = financeHelper.formatFinanceAmount(value, 'CNY')
-  return `${amount.symbol}${amount.value} CNY`
+  return financeHelper.formatNativeAmount(value, currency)
 }
 
 function buildRow(node: NodeData): SnapshotRow {
@@ -191,7 +183,7 @@ function buildRow(node: NodeData): SnapshotRow {
     price: node.price || 0,
     currency: node.currency,
     billingCycleDays: node.billing_cycle || 0,
-    monthlyCostCNY: financeHelper.calculateMonthlyCostCNY(node, exchangeRates.value),
+    monthlyCostNative: financeHelper.calculateMonthlyCostNative(node),
     expiredAt: node.expired_at,
     tags: node.tags,
   }
@@ -206,7 +198,7 @@ const onlineCount = computed(() => props.nodes.filter(node => node.online).lengt
 const totalCpuCores = computed(() => props.nodes.reduce((sum, node) => sum + (node.cpu_cores || 0), 0))
 const totalMemoryBytes = computed(() => props.nodes.reduce((sum, node) => sum + (node.mem_total || 0), 0))
 const totalDiskBytes = computed(() => props.nodes.reduce((sum, node) => sum + (node.disk_total || 0), 0))
-const totalMonthlyCostCNY = computed(() => rows.value.reduce((sum, row) => sum + row.monthlyCostCNY, 0))
+const totalMonthlyCostNative = computed(() => financeHelper.nativeMonthlyTotals(props.nodes))
 
 const csvColumns: CsvColumn[] = [
   { label: '节点 ID', value: row => row.uuid },
@@ -243,9 +235,9 @@ const csvColumns: CsvColumn[] = [
   { label: '价格', value: row => formatPrice(row) },
   { label: '计费周期', value: row => formatBillingCycle(row.billingCycleDays) },
   { label: '月成本', value: row => formatMonthlyCost(row) },
-  { label: '每核月成本', value: row => formatValueCost(getCostPerCore(row)) },
-  { label: '每 GB 内存月成本', value: row => formatValueCost(getCostPerMemoryGb(row)) },
-  { label: '每 GB 流量月成本', value: row => formatValueCost(getCostPerTrafficGb(row)) },
+  { label: '每核月成本', value: row => formatValueCost(getCostPerCore(row), row.currency) },
+  { label: '每 GB 内存月成本', value: row => formatValueCost(getCostPerMemoryGb(row), row.currency) },
+  { label: '每 GB 流量月成本', value: row => formatValueCost(getCostPerTrafficGb(row), row.currency) },
   { label: '到期时间', value: row => formatDate(row.expiredAt) },
   { label: '标签', value: row => row.tags || '-' },
 ]
@@ -328,9 +320,9 @@ function buildJsonNode(row: SnapshotRow) {
       cycle: formatBillingCycle(row.billingCycleDays),
       monthlyCost: formatMonthlyCost(row),
       valueMetrics: {
-        costPerCore: formatValueCost(getCostPerCore(row)),
-        costPerMemoryGb: formatValueCost(getCostPerMemoryGb(row)),
-        costPerTrafficGb: formatValueCost(getCostPerTrafficGb(row)),
+        costPerCore: formatValueCost(getCostPerCore(row), row.currency),
+        costPerMemoryGb: formatValueCost(getCostPerMemoryGb(row), row.currency),
+        costPerTrafficGb: formatValueCost(getCostPerTrafficGb(row), row.currency),
       },
       expiredAt: formatDate(row.expiredAt),
     },
@@ -378,7 +370,7 @@ async function exportJson(): Promise<void> {
           cpuCores: totalCpuCores.value,
           memory: formatBytes(totalMemoryBytes.value),
           disk: formatBytes(totalDiskBytes.value),
-          monthlyCost: financeHelper.formatFinanceAmount(totalMonthlyCostCNY.value, 'CNY'),
+          monthlyCost: totalMonthlyCostNative.value.map(row => financeHelper.formatFinanceAmount(row.amount, row.currency)),
         },
       },
       exportRows,
@@ -474,10 +466,10 @@ async function exportCsv(): Promise<void> {
           月成本
         </div>
         <div class="mt-1 text-2xl font-bold">
-          {{ financeHelper.formatFinanceAmount(totalMonthlyCostCNY, 'CNY').symbol }}{{ financeHelper.formatFinanceAmount(totalMonthlyCostCNY, 'CNY').value }}
+          各节点本币
         </div>
         <div class="mt-1 text-[11px] text-muted-foreground">
-          CNY 估算
+          统一换算见首页顶栏；导出保留本币
         </div>
       </CardX>
     </div>

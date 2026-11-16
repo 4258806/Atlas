@@ -3,7 +3,7 @@ import { isFreeNode } from '@/utils/tagHelper'
 
 export type CurrencyCode = 'CNY' | 'USD' | 'HKD' | 'EUR' | 'GBP' | 'JPY' | 'RUB' | 'CHF' | 'INR' | 'VND' | 'THB' | 'CAD' | 'SGD'
 export type ExchangeRates = Record<CurrencyCode, number>
-export type ExchangeRateSource = 'cache' | 'network' | 'stale-cache' | 'default'
+export type ExchangeRateSource = 'cache' | 'network' | 'stale-cache' | 'default' | 'unavailable'
 
 export type MeteredTrafficMode = 'sum' | 'max' | 'up' | 'down'
 
@@ -26,14 +26,6 @@ export interface MeteredEstimate {
   totalCost: number
 }
 
-interface ExchangeRatesCache {
-  base: 'CNY'
-  date: string
-  fetchedAt: number
-  rates: Partial<Record<CurrencyCode, number>>
-}
-
-const CACHE_KEY = 'komari_finance_exchange_rates_cny_v1'
 const OVERRIDES_KEY = 'komari_finance_exchange_rate_overrides_v1'
 const FINANCE_CURRENCY_KEY = 'fin_currency'
 const EXCLUDE_FREE_KEY = 'fin_exclude_free'
@@ -42,7 +34,6 @@ export const MAX_ESTIMATE_INPUT = 1e12
 export const SUPPORTED_CURRENCIES: CurrencyCode[] = ['CNY', 'USD', 'HKD', 'EUR', 'GBP', 'JPY', 'RUB', 'CHF', 'INR', 'VND', 'THB', 'CAD', 'SGD']
 const MS_PER_DAY = 24 * 60 * 60 * 1000
 const LONG_TERM_YEARS = 100
-let exchangeRatesInflight: Promise<{ rates: ExchangeRates, source: ExchangeRateSource, updatedAt: number | null }> | null = null
 
 export const DEFAULT_EXCHANGE_RATES: ExchangeRates = {
   CNY: 1,
@@ -74,26 +65,6 @@ export const CURRENCY_SYMBOLS: Record<CurrencyCode, string> = {
   THB: '฿',
   CAD: 'CA$',
   SGD: 'S$',
-}
-
-const EXCHANGE_RATE_APIS = [
-  {
-    url: 'https://open.er-api.com/v6/latest/CNY',
-    parse: (data: unknown) => (data as { rates?: unknown }).rates,
-  },
-  {
-    url: 'https://api.frankfurter.app/latest?from=CNY',
-    parse: (data: unknown) => (data as { rates?: unknown }).rates,
-  },
-] as const
-
-async function safeJson(response: Response): Promise<unknown> {
-  try {
-    return await response.json()
-  }
-  catch {
-    return null
-  }
 }
 
 export function normalizeCurrency(currency: string | null | undefined): CurrencyCode {
@@ -256,6 +227,10 @@ export function clearExchangeRateOverrides(): void {
   removeLocalStorageItem(OVERRIDES_KEY)
 }
 
+export function hasExchangeRateOverrides(): boolean {
+  return Object.keys(readExchangeRateOverrides()).length > 0
+}
+
 export function calculateTotalRemainingValueCNY(
   nodes: NodeData[],
   exchangeRates: ExchangeRates,
@@ -356,12 +331,42 @@ export function calculateRemainingValueCNY(
   return priceCNY * fraction
 }
 
+export function calculateMonthlyCostNative(node: NodeData): number {
+  const price = Number(node.price)
+  if (!Number.isFinite(price) || price <= 0)
+    return 0
+  const cycle = Number(node.billing_cycle)
+  return Number.isFinite(cycle) && cycle > 0 ? price / cycle * 30 : price
+}
+
+export function calculateRemainingValueNative(node: NodeData, now = new Date()): number {
+  // Unit-rate conversion reuses identical prorating without a network lookup.
+  return calculateRemainingValueCNY({ ...node, currency: 'CNY' }, { CNY: 1 } as ExchangeRates, now)
+}
+
+export function nativeMonthlyTotals(nodes: NodeData[]): Array<{ currency: CurrencyCode, amount: number }> {
+  const totals = new Map<CurrencyCode, number>()
+  for (const node of nodes) {
+    const currency = normalizeCurrency(node.currency)
+    totals.set(currency, (totals.get(currency) ?? 0) + calculateMonthlyCostNative(node))
+  }
+  return Array.from(totals, ([currency, amount]) => ({ currency, amount }))
+}
+
+export function formatNativeAmount(amount: number, currency: string): string {
+  const code = normalizeCurrency(currency)
+  const formatted = formatFinanceAmount(amount, code)
+  return `${formatted.symbol}${formatted.value} ${code}`
+}
+
 export function formatFinanceAmount(amount: number, currency: CurrencyCode): {
   currency: CurrencyCode
   symbol: string
   value: string
 } {
-  const safeAmount = Number.isFinite(amount) ? amount : 0
+  if (!Number.isFinite(amount))
+    return { currency, symbol: '', value: '汇率不可用' }
+  const safeAmount = amount
   const value = new Intl.NumberFormat('zh-CN', {
     maximumFractionDigits: 2,
     minimumFractionDigits: Math.abs(safeAmount) < 100000 ? 2 : 0,
@@ -375,54 +380,9 @@ export function formatFinanceAmount(amount: number, currency: CurrencyCode): {
   }
 }
 
-export async function getDailyExchangeRates(): Promise<{
-  rates: ExchangeRates
-  source: ExchangeRateSource
-  updatedAt: number | null
-}> {
-  const today = getTodayDateKey()
-  const cached = readCachedExchangeRates()
-
-  if (cached && cached.date === today) {
-    return {
-      rates: cached.rates,
-      source: 'cache',
-      updatedAt: cached.fetchedAt,
-    }
-  }
-
-  if (!exchangeRatesInflight) {
-    exchangeRatesInflight = (async () => {
-      const fetchedRates = await fetchExchangeRates()
-      if (fetchedRates) {
-        const updatedAt = Date.now()
-        writeCachedExchangeRates(fetchedRates, today, updatedAt)
-        return {
-          rates: fetchedRates,
-          source: 'network' as const,
-          updatedAt,
-        }
-      }
-
-      if (cached) {
-        return {
-          rates: cached.rates,
-          source: 'stale-cache' as const,
-          updatedAt: cached.fetchedAt,
-        }
-      }
-
-      return {
-        rates: DEFAULT_EXCHANGE_RATES,
-        source: 'default' as const,
-        updatedAt: null,
-      }
-    })().finally(() => {
-      exchangeRatesInflight = null
-    })
-  }
-
-  return exchangeRatesInflight
+export async function getDailyExchangeRates(required: CurrencyCode[] = SUPPORTED_CURRENCIES) {
+  const { getSummaryExchangeRates } = await import('@/services/exchangeRates.service')
+  return getSummaryExchangeRates(required)
 }
 
 export function getPriceCNY(node: NodeData, exchangeRates: ExchangeRates): number {
@@ -435,91 +395,6 @@ export function getPriceCNY(node: NodeData, exchangeRates: ExchangeRates): numbe
     return price
 
   return price / exchangeRates[currency]
-}
-
-async function fetchExchangeRates(): Promise<ExchangeRates | null> {
-  for (const api of EXCHANGE_RATE_APIS) {
-    try {
-      const response = await fetchWithTimeout(api.url)
-      if (!response.ok)
-        continue
-
-      const data = await safeJson(response)
-      const rates = sanitizeExchangeRates(api.parse(data))
-      if (rates)
-        return rates
-    }
-    catch (error) {
-      console.warn(`获取汇率失败: ${api.url}`, error)
-    }
-  }
-
-  return null
-}
-
-async function fetchWithTimeout(url: string, timeoutMs = 5000): Promise<Response> {
-  const controller = new AbortController()
-  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs)
-
-  try {
-    return await fetch(url, { signal: controller.signal })
-  }
-  finally {
-    window.clearTimeout(timeoutId)
-  }
-}
-
-function readCachedExchangeRates(): { date: string, rates: ExchangeRates, fetchedAt: number } | null {
-  try {
-    const rawValue = getLocalStorageItem(CACHE_KEY)
-    if (!rawValue)
-      return null
-
-    const cache = JSON.parse(rawValue) as ExchangeRatesCache
-    const rates = sanitizeExchangeRates(cache.rates)
-    if (cache.base !== 'CNY' || !cache.date || !rates)
-      return null
-
-    return {
-      date: cache.date,
-      rates,
-      fetchedAt: Number.isFinite(cache.fetchedAt) ? cache.fetchedAt : 0,
-    }
-  }
-  catch {
-    return null
-  }
-}
-
-function writeCachedExchangeRates(rates: ExchangeRates, date: string, fetchedAt: number): void {
-  const cache: ExchangeRatesCache = {
-    base: 'CNY',
-    date,
-    fetchedAt,
-    rates,
-  }
-  setLocalStorageItem(CACHE_KEY, JSON.stringify(cache))
-}
-
-function sanitizeExchangeRates(rates: unknown): ExchangeRates | null {
-  if (!rates || typeof rates !== 'object')
-    return null
-
-  const record = rates as Record<string, unknown>
-  const result = { CNY: 1 } as ExchangeRates
-
-  for (const currency of SUPPORTED_CURRENCIES) {
-    if (currency === 'CNY')
-      continue
-
-    const value = Number(record[currency])
-    if (!Number.isFinite(value) || value <= 0)
-      return null
-
-    result[currency] = value
-  }
-
-  return result
 }
 
 function readExchangeRateOverrides(): Partial<ExchangeRates> {

@@ -1,9 +1,12 @@
 import type { NodeData } from '../../src/stores/nodes'
 import { expect, test } from '@playwright/test'
+import { parseRateQuote } from '../../src/services/exchangeRates.service'
 import {
   applyExchangeRateOverrides,
   calculateMeteredEstimate,
   calculateMonthlyCostCNY,
+  calculateMonthlyCostNative,
+  calculateRemainingValueNative,
   clearExchangeRateOverrides,
   clearStoredMeteredEstimateSettings,
   DEFAULT_EXCHANGE_RATES,
@@ -22,6 +25,10 @@ import {
 // Deterministic unit fixtures, not evidence of a live exchange-rate provider.
 const descriptors = new Map(['localStorage', 'window', 'fetch'].map(key => [key, Object.getOwnPropertyDescriptor(globalThis, key)]))
 let values: Map<string, string>
+const realNow = Date.now
+function primary(rates = DEFAULT_EXCHANGE_RATES) {
+  return { result: 'success', base_code: 'CNY', time_last_update_unix: Math.floor(Date.now() / 1000) - 60, time_next_update_unix: Math.floor(Date.now() / 1000) + 3600, rates }
+}
 test.beforeEach(() => {
   values = new Map()
   const storage = {
@@ -33,6 +40,7 @@ test.beforeEach(() => {
   Object.defineProperty(globalThis, 'window', { configurable: true, value: { setTimeout, clearTimeout } })
 })
 test.afterEach(() => {
+  Date.now = realNow
   for (const [key, descriptor] of descriptors) {
     if (descriptor)
       Object.defineProperty(globalThis, key, descriptor)
@@ -89,7 +97,7 @@ test('online response fixture is cached with SGD; the second call does not fetch
   let requests = 0
   Object.defineProperty(globalThis, 'fetch', { configurable: true, value: async () => {
     requests++
-    return Response.json({ rates: { ...DEFAULT_EXCHANGE_RATES, SGD: 0.25 } })
+    return Response.json(primary({ ...DEFAULT_EXCHANGE_RATES, SGD: 0.25 }))
   } })
   const first = await getDailyExchangeRates()
   expect(first.source).toBe('network')
@@ -98,6 +106,73 @@ test('online response fixture is cached with SGD; the second call does not fetch
   expect(second.source).toBe('cache')
   expect(second.rates).toEqual(first.rates)
   expect(requests).toBe(1)
+})
+
+test('per-node native costs remain independent while one summary currency is selected', () => {
+  const now = new Date('2026-11-17T00:00:00Z')
+  const usd = { price: 9.9, currency: 'USD', billing_cycle: 30, expired_at: '2026-12-02T00:00:00Z' } as NodeData
+  const cny = { ...usd, price: 804.6, currency: 'CNY', billing_cycle: 180 } as NodeData
+  setStoredFinanceCurrency('EUR')
+  expect(getStoredFinanceCurrency()).toBe('EUR')
+  expect(calculateMonthlyCostNative(usd)).toBe(9.9)
+  expect(calculateRemainingValueNative(usd, now)).toBeCloseTo(4.95)
+  expect(calculateMonthlyCostNative(cny)).toBeCloseTo(134.1)
+  expect(calculateRemainingValueNative(usd, now)).toBeCloseTo(4.95)
+  expect(calculateRemainingValueNative(cny, now)).toBeCloseTo(67.05)
+})
+
+test('backup accepts only needed currencies and never fills missing RUB/VND with invented rates', async () => {
+  let requests = 0
+  Object.defineProperty(globalThis, 'fetch', { configurable: true, value: async (url: string) => {
+    requests++
+    return url.includes('er-api') ? new Response('', { status: 503 }) : Response.json({ base: 'CNY', date: new Date(Date.now()).toISOString().slice(0, 10), rates: { USD: 0.14 } })
+  } })
+  const quote = await getDailyExchangeRates(['CNY', 'USD'])
+  expect(quote.provider).toBe('Frankfurter')
+  expect(quote.source).toBe('network')
+  expect(quote.rates.USD).toBe(0.14)
+  expect(Number.isNaN(quote.rates.RUB)).toBe(true)
+  const missing = await getDailyExchangeRates(['RUB'])
+  expect(missing.source).toBe('unavailable')
+  expect(Number.isNaN(missing.rates.RUB)).toBe(true)
+  expect(requests).toBe(4)
+})
+
+test('provider expiration refreshes within the same date and outages are bounded', async () => {
+  let now = Date.UTC(2026, 10, 17, 10)
+  Date.now = () => now
+  let requests = 0
+  Object.defineProperty(globalThis, 'fetch', { configurable: true, value: async () => {
+    requests++
+    return Response.json(primary())
+  } })
+  await getDailyExchangeRates()
+  now += 3600001
+  expect((await getDailyExchangeRates()).source).toBe('network')
+  expect(requests).toBe(2)
+  now += 3600001
+  Object.defineProperty(globalThis, 'fetch', { configurable: true, value: async () => {
+    requests++
+    return new Response('', { status: 503 })
+  } })
+  expect((await getDailyExchangeRates()).source).toBe('stale-cache')
+  expect((await getDailyExchangeRates()).source).toBe('stale-cache')
+  expect(requests).toBe(4)
+})
+
+test('malformed base, dates, values and provider timestamps fail closed', () => {
+  const now = Date.now()
+  for (const patch of [{ base_code: 'USD' }, { result: 'error' }, { time_last_update_unix: now / 1000 + 1000 }, { time_next_update_unix: now / 1000 - 1 }, { rates: { USD: '0.14' } }, { rates: { CNY: 2, USD: 0.14 } }])
+    expect(parseRateQuote('primary', { ...primary(), ...patch }, now)).toBeNull()
+  expect(parseRateQuote('backup', { base: 'CNY', date: '2026-02-31', rates: { USD: 0.14 } }, now)).toBeNull()
+})
+
+test('an outage without a trustworthy cache never silently supplies hardcoded rates', async () => {
+  Object.defineProperty(globalThis, 'fetch', { configurable: true, value: async () => new Response('', { status: 503 }) })
+  const missing = await getDailyExchangeRates(['USD'])
+  expect(missing.source).toBe('unavailable')
+  expect(Number.isNaN(missing.rates.USD)).toBe(true)
+  expect(formatFinanceAmount(Number.NaN, 'USD').value).toBe('汇率不可用')
 })
 
 test('both provider failures preserve a stale SGD cache rather than inventing a rate', async () => {

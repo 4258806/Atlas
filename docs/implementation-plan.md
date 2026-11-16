@@ -4,7 +4,7 @@ The user authorized these stages in order on 2026-11-17. Runtime changes are M5;
 
 1. Engineering: non-mutating lint, Linux unit/helper tests, browser regression, clean-source native ZIP validation and guarded manual release.
 2. Node reset schedules: timezone/day/hour/minute, DST and month-end rules, migration without deleting traffic history.
-3. Finance: native node currencies; multi-currency home aggregate only; validated, attributed, fresh FX sources.
+3. Finance: native node currencies; support multiple currencies but display only one selected currency in the home aggregate; validated, attributed, fresh FX sources. No simultaneous extra-currency UI.
 4. Carrier ordering: persisted drag order with touch and keyboard alternatives.
 5. Display: blocks/sparklines and optional TCP/UDP connections, honest missing data.
 6. Return routes: audit existing opt-in helper/plugin; verify targets/ASN and measured DMIT trial before rollout.

@@ -10,11 +10,15 @@ import process from 'node:process'
 import { chromium, expect } from '@playwright/test'
 import { createServer } from 'vite'
 
+const RATE_URL = /er-api|frankfurter/
+const RATE_NETWORK_ERROR = /CORS|Content Security Policy|er-api|frankfurter/
+
 async function main() {
   const [binary, python, baseline, candidate] = process.argv.slice(2).map(p => resolve(p))
   assert(binary && python && baseline && candidate, 'backend, Python, baseline ZIP and candidate ZIP required')
   const root = process.cwd()
-  const out = join(root, 'test-results/native-reset')
+  const finance = process.argv.includes('--finance')
+  const out = join(root, finance ? 'test-results/native-finance' : 'test-results/native-reset')
   mkdirSync(out, { recursive: true })
   const labs = join(root, 'test-results/full')
   mkdirSync(labs, { recursive: true })
@@ -135,6 +139,16 @@ async function main() {
     await context.addCookies([{ name: cookieName, value: cookieValue, url: origin }])
     const page = await context.newPage()
     const errors = []
+    const rateFailures = []
+    page.on('requestfailed', (request) => {
+      if (RATE_URL.test(request.url()))
+        rateFailures.push({ url: request.url(), error: request.failure()?.errorText })
+    })
+    page.on('console', (message) => {
+      if (RATE_NETWORK_ERROR.test(message.text()))
+        rateFailures.push({ browser: message.text().slice(0, 500) })
+    })
+    report.rateNetworkDiagnostics = rateFailures
     page.on('pageerror', error => errors.push(error.message))
     const open = async () => {
       await page.goto(origin)
@@ -208,6 +222,41 @@ async function main() {
       await expect(page.locator(`[data-traffic-cycle-node="${a}"] input[type="time"]`)).toHaveValue('00:00')
       assert.deepEqual(errors, [])
     })
+    if (finance) {
+      await check('native node billing stays in its own currency while the header selects one currency', async () => {
+        const expiry = new Date(Date.now() + 15 * 86400000).toISOString()
+        await rpc('admin:editClient', { uuid: a, price: 9.9, currency: 'USD', billing_cycle: 30, expired_at: expiry })
+        await rpc('admin:editClient', { uuid: b, price: 804.6, currency: 'CNY', billing_cycle: 180, expired_at: expiry })
+        const before = (await rpc('public:getPublicSettings')).theme_settings
+        await api('/api/admin/theme/settings?theme=Enhanced', { ...before, hideGeneralCard: false, generalCardPreset: '自定义', generalCardKeys: 'remainingValue\nmonthlyCost', detailMetricCardPreset: '自定义', detailMetricCardKeys: 'price\nmonthlyCost\nremainingValue' })
+        for (const width of [1440, 390]) {
+          await page.setViewportSize({ width, height: 1000 })
+          await page.goto(origin)
+          const summary = page.locator('[data-general-card-key="remainingValue"]')
+          await expect(summary).toContainText('CNY', { timeout: 15000 })
+          await expect(summary).not.toContainText('汇率不可用', { timeout: 15000 })
+          await summary.click()
+          const dialog = page.getByRole('dialog', { name: '价值与费用明细' })
+          const usdRow = dialog.getByRole('row').filter({ hasText: 'Reset fixture A' })
+          const cnyRow = dialog.getByRole('row').filter({ hasText: 'Reset fixture B' })
+          await expect(usdRow).toContainText('$9.90 USD')
+          await expect(cnyRow).toContainText('¥134.10 CNY')
+          await dialog.getByRole('combobox', { name: '显示币种', exact: true }).selectOption('EUR')
+          await expect(usdRow).toContainText('$4.95 USD')
+          await expect(cnyRow).toContainText('¥134.10 CNY')
+          await page.keyboard.press('Escape')
+          await page.reload()
+          await expect(summary).toContainText('EUR')
+          await expect(page.locator('[data-summary-extra-currency]')).toHaveCount(0)
+          await page.screenshot({ path: join(out, `native-finance-${width}.png`), fullPage: true })
+          await page.goto(`${origin}/instance/${a}`)
+          await expect(page.getByText('$4.95', { exact: true })).toBeVisible()
+          await page.evaluate(() => localStorage.setItem('fin_currency', 'CNY'))
+        }
+        assert.deepEqual((await rpc('public:getPublicSettings')).theme_settings.unknownFuture, settings.unknownFuture)
+        assert.deepEqual(errors, [])
+      })
+    }
     report.status = 'passed'
   }
   catch (error) {

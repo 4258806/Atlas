@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { GeneralCardKey } from '@/stores/app'
 import type { NodeData } from '@/stores/nodes'
-import type { CurrencyCode, ExchangeRateSource } from '@/utils/financeHelper'
+import type { CurrencyCode } from '@/utils/financeHelper'
 import type { TopNodeMetric } from '@/utils/nodeMetricsHelper'
 import { Icon } from '@iconify/vue'
 import { useNow } from '@vueuse/core'
@@ -9,6 +9,7 @@ import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
 import NodeEarthGlobe from '@/components/NodeEarthGlobe.vue'
 import { CardX } from '@/components/ui/card-x'
 import { DataTooltip } from '@/components/ui/data-tooltip'
+import { useSummaryRates } from '@/composables/useSummaryRates'
 
 import { UI_CONFIG } from '@/constants/ui'
 import { useAppStore } from '@/stores/app'
@@ -70,15 +71,15 @@ const nodesStore = useNodesStore()
 const FinanceDetailsDialog = defineAsyncComponent(() => import('@/components/FinanceDetailsDialog.vue'))
 // 未登录且开启「未登录隐藏价格」时，屏蔽金额类信息
 const showPrice = computed(() => appStore.privateFeaturesAllowed || !appStore.hidePriceWhenLoggedOut)
-const exchangeRates = ref(financeHelper.DEFAULT_EXCHANGE_RATES)
-const dailyExchangeRates = ref(financeHelper.DEFAULT_EXCHANGE_RATES)
-const exchangeRateSource = ref<ExchangeRateSource | 'loading'>('loading')
-const exchangeRateUpdatedAt = ref<number | null>(null)
 const financeCurrency = ref<CurrencyCode>('CNY')
+const manualRateOverride = ref(financeHelper.hasExchangeRateOverrides())
 const excludeFreeNodes = ref(true)
 const financeDetailsOpen = ref(false)
 const currentTime = useNow({ interval: 1000 })
 const summaryNodes = computed(() => props.nodes ?? nodesStore.visibleNodes)
+const financeEnabled = computed(() => showPrice.value && appStore.generalCardOrder.some(key => ['remainingValue', 'monthlyCost', 'yearlyCost'].includes(key)))
+const requiredCurrencies = computed<CurrencyCode[]>(() => [...new Set([financeCurrency.value, ...summaryNodes.value.filter(node => !excludeFreeNodes.value || !isFreeNode(node)).map(node => financeHelper.normalizeCurrency(node.currency))])])
+const { rates: exchangeRates, dailyRates: dailyExchangeRates, source: exchangeRateSource, updatedAt: exchangeRateUpdatedAt, provider: exchangeRateProvider } = useSummaryRates(requiredCurrencies, financeEnabled)
 
 const summaryTransitionKey = computed(() => props.transitionKey ?? nodesStore.visibleNodes.length)
 const metricSwitchTransitionProps = computed(() => ({
@@ -196,10 +197,11 @@ function formatCostCard(amountCNY: number): { value: string, unit?: string } {
   if (!showPrice.value)
     return { value: '***' }
 
-  const targetRate = exchangeRates.value[financeCurrency.value] || 1
+  const targetRate = exchangeRates.value[financeCurrency.value]
   const formatted = financeHelper.formatFinanceAmount(amountCNY * targetRate, financeCurrency.value)
   return {
     value: `${formatted.symbol}${formatted.value}`,
+    unit: financeCurrency.value,
   }
 }
 
@@ -380,10 +382,10 @@ const monthlyCostCNY = computed(() => summaryNodes.value.reduce((sum, node) => s
 const yearlyCostCNY = computed(() => summaryNodes.value.reduce((sum, node) => sum + getNodePeriodCostCNY(node, 365), 0))
 
 const remainingValueCNY = computed(() => {
-  return financeHelper.calculateTotalRemainingValueCNY(summaryNodes.value, exchangeRates.value, excludeFreeNodes.value)
+  return financeHelper.calculateTotalRemainingValueCNY(summaryNodes.value, exchangeRates.value, excludeFreeNodes.value, currentTime.value)
 })
 const remainingValue = computed(() => {
-  const targetRate = exchangeRates.value[financeCurrency.value] || 1
+  const targetRate = exchangeRates.value[financeCurrency.value]
   return remainingValueCNY.value * targetRate
 })
 const formattedRemainingValue = computed(() => {
@@ -393,7 +395,7 @@ const totalValueCNY = computed(() => {
   return financeHelper.calculateTotalValueCNY(summaryNodes.value, exchangeRates.value, excludeFreeNodes.value)
 })
 const totalValue = computed(() => {
-  const targetRate = exchangeRates.value[financeCurrency.value] || 1
+  const targetRate = exchangeRates.value[financeCurrency.value]
   return totalValueCNY.value * targetRate
 })
 const formattedTotalValue = computed(() => {
@@ -462,6 +464,7 @@ function getCardDefinition(key: GeneralCardKey): GeneralMetricCard {
         label: '剩余价值',
         icon: 'tabler:cash',
         value: showPrice.value ? `${formattedRemainingValue.value.symbol}${formattedRemainingValue.value.value}` : '***',
+        unit: showPrice.value ? financeCurrency.value : undefined,
         tooltip: totalValueTooltip.value,
         action: showPrice.value ? 'financeDetails' : undefined,
       }
@@ -793,23 +796,19 @@ function updateExcludeFreeNodes(exclude: boolean) {
 
 function updateExchangeRate(currency: CurrencyCode, value: number) {
   financeHelper.setExchangeRateOverride(currency, value)
+  manualRateOverride.value = true
   exchangeRates.value = { ...exchangeRates.value, [currency]: value, CNY: 1 }
 }
 
 function resetExchangeRates() {
   financeHelper.clearExchangeRateOverrides()
+  manualRateOverride.value = false
   exchangeRates.value = { ...dailyExchangeRates.value }
 }
 
-onMounted(async () => {
+onMounted(() => {
   financeCurrency.value = financeHelper.getStoredFinanceCurrency()
   excludeFreeNodes.value = financeHelper.shouldExcludeFreeNodes()
-
-  const { rates, source, updatedAt } = await financeHelper.getDailyExchangeRates()
-  dailyExchangeRates.value = rates
-  exchangeRates.value = financeHelper.applyExchangeRateOverrides(rates)
-  exchangeRateSource.value = source
-  exchangeRateUpdatedAt.value = updatedAt
 })
 </script>
 
@@ -868,6 +867,12 @@ onMounted(async () => {
           </DataTooltip>
         </div>
       </CardX>
+      <p v-if="financeEnabled" data-rate-attribution class="col-span-full text-[10px] text-muted-foreground">
+        顶栏参考换算 · {{ exchangeRateProvider || (manualRateOverride ? '手动汇率' : '汇率不可用') }}{{ manualRateOverride ? '（含手动覆盖）' : '' }} · {{ exchangeRateSource === 'stale-cache' ? '历史缓存' : exchangeRateSource === 'loading' ? '载入中' : '报价时间' }}
+        {{ exchangeRateUpdatedAt ? new Date(exchangeRateUpdatedAt).toLocaleString('zh-CN') : '' }} ·
+        <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener noreferrer" class="underline">Rates By ExchangeRate-API</a> ·
+        <a href="https://frankfurter.dev" target="_blank" rel="noopener noreferrer" class="underline">Frankfurter</a>
+      </p>
     </div>
   </div>
 
@@ -879,6 +884,8 @@ onMounted(async () => {
     :source="exchangeRateSource"
     :rates-updated-at="exchangeRateUpdatedAt"
     :currency="financeCurrency"
+    :summary-remaining="`${formatCostCard(remainingValueCNY).value} ${financeCurrency}`"
+    :summary-monthly="`${formatCostCard(monthlyCostCNY).value} ${financeCurrency}`"
     :exclude-free="excludeFreeNodes"
     :now="currentTime"
     @update:currency="updateFinanceCurrency"
