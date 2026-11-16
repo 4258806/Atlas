@@ -72,7 +72,7 @@ class HelperArchiveSafetyTests(unittest.TestCase):
     def rejected_by_both_before_any_write_or_execution(self, payload):
         with self.assertRaises(Refused):
             helper_members(payload)
-        with tempfile.TemporaryDirectory(dir=os.environ['TMPDIR'], prefix='archive-negative-') as directory:
+        with tempfile.TemporaryDirectory(dir=os.environ.get('TMPDIR'), prefix='archive-negative-') as directory:
             root = Path(directory)
             package = root / 'malformed.tar.gz'
             package.write_bytes(payload)
@@ -134,7 +134,7 @@ class HelperArchiveSafetyTests(unittest.TestCase):
                 self.rejected_by_both_before_any_write_or_execution(self.archive(entries))
 
     def test_real_archive_installs_v2_only_into_owned_temporary_prefix(self):
-        with tempfile.TemporaryDirectory(dir=os.environ['TMPDIR'], prefix='archive-positive-') as directory:
+        with tempfile.TemporaryDirectory(dir=os.environ.get('TMPDIR'), prefix='archive-positive-') as directory:
             root = Path(directory)
             package = root / 'helper.tar.gz'
             package.write_bytes(self.data)

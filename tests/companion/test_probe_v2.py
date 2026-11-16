@@ -161,7 +161,7 @@ class ProbeV2Tests(unittest.TestCase):
                 v2.query_cymru(ip, 1)
 
     def test_local_configuration_opt_in_consent_types_and_ipv6_rejection(self):
-        with tempfile.TemporaryDirectory(dir=os.environ['TMPDIR']) as directory:
+        with tempfile.TemporaryDirectory(dir=os.environ.get('TMPDIR')) as directory:
             path = Path(directory, 'config.json')
             base = {'panel': 'https://example.invalid', 'uuid': UUID, 'tokenFile': str(Path(directory, 'token')), 'enabled': True}
             for options in [{'probeProtocols': ['udp', 'tcp']}, {'probeProtocols': ['tcp'], 'cymruEnabled': True, 'cymruConsent': True}, {}]:
@@ -173,7 +173,7 @@ class ProbeV2Tests(unittest.TestCase):
                     helper.read_config(path, None)
 
     def test_runtime_reserves_before_probe_persists_cache_and_enforces_restart_cooldown(self):
-        with tempfile.TemporaryDirectory(dir=os.environ['TMPDIR']) as directory:
+        with tempfile.TemporaryDirectory(dir=os.environ.get('TMPDIR')) as directory:
             token = Path(directory, 'token')
             with v2.runtime(token, helper.private_text) as state:
                 runtime_file = token.with_name('route-runtime.json')
@@ -188,7 +188,7 @@ class ProbeV2Tests(unittest.TestCase):
                 self.assertEqual(restored['cache']['8.8.8.8']['asns'], [4809])
 
     def test_service_state_directory_does_not_write_readonly_credential_directory(self):
-        with tempfile.TemporaryDirectory(dir=os.environ['TMPDIR']) as directory:
+        with tempfile.TemporaryDirectory(dir=os.environ.get('TMPDIR')) as directory:
             root = Path(directory)
             credentials, state = root / 'credentials', root / 'service-state'
             credentials.mkdir(mode=0o700); state.mkdir(mode=0o700)
@@ -204,7 +204,7 @@ class ProbeV2Tests(unittest.TestCase):
                 credentials.chmod(0o700)
 
     def test_runtime_rejects_corruption_private_ips_symlinks_and_unsafe_mode(self):
-        with tempfile.TemporaryDirectory(dir=os.environ['TMPDIR']) as directory:
+        with tempfile.TemporaryDirectory(dir=os.environ.get('TMPDIR')) as directory:
             token = Path(directory, 'token')
             path = token.with_name('route-runtime.json')
             for text, mode in [('not-json', 0o600), ('null', 0o600), (json.dumps({'version': 1, 'lastProbe': 0, 'cache': {'127.0.0.1': {'asns': [4809], 'expires': 1}}}), 0o600), (json.dumps({'version': 1, 'lastProbe': 0, 'cache': {}}), 0o644)]:

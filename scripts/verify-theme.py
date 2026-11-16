@@ -12,14 +12,15 @@ def validate(path, release=False):
         names = archive.namelist()
         if len(names) != len(set(names)):
             raise ValueError("duplicate ZIP entries")
-        for name in names:
+        for info in archive.infolist():
+            name = info.orig_filename
             normalized = name.replace("\\", "/")
             parts = pathlib.PurePosixPath(normalized).parts
-            if normalized != name or name.startswith("/") or ".." in parts or ":" in name:
+            if normalized != name or info.filename != name or name.startswith("/") or ".." in parts or ":" in name:
                 raise ValueError(f"unsafe ZIP path: {name}")
             if parts[0] not in {"komari-theme.json", "preview.png", "dist"}:
                 raise ValueError(f"unexpected top-level path: {name}")
-            if (archive.getinfo(name).external_attr >> 16) & 0o170000 == 0o120000:
+            if (info.external_attr >> 16) & 0o170000 == 0o120000:
                 raise ValueError("symlinks are not supported")
         required = {"komari-theme.json", "preview.png", "dist/index.html", "dist/BUILD.json"}
         if not required.issubset(names):
