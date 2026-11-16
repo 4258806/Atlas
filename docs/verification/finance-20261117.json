@@ -1,0 +1,103 @@
+{
+  "kind": "official-Komari-1.6.1-loopback-native-finance-and-reset-acceptance",
+  "productionTouched": false,
+  "history": "explicit synthetic SQL fixture",
+  "backendSHA256": "0c6e73c42ac166d34562e57037007a21692599e9e868ddae18217691e0f5d932",
+  "baselineSHA256": "54ef15efe37707109ce721ed22608745a575b3683038951b02b05d1724d3ff17",
+  "candidateSHA256": "1e1d7ea9172e3a9d45e021a7baf6daeb396d3c9bfaf27ef2004d7933a102be8c",
+  "checks": [
+    {
+      "name": "fresh official backend and verified native administrator session",
+      "status": "passed"
+    },
+    {
+      "name": "install exact baseline, upgrade candidate and preserve settings",
+      "status": "passed"
+    },
+    {
+      "name": "installed desktop and mobile UI persists independent minute and IANA zone",
+      "status": "passed"
+    },
+    {
+      "name": "native per-metric retention and tier configuration read back without disabling metrics",
+      "status": "passed"
+    },
+    {
+      "name": "native persisted minute edge and hourly body sum exactly without history mutation",
+      "status": "passed"
+    },
+    {
+      "name": "rollback restores baseline ZIP plus exact v1 settings and re-upgrade retains configuration",
+      "status": "passed"
+    },
+    {
+      "name": "native node billing stays in its own currency while the header selects one currency",
+      "status": "passed"
+    }
+  ],
+  "rateNetworkDiagnostics": [],
+  "syntheticRows": 15960,
+  "status": "passed",
+  "stage": 3,
+  "source_commit": "b72356380b9c8a549a9b27cf5e407e59c5315f17",
+  "pull_request": "https://github.com/MagnetOscar/Glassmorphism-Enhanced/pull/4",
+  "package": {
+    "version": "1.2.1",
+    "commit": "b72356380b9c8a549a9b27cf5e407e59c5315f17",
+    "dirty": false,
+    "mode": "production",
+    "sha256": "1e1d7ea9172e3a9d45e021a7baf6daeb396d3c9bfaf27ef2004d7933a102be8c",
+    "file": "komari-theme-Glassmorphism-build-b723563.zip",
+    "entries": 784
+  },
+  "live_provider_metadata": {
+    "source": "network",
+    "provider": "ExchangeRate-API",
+    "updatedAt": 1794787351000,
+    "expiresAt": 1794875501000,
+    "coversUSDandCNY": true,
+    "rawRatesPublished": false
+  },
+  "ci": {
+    "quality_runtime_source": "https://github.com/MagnetOscar/Glassmorphism-Enhanced/actions/runs/43950765237",
+    "unit_component_tests_passed": 335,
+    "required_final_checks": [
+      "lint-and-build",
+      "screenshots"
+    ],
+    "final_check_record": "https://github.com/MagnetOscar/Glassmorphism-Enhanced/pull/4/checks",
+    "merge_requires_both_checks": true,
+    "runtime_unchanged_since_quality": "c4c57b219c1f6df98f730868979ccaa7cea23683"
+  },
+  "local_checks": {
+    "finance_calendar_tests_passed": 114,
+    "package_negative_tests_passed": 9,
+    "lint": "passed",
+    "type_check": "passed",
+    "release_gate": "refused inherited/unaccepted version as required"
+  },
+  "visual_review": {
+    "failed_original_run": "https://github.com/MagnetOscar/Glassmorphism-Enhanced/actions/runs/43942231466",
+    "root_cause": "Attribution consumed a fixed-height metric grid row, displacing the map.",
+    "fix_commit": "c4c57b219c1f6df98f730868979ccaa7cea23683",
+    "reviewed_linux_snapshot_run": "https://github.com/MagnetOscar/Glassmorphism-Enhanced/actions/runs/43950765057",
+    "reviewed_snapshot": "tests/visual/snapshots/chromium/home-tiled-desktop.png",
+    "review": "Map begins 24 px below the old layout for attribution plus spacing; amounts remain unchanged with explicit CNY labels. No blank metric-height attribution row.",
+    "spacing_and_mobile_overflow_checks": "passed at 390 and 1440 pixels",
+    "thresholds_changed": false,
+    "tests_skipped": false
+  },
+  "scope": {
+    "stage1": "Protected PR flow and baseline verified; production ZIP build-mode guard added.",
+    "stage2": "All six reset/retention/installation/persistence/upgrade/rollback checks passed again on this exact package.",
+    "stage3": "Node-native fees and remaining values; one selected summary currency; validated attributed FX.",
+    "formal_release_published": false,
+    "production_modified": false,
+    "limitations": [
+      "Prices and SQL traffic are explicitly synthetic fixtures.",
+      "This is isolated official-backend acceptance, not production billing or storage-growth acceptance.",
+      "The current inherited manifest is a development candidate; stages 4-9 remain unaccepted."
+    ],
+    "stop_after_stage": 3
+  }
+}
