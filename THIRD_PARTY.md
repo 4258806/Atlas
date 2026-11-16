@@ -1,5 +1,14 @@
 # Third-Party Notices
 
+## Direct upstream of the personal fork
+
+- Personal fork: <https://github.com/MagnetOscar/Glassmorphism-Enhanced>.
+- Direct upstream: <https://github.com/casiuna/Glassmorphism-Enhanced>, maintained by casiuna.
+- Pinned release: v1.2.1, commit `0332d5f7c73f7994ba21c01e4b739d04835120b1`.
+- Role: complete source baseline for this personal derivative, including the upstream's previous integrations and notices below.
+- License: MIT; the root `LICENSE`, existing copyright notices, and upstream Git history are retained unchanged.
+- Initial personal-fork changes are documentation only. See [FORK.md](FORK.md) for provenance and the exact modification scope. Earlier development and test statements below describe inherited upstream work, not new verification performed by this fork.
+
 Glassmorphism Enhanced is an enhanced fork, not a clean-room or wholly original implementation. The upstream Git history and root `LICENSE` are retained.
 
 ## Komari Glassmorphism

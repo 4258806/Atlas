@@ -1,4 +1,14 @@
-# Glassmorphism Enhanced
+# Glassmorphism Enhanced Personal Fork
+
+本仓库是 [MagnetOscar/Glassmorphism-Enhanced](https://github.com/MagnetOscar/Glassmorphism-Enhanced)，由 GitHub Fork 功能从 [casiuna/Glassmorphism-Enhanced](https://github.com/casiuna/Glassmorphism-Enhanced) 创建，用于个人服务器监控主题的二次开发。它是社区衍生项目，不是上游官方发行版，不代表原作者或上游维护者。
+
+开发基线固定为上游 **v1.2.1**，提交 [`0332d5f7c73f7994ba21c01e4b739d04835120b1`](https://github.com/casiuna/Glassmorphism-Enhanced/commit/0332d5f7c73f7994ba21c01e4b739d04835120b1)。`baseline/v1.2.1` 保留该原始提交，默认开发分支为 `personal/main`。主题清单当前的 `1.2.1` 仍是上游原始版本号，不表示本 Fork 已发布新的二次开发版本。
+
+**当前仅完成 Fork 初始化、来源及许可声明；未修改功能源码，未发布自有构建或部署到服务器。** 本分支相对基线的改动见 [FORK.md](FORK.md)；下方功能和验收记录属于上游 v1.2.1，不是本 Fork 新完成的功能或测试。
+
+保留原始 [MIT License](LICENSE)、作者署名、Git 历史及 [第三方声明](THIRD_PARTY.md)。本 Fork 新增文档也按 MIT 许可提供；后续引入其他项目代码时，应继续记录来源、准确版本和对应许可，不将上游贡献声明为本项目原创。
+
+## 上游 v1.2.1 说明
 
 基于 [Komari](https://github.com/komari-monitor/komari) 的第三方监控主题。保留毛玻璃设计，重点展示节点状态、流量和中国联通／电信／移动三网延迟。
 

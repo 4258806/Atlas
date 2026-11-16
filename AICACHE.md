@@ -1,5 +1,17 @@
 # AI Cache / Agent Handoff Log
 
+## 2026-11-16 Personal Fork 初始化（M6）
+
+- 当前仓库：MagnetOscar/Glassmorphism-Enhanced，GitHub 原生公开 Fork；直接父仓库为 casiuna/Glassmorphism-Enhanced。
+- 用户本轮授权仅为第一步：创建公开 Fork、固定 v1.2.1 基线、补充来源和许可声明、删除先前空的独立私有仓库。后续功能、生产部署和 Agent 修改尚未授权实施。
+- 固定提交：0332d5f7c73f7994ba21c01e4b739d04835120b1；原始基线 baseline/v1.2.1，开发分支 personal/main。不要将继承的其他分支或旧日志误作当前任务状态。
+- 本轮仅修改 README.md、FORK.md、THIRD_PARTY.md 与本日志；根 LICENSE、功能源码、主题清单、依赖和第三方许可文件保持原样。新增文档继续使用 MIT，保留原作者与各上游署名。
+- 验证范围：git diff --check、基线和当前功能文件一致性、LICENSE 哈希、GitHub Fork/可见性/分支读回。文档变更不运行 lint/build，不把继承的测试结果作为本轮结果。
+- GitHub Actions 暂停，避免继承的发行工作流在初始化时创建非预期 Release。本轮不创建发行版、不修改线上 CA、Cloudflare、Nginx 或任何 VPS。
+- 下一步仍为已讨论的可行性验证，须等用户单独指示；不能因为存在后续计划就继续开发。
+
+以下为原样保留的上游历史日志；其中的任务权限、私有路径和验收结果不代表本 Fork 的当前授权或新完成结果。
+
 ## 当前执行：v1.2.1 后台归类与伴生依赖简化（M4/M6，保持鉴权，禁止提交发布）
 
 - 仅后台设置与手动编辑体验；基线 1064 个文件和源码备份在 settings-companion-review/before*。前台卡片、Ping/Transit/流量算法、Full 安装器及降级保护不改。
