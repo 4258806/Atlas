@@ -35,12 +35,14 @@ def validate(path, release=False):
             raise ValueError("source commit mismatch")
         if release and build.get("dirty") is not False:
             raise ValueError("release requires a clean-source build")
+        if release and build.get("mode") != "production":
+            raise ValueError("release requires a production-mode build")
         if archive.read("preview.png") != pathlib.Path("docs/preview.png").read_bytes():
             raise ValueError("preview mismatch")
         if release and not any(name.startswith("dist/licenses/") for name in names):
             raise ValueError("release is missing license notices")
         return {"version": manifest["version"], "commit": head,
-                "dirty": build["dirty"], "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                "dirty": build["dirty"], "mode": build.get("mode"), "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
                 "file": path.name, "entries": len(names)}
 
 

@@ -4,6 +4,8 @@ Public development records only. Do not add deployment addresses, identifiers, c
 
 ## Current: step 3 acceptance, then pause (2026-11-17)
 
+- Continuation audit: PR #4 head 8bdcc7c passed quality but failed one tiled-home screenshot (215 browser tests passed). Attribution occupied a fixed-height metric grid row and displaced the map. Keep attribution outside that grid; add desktop/mobile spacing and overflow assertions. Do not raise screenshot tolerances or skip the failing test.
+- Stage 1 follow-up: record the Vite build mode in BUILD.json and reject visual/unknown modes at the production ZIP gate. Nine archive tests, 114 finance/calendar tests, lint/type-check/production build and five focused browser tests passed locally; updated Linux CI and exact clean-source native evidence remain pending.
 - Step 2 accepted and merged: PR #3, merge 2d658f6. Latest required CI runs 43934605367 and 43934605418 passed. Official isolated 1.6.1 native acceptance is recorded in docs/verification/reset-20261117.json.
 - User changed step 3: support the existing currencies but show ONLY ONE selected currency in the homepage aggregate. No additional-currency checkboxes/parallel amounts. Keep each node's own currency; preserve existing browser fin_currency selection.
 - Step 3 implementation on feat/native-finance-summary: native node fees/remaining value/detail/comparison/export, summary-only validated FX, provider timestamp expiry, existing backup source checked only for required currencies, explicit stale/unavailable/manual states, attribution. No Google scraping, rate redistribution API, backend scheduler or Agent changes.

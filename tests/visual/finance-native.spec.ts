@@ -3,6 +3,24 @@ import { expect, test } from '@playwright/test'
 import { installKomariFixture } from './fixtures/komari'
 
 for (const width of [390, 1440]) {
+  test(`rate attribution keeps the tiled map close to summary cards at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 1000 })
+    await installKomariFixture(page, { earthRenderer: 'tiled' })
+    await page.goto('/')
+    const attribution = page.locator('[data-rate-attribution]')
+    await expect(attribution).toContainText('ExchangeRate-API')
+    const attributionBox = await attribution.boundingBox()
+    const cards = await page.locator('[data-general-card-key]').all()
+    const cardBoxes = await Promise.all(cards.map(card => card.boundingBox()))
+    const cardBottom = Math.max(...cardBoxes.map(box => box!.y + box!.height))
+    const mapBox = await page.locator('.earth-map-shell').boundingBox()
+    expect(attributionBox!.y).toBeGreaterThanOrEqual(cardBottom)
+    expect(mapBox!.y).toBeGreaterThanOrEqual(attributionBox!.y + attributionBox!.height)
+    expect(mapBox!.y - cardBottom).toBeLessThan(70)
+    expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(width)
+    await page.screenshot({ path: `test-results/finance-tiled-${width}.png`, fullPage: true })
+  })
+
   test(`native node currencies and single-currency header persists at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 1000 })
     await installKomariFixture(page, {

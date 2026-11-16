@@ -730,16 +730,25 @@ const earthClass = computed(() => {
 
   return 'col-span-12 col-start-1 md:col-span-6 md:col-start-7 md:row-start-1'
 })
-const cardGridClass = computed(() => {
+const cardRegionClass = computed(() => {
   if (!showEarth.value)
-    return 'col-span-1 grid grid-cols-3 md:grid-cols-6 gap-2'
+    return 'col-span-1'
 
   if (isTiledEarth.value)
-    return 'col-span-12 row-start-1 z-9 grid grid-cols-12 auto-rows-[4.75rem] sm:auto-rows-[5rem] md:auto-rows-[5.8rem] gap-2 sm:gap-3'
+    return 'col-span-12 row-start-1 z-9'
 
   return hasExtraCards.value
-    ? 'h-auto -mt-42 md:mt-0 col-span-12 row-start-3 z-9 md:h-auto md:col-span-6 md:row-start-1 grid grid-cols-12 auto-rows-[5rem] md:auto-rows-[7rem] gap-2'
-    : 'h-42 -mt-42 md:mt-0 col-span-12 row-start-3 z-9 md:h-auto md:col-span-6 md:row-start-1 grid grid-cols-12 grid-rows-2 gap-2'
+    ? 'h-auto -mt-42 md:mt-0 col-span-12 row-start-3 z-9 md:col-span-6 md:row-start-1'
+    : 'h-42 -mt-42 md:mt-0 col-span-12 row-start-3 z-9 md:h-auto md:col-span-6 md:row-start-1'
+})
+const cardGridClass = computed(() => {
+  if (!showEarth.value)
+    return 'grid-cols-3 md:grid-cols-6'
+  if (isTiledEarth.value)
+    return 'grid-cols-12 auto-rows-[4.75rem] sm:auto-rows-[5rem] md:auto-rows-[5.8rem] sm:gap-3'
+  return hasExtraCards.value
+    ? 'grid-cols-12 auto-rows-[5rem] md:auto-rows-[7rem]'
+    : 'grid-cols-12 grid-rows-2'
 })
 const cardClass = 'group relative z-10 h-full bg-background/50 border-none hover:bg-background backdrop-blur-sm md:backdrop-blur-none transition-all'
 const cardPositionClasses = [
@@ -820,54 +829,56 @@ onMounted(() => {
       :class="earthClass"
     />
 
-    <div v-if="visibleCards.length > 0" :class="cardGridClass">
-      <CardX
-        v-for="(card, index) in visibleCards"
-        :key="card.key"
-        :data-general-card-key="card.key"
+    <div v-if="visibleCards.length > 0" :class="cardRegionClass" class="flex min-w-0 flex-col gap-2">
+      <div :class="cardGridClass" class="grid min-h-0 flex-1 gap-2">
+        <CardX
+          v-for="(card, index) in visibleCards"
+          :key="card.key"
+          :data-general-card-key="card.key"
 
-        hoverable
-        :class="[cardClass, getCardPositionClass(index), card.action && 'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring']"
-        content-class="h-full !p-3"
-        :role="card.action ? 'button' : undefined"
-        :tabindex="card.action ? 0 : undefined"
-        :aria-label="card.action ? `查看${card.label}明细` : undefined"
-        @click="activateCard(card)"
-        @keydown="handleCardKeydown($event, card)"
-      >
-        <div class="flex h-full flex-col justify-between gap-1">
-          <div class="flex items-start justify-between gap-2">
-            <span class="text-xs font-medium tracking-wider text-muted-foreground truncate">{{ card.label }}</span>
-            <Icon
-              :icon="card.icon" :width="20" :height="20"
-              class="shrink-0 text-slate-500/20 group-hover:text-slate-500 transition-colors"
-            />
+          hoverable
+          :class="[cardClass, getCardPositionClass(index), card.action && 'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring']"
+          content-class="h-full !p-3"
+          :role="card.action ? 'button' : undefined"
+          :tabindex="card.action ? 0 : undefined"
+          :aria-label="card.action ? `查看${card.label}明细` : undefined"
+          @click="activateCard(card)"
+          @keydown="handleCardKeydown($event, card)"
+        >
+          <div class="flex h-full flex-col justify-between gap-1">
+            <div class="flex items-start justify-between gap-2">
+              <span class="text-xs font-medium tracking-wider text-muted-foreground truncate">{{ card.label }}</span>
+              <Icon
+                :icon="card.icon" :width="20" :height="20"
+                class="shrink-0 text-slate-500/20 group-hover:text-slate-500 transition-colors"
+              />
+            </div>
+            <DataTooltip
+              as="span"
+              placement="top"
+              :content="card.tooltip"
+              class="min-w-0"
+              content-class="whitespace-pre px-2 py-1 left-0 -translate-x-0 leading-normal"
+            >
+              <Transition v-bind="metricSwitchTransitionProps">
+                <div
+                  :key="`${card.key}-${summaryTransitionKey}`"
+                  class="flex items-baseline gap-1 min-w-0"
+                  :style="getMetricSwitchStyle(index)"
+                >
+                  <span class="text-md md:text-2xl font-bold leading-none tracking-tight truncate">
+                    {{ card.value }}
+                  </span>
+                  <span v-if="card.unit" :class="unitClass">
+                    {{ card.unit }}
+                  </span>
+                </div>
+              </Transition>
+            </DataTooltip>
           </div>
-          <DataTooltip
-            as="span"
-            placement="top"
-            :content="card.tooltip"
-            class="min-w-0"
-            content-class="whitespace-pre px-2 py-1 left-0 -translate-x-0 leading-normal"
-          >
-            <Transition v-bind="metricSwitchTransitionProps">
-              <div
-                :key="`${card.key}-${summaryTransitionKey}`"
-                class="flex items-baseline gap-1 min-w-0"
-                :style="getMetricSwitchStyle(index)"
-              >
-                <span class="text-md md:text-2xl font-bold leading-none tracking-tight truncate">
-                  {{ card.value }}
-                </span>
-                <span v-if="card.unit" :class="unitClass">
-                  {{ card.unit }}
-                </span>
-              </div>
-            </Transition>
-          </DataTooltip>
-        </div>
-      </CardX>
-      <p v-if="financeEnabled" data-rate-attribution class="col-span-full text-[10px] text-muted-foreground">
+        </CardX>
+      </div>
+      <p v-if="financeEnabled" data-rate-attribution class="shrink-0 text-[10px] text-muted-foreground">
         顶栏参考换算 · {{ exchangeRateProvider || (manualRateOverride ? '手动汇率' : '汇率不可用') }}{{ manualRateOverride ? '（含手动覆盖）' : '' }} · {{ exchangeRateSource === 'stale-cache' ? '历史缓存' : exchangeRateSource === 'loading' ? '载入中' : '报价时间' }}
         {{ exchangeRateUpdatedAt ? new Date(exchangeRateUpdatedAt).toLocaleString('zh-CN') : '' }} ·
         <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener noreferrer" class="underline">Rates By ExchangeRate-API</a> ·
