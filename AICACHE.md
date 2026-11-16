@@ -1,5 +1,13 @@
 # AI Cache / Agent Handoff Log
 
+## 2026-11-16 用户长期开发与发布约束（M6）
+
+- 用户明确要求记住本项目后续更新、整体验收、使用和发布约束：只在自己的 GitHub Fork 维护，保留对应 diff 和多版本打包 Release，以可上传的 ZIP 交付，按最终可供公众使用的项目标准维护。
+- 当前规范集中于 docs/releasing.md；AGENTS.md、AIAGENTREADME.md 与 README.md 已对齐。移除发行指南中不适用于当前 Fork 的旧仓库写入目标和旧发布授权，历史原文仍可从固定上游基线查看。
+- 正式版本要求已提交源码、适用测试、真实安装/升级/回滚验收、明确兼容范围、ZIP/SHA256/提交关联、远端附件读回及保留旧版本。小范围文档更新只保留 GitHub diff，不虚构软件 Release。
+- 本轮仅更新五份文档并保存用户的长期记忆，不修改功能源码、版本、依赖、工作流或生产。Actions 仍关闭，规范不等于流水线已完成。
+- 本地验证通过：git diff --check；99 个相对文档链接无缺失；功能源码、主题清单、依赖、工作流和 LICENSE 相对上一提交不变。交付再读回 GitHub 提交；文档变更不运行 lint/build。后续功能、发布或生产部署仍按具体用户任务范围推进。
+
 ## 2026-11-16 Personal Fork 初始化（M6）
 
 - 当前仓库：MagnetOscar/Glassmorphism-Enhanced，GitHub 原生公开 Fork；直接父仓库为 casiuna/Glassmorphism-Enhanced。

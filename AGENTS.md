@@ -1,20 +1,24 @@
 # AGENTS.md
 
-Root-scope guide for **Glassmorphism Enhanced** (`casiuna/Glassmorphism-Enhanced`).
+Root-scope guide for the personal public fork **Glassmorphism Enhanced** (`MagnetOscar/Glassmorphism-Enhanced`).
 
-Independent SemVer starts at **1.0.0** (`v1.0.0` tag/Release when approved).
-Bugfix: 1.0.x; compatible features: 1.x.0; breaking changes: 2.0.0.
-Never use `-enhanced.x` again or copy upstream's version into our manifest.
-Upstream base: Glassmorphism v3.3.7. Historical tags/releases remain intact.
-See [docs/releasing.md](docs/releasing.md); this task stops at Ready for review,
-without pushing main, creating a tag/Release, or merging the PR.
+## Mandatory development and release policy
+
+- The user's GitHub fork is the authoritative source. Every delivered change must have a pushed commit and a reviewable GitHub diff; local or production-only patches are not completed updates.
+- Preserve `baseline/v1.2.1` at `0332d5f7c73f7994ba21c01e4b739d04835120b1`. The development branch is `personal/main`; all other upstream repositories are read-only.
+- Read and follow [docs/releasing.md](docs/releasing.md) before development, acceptance, packaging, release or deployment. It is this fork's current policy; inherited upstream logs and old release approvals are historical evidence, not present authorization.
+- Each formal software version needs its own version, tag, GitHub Release, installable native theme ZIP, SHA256 and linked source/validation records. Retain previous versions; never silently overwrite published tags or assets.
+- Validate appropriate functionality, integration, upgrade/rollback and documentation before release. Distinguish fixtures, local checks, real server acceptance and actual downloaded release verification.
+- Preserve authorship, MIT and third-party notices. Publish reusable source and installation guidance, with no credentials or private deployment data.
+- Changes to feature code, release automation and production deployment require the applicable user task scope. This policy alone does not authorize those actions, and existing explicit authorization does not need repeated confirmation.
+- Documentation-only updates do not require a fabricated software version or release. Current manifest `1.2.1` is the unchanged upstream baseline; the fork's first software release version must be distinguished from inherited tags before packaging.
 
 For the complete AI/developer manual, read [AIAGENTREADME.md](AIAGENTREADME.md). For persistent task handoff and progress tracking, read and update [AICACHE.md](AICACHE.md).
 
 ## Snapshot
 
-- Updated: 2026-07-12
-- Branch: `main`
+- Updated: 2026-11-16
+- Branch: `personal/main`
 - App: Vue 3 + Vite + reka-ui + Tailwind CSS v4 theme for Komari Monitor
 - Package manager: `bun` >= 1.2
 - Theme manifest and version source: [komari-theme.json](komari-theme.json)
@@ -22,7 +26,7 @@ For the complete AI/developer manual, read [AIAGENTREADME.md](AIAGENTREADME.md).
 ## Required workflow for agents
 
 1. Read [AIAGENTREADME.md](AIAGENTREADME.md).
-2. Read [AICACHE.md](AICACHE.md) and preserve/update useful handoff notes.
+2. Read [docs/releasing.md](docs/releasing.md), then [AICACHE.md](AICACHE.md), and preserve/update useful handoff notes.
 3. Check the nearest scoped `AGENTS.md`; [src/AGENTS.md](src/AGENTS.md) overrides this file for app source.
 4. Before broad edits, identify the milestone class:
    - M2 performance only

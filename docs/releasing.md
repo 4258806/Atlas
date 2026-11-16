@@ -1,84 +1,71 @@
-# Releasing Glassmorphism Enhanced
+# 个人 Fork 开发验收与发布规范
 
-Repository: https://github.com/casiuna/Glassmorphism-Enhanced
+本规范记录用户于 2026 年 11 月 16 日明确要求的长期开发约束。目标是在个人使用需求上持续维护一个可追溯、可验收、可升级、最终可供其他人使用的公开项目。
 
-**Release target: v1.2.1**, manifest `1.2.1`, identity `Enhanced`, name `Glassmorphism Enhanced`. The owner has authorized reviewed source commit, normal fast-forward push, tag and GitHub Release in this repository, conditional on all release gates passing. No market update or production deployment is authorized. The previous stable publication is [v1.2.0](https://github.com/casiuna/Glassmorphism-Enhanced/releases/tag/v1.2.0), at `f9cec36ca3d3373ba2e9edf2e0844d30dc66933d`, and must remain intact. Latest precommit evidence is in `test-results/v121/settings-companion-review/`; clean-commit release evidence is recorded separately in `test-results/v121/official-release/`. The approved equal-thirds layout is frozen.
+## 仓库与修改记录
 
-**Publication authority:** v1.2.1 has separate owner approval, not inherited authorization from v1.2.0. A CHANGELOG heading or local build is not publication. Verify clean committed source, main, successful Actions, the v1.2.1 tag, exact Release title `Glassmorphism Enhanced v1.2.1`, metadata and both downloaded assets before claiming success. CI is the authoritative release build; never upload a dirty old-HEAD validation ZIP or relax the clean-source verifier. Stop on any failed gate; do not force-push, move published tags or deploy to production.
+- 唯一维护仓库为 [MagnetOscar/Glassmorphism-Enhanced](https://github.com/MagnetOscar/Glassmorphism-Enhanced)，默认开发分支为 `personal/main`。本地用于开发、验证和构建，交付的更新必须同步到该 GitHub 仓库。
+- 原始基线 `baseline/v1.2.1` 固定在 `0332d5f7c73f7994ba21c01e4b739d04835120b1`；保留上游历史、标签和来源记录。上游仓库只读，不向其他维护者仓库直接写入。
+- 功能和修复采用范围明确的分支、提交及 PR，说明解决的问题、实现范围、验证结果和兼容性。小范围文档更新可直接使用清楚的提交及 GitHub commit diff。
+- 每次交付提供对应提交或 PR，以及相对上一版本的 compare diff。不能只修改线上构建后的 JS/CSS，或将未推送的本地补丁视为完成。
+- 现有生产构建资源补丁如需纳入项目，应重新整理为可审查的源码提交，不混入原始基线。
 
-**Two public assets only:** one `komari-theme-Glassmorphism-build-<short-sha>.zip` (native root `komari-theme.json`, `preview.png`, `dist/`) and one `Glassmorphism-Enhanced-Full-<short-sha>.tar.gz` (one verified inner Full ZIP with installer/modules/docs/checksums/licenses). Do not attach the inner Full ZIP separately: the market updater relies on a single public ZIP. Theme `dist/BUILD.json`, module BUILD files and Full manifest must bind the same clean commit. After full local QA, run `python3 scripts/package-full.py` and `python3 tests/full/verify_delivery.py`; CI gates source/module safety, installer and `--packages-only` verification before publishing.
+## 版本与历史
 
-**Existing market entry:** do not open another new-theme issue. Any later market update requires separate authorization, an officially downloaded and verified asset, and the updater/normal PR flow for short `Enhanced`; never force-write the official market main. No market update is authorized in this acceptance stage.
+- `komari-theme.json.version` 仍为软件版本的唯一来源；不增加冲突的 `package.json.version`。
+- 采用清楚的 SemVer 版本规则，区分修复、兼容功能和破坏性变更。发布前检查继承标签和现有 Release，确定不会与上游历史混淆的自有发行标识；本次规范更新不选择或发布新软件版本。
+- 每个正式软件版本对应独立的 tag、GitHub Release、源码提交和安装 ZIP。试用版本使用明确的 alpha/beta/rc 标识，并标记为预发布。
+- 已发布的 tag、Release 和附件保留可下载，禁止移动旧 tag、覆盖旧 ZIP 或借用旧版本号静默修包。发行包有问题时发布新的修订版本，并记录原因。
+- 纯文档、规范和交接更新保留 GitHub diff 即可，不为了制造版本记录而发布内容未变的软件包。
 
-**Historical scope:** the monthly-window compatibility discussion and v1.0.2/v1.0.3 incident notes below describe v1.0.6 and earlier releases, not the current implementation. That frontend monthly implementation was withdrawn in v1.0.7; current machine-cumulative traffic semantics are in the [README](../README.md#流量说明). Existing release policies and historical records remain intact.
+## 开发与验收
 
-**Historical v1.0.6** was published on **2026-10-18** at `b9f7f4f730a9e8445d261363fe8c070c98bd3001`. Its annotated tag, [GitHub Release](https://github.com/casiuna/Glassmorphism-Enhanced/releases/tag/v1.0.6) and `komari-theme-Glassmorphism-build-b9f7f4f.zip` remain unchanged. Historical v1.0.5 and earlier tags/assets are also retained. See [v1.0.6 notes](release-notes-v1.0.6.md).
+- 保持项目既有分层、依赖锁定和构建契约，优先复用已有能力。每项新增功能应有独立的验收标准和对应变更记录。
+- 功能代码改动运行适用的非修复 lint、类型检查、现有测试和生产构建；新增关键逻辑补充必要的回归测试。文档变更核验 diff、链接、来源和范围，无需安装依赖或重新构建软件。
+- 测试必须覆盖实际改动涉及的异常及兼容场景，例如节点隔离、缺失数据、时间边界、设置保存、升级和回滚。不能降低门槛、删除失败断言或伪造数据以制造通过结果。
+- UI 改动检查桌面与手机、亮暗模式和相关卡片尺寸；实时状态和历史数据不能因为新增功能失效。
+- 声明支持的 Komari Server/Agent 版本应有相应的真实隔离集成验证。真实网络采集、fixture 回放、浏览器截图、本地构建成功和生产验收是不同证据，分别记录。
+- 安装 ZIP 应在隔离环境实际上传、启用、配置、刷新及升级测试；验证旧配置与历史保留，且可回滚。完成相关测试后才可宣称可用。
+- 验收报告绑定准确源码提交、软件版本和包的 SHA256。继承的上游测试记录不能作为本 Fork 新功能的验收结果。
+- README 及版本说明提供安装、配置、兼容范围、升级、回滚和已知限制，避免依赖个人服务器环境才能理解或运行。
 
-All repository changes must target **`casiuna/Glassmorphism-Enhanced`** only. Upstream is read-only: no upstream PRs, pushes, issues, comments or reviews. GitHub publication is separate from installing a theme on a production Komari server; production, databases and provider accounts are not modified by documentation synchronization.
+## 标准 ZIP 交付
 
-## Independent version policy
+本项目标准安装交付格式为 **ZIP**。每个正式 Release 必须上传实际构建且可由 Komari 主题管理器导入的原生主题包，不得用 GitHub 自动生成的 Source code ZIP 或 tar.gz 代替。
 
-The independent version line began at **1.0.0**, released as Git tag / GitHub Release **v1.0.0**. The current release target is **1.2.1**; previous published versions remain preserved. `komari-theme.json.version` is the sole version source; do not add `package.json.version`. Theme and Full versions match; Plugin/Helper use their independent 0.3.0 version line plus the build commit suffix.
+原生主题 ZIP 顶层结构保持：
 
-- Bugfix: `1.0.1`, `1.0.2`, `1.0.3`, …
-- Compatible feature: `1.1.0`, `1.2.0`, …
-- Breaking change: `2.0.0`.
-- No `-enhanced.x` suffix and no upstream version in our release number.
-- Upstream base: Glassmorphism v3.3.7. Record future upstream provenance in CHANGELOG / AICACHE, independently of our SemVer.
-- Keep the historical `v3.3.7-enhanced.1` tag/Release. Numeric comparison against the old line must not be used to select the independent release.
-
-## Tag namespace sanitation
-
-The fork's inherited upstream SemVer tags were audited before the independent release line was reopened. The 43 inherited original tags are preserved as `upstream-<original-tag>` refs and removed from the fork's original namespace. Existing release tags, including `v1.0.0` through published `v1.0.6`, `v3.3.7-enhanced.1`, `upstream-v1.0.0`, and `komari`, remain protected. Any future owner-approved release namespace must be checked for collisions before publication; published tags must not be reused or moved.
-
-## v1.0.5 Transit configuration migration
-
-Old format: `TargetNode|RelayNode|Task`. New format: `RelayNode|TargetNode|Task`, for example `RelayNode|TargetNode|Relay-Target`. Existing configurations must **manually swap the first two columns** before using v1.0.5; do not claim automatic migration. No old-order autodetection or backend writes are performed. The last valid row per target still wins, and multiple targets may share one relay. See [Transit rules](transit-rules.md) and the [v1.0.5 release notes](release-notes-v1.0.5.md).
-
-## Historical v1.0.6: Komari 1.5.0 compatibility and monthly traffic
-
-The following records the retired v1.0.6 monthly implementation, not v1.1.0 behavior.
-
-The source-audited compatibility targets for this bugfix are **Komari Server 1.5.0/1.5.1**; deterministic frontend tests are not production validation. The theme does not depend on `traffic_up` / `traffic_down` in `common:getNodesLatestStatus`; those latest payloads may contain only persistent `net_total_up` / `net_total_down` counters. Monthly quota usage is derived through the existing shared `public:queryMetrics` path using `traffic.up` and `traffic.down` with `aggregation=sum`; only uniquely matched observations inside the provisional current window are accumulated, and numeric quota usage additionally requires conservative returned-bucket coverage checks.
-
-The provisional monthly window uses the existing `expired_at` UTC calendar day as the renewal-day anchor. Annual billing changes the fee cycle only; traffic still rolls monthly in this theme. Short months clamp day 29/30/31 to the last day, and the original day is restored in the next month that contains it. The cycle starts at UTC midnight so Komari's UTC-aligned rollup buckets do not include the previous calendar day. Provider reset dates/timezones and traffic rules are not inferred or verified from that metadata; official reconciliation remains separate.
-
-In released v1.0.6, missing/incomplete monthly metric data is unknown/partial, never a machine cumulative value or manufactured zero. Complete returned-bucket evidence uses SUM + exact entity/range + UTC interval alignment + positive observation counts; it does not certify a provider bill or invisible reporting gaps. Shared/home never fans out history. A single-node detail may request bounded network history with start/end + safe hours + maxCount=-1, but reconstructed records lack coverage counts and can default absent fields to zero, so their subtotal stays partial. See [the read-only source audit and no-write reconciliation plan](monthly-traffic-reliability.md).
-
-## Historical v1.0.2 incident and v1.0.3 hotfix
-
-The v1.0.2 production regression was frontend request pressure: the shared monthly clock refreshed every minute while the traffic cache expired after 30 seconds, and missing metric data could start one full-cycle history request per node from the shared path. This could monopolize the shared request pool and delay monthly traffic, Ping/three-network data, and theme upload completion. There is no evidence of database corruption or writes/resetting of `net_total_*`; v1.0.3 addresses availability by using metric-to-legacy on shared paths, preserving legacy values while loading, and restricting history fallback to one explicitly opened detail node.
-
-The historical v1.0.3 fixed rollout protection is explicitly withdrawn by the owner for this repair: all valid current cycles query immediately. Production and visual builds no longer inject a migration anchor. Existing stateless finance price/rate calculations remain unchanged; the financial metered estimator keeps its separate user-selected machine-counter scope.
-
-## Review gate
-
-**v1.1.0 local acceptance:** browser **81/81**, unit/component **67/67**, real Komari 1.6.0/1.5.1 integration **16/16**, plus TypeScript, full no-fix ESLint, diff-check and production build passed. Physical GPU telemetry was not tested. The historical browser report has no pinned source fingerprint; local package payloads were matched byte-for-byte to the recorded integration-tested bundle. See [the compatibility review](komari-1.6.0-compatibility.md) and [identity migration/backout](migration-v1.1.0.md).
-
-Precisely review and commit the implementation, tests, manifest and documentation on the development branch. Before any separately authorized main update, independently verify fast-forward ancestry and tag collision state. The final v1.1.0 ZIP must be built from the reviewed release commit in CI; never publish a precommit validation ZIP or replace old tags/assets. Market submission is a separate authorized action after the official downloadable ZIP is verified.
-
-v1.0.6 has passed its release gate and is published at `b9f7f4f730a9e8445d261363fe8c070c98bd3001`, with manifest 1.0.6. Documentation/workflow-only follow-up commits do not bump the manifest, rebuild its package, move its tag or rewrite its Release/assets. A future version requires its own approved version change, validation and collision checks; never reuse a published tag.
-
-The `Release On Version Bump` workflow runs on this fork's `main` pushes only; it does not use `workflow_dispatch`. It derives `release_tag=v${currentVersion}` and compares the manifest against the push's previous SHA. **Only `steps.version.outputs.version_changed == 'true'` enables tag-state validation, build, tag creation and Release publication.** An unchanged version logs a normal skip and leaves existing tags/assets untouched. For an actual version change, an existing tag pointing at another commit still causes refusal. Bun is pinned to **1.3.14**, matching `package.json` and the quality/visual workflows; committed `bun.lock` and a successful `bun install --frozen-lockfile` are required. Published v1.0.5 remains at `3bb76d9fd6f86d9fe56845b12922ee75866f2ed3`; v1.0.6 remains at its separate release commit.
-
-## Verification
-
-For a future version/source change, run the release checks below. Documentation-only synchronization instead checks links, YAML, unchanged-version gates and diff scope without rebuilding the published package.
-
-```sh
-bun install --frozen-lockfile
-bun x --no-install eslint . --max-warnings 0
-bun run type-check
-node node_modules/@playwright/test/cli.js test -c tests/request-manager.config.ts
-bun run test:visual
-bun run build
-git diff --check
+```text
+komari-theme.json
+preview.png
+dist/
 ```
 
-For v1.2.1, inspect the ZIP, not just `dist/`: top level must be exactly `komari-theme.json`, `preview.png`, `dist/`. Require `short: Enhanced`, `name: Glassmorphism Enhanced`, `version: 1.2.1`, `author: casiuna`; retain `komari-theme-Glassmorphism-build-<short-sha>.zip`. Build from that version's final release commit in clean source with Bun 1.3.14 and the frozen lockfile, then verify required HTML/assets, preview, commit identity and SHA-256. Before commit authorization, only dirty local validation packages may exist; the old baseline short SHA is not the future release identity. Preserve MIT/THIRD_PARTY notices and existing settings. Do not migrate by direct database edits.
+- 沿用现有 `komari-theme-Glassmorphism-build-<short-sha>.zip` 打包约定；版本由 Release/tag、包内主题清单和构建信息明确标识。
+- 构建来自干净、已提交且已同步 GitHub 的源码，使用锁文件和固定工具链。正式附件应由受控 CI 构建，不发布 dirty 或 visual-test 模式的验收包。
+- 校验 ZIP 路径安全、清单、静态资源、版本、源码提交、预览和许可文件。需要随包保留的许可声明放入兼容的 `dist/licenses/`，不破坏顶层安装结构。
+- 可选 Plugin/Helper 若需要独立交付，也使用用途明确的独立 ZIP，并记录组件版本和兼容关系；不能将其与原生主题 ZIP 混称或混装。
+- 发布 SHA256 校验记录。下载 GitHub Release 的实际 ZIP，核对其内容和哈希与本次通过验收的产物一致。
+- 不包含真实 Agent token、云账户凭据、私有数据库、个人配置、日志、真实节点资料或开发临时文件。演示数据与真实监测结果明确区分。
 
-After an authorized push, read the exact branch/main ref back from this fork. For a new version, verify Actions, tag target, Release metadata and the downloaded asset digest; a local ZIP alone is not proof of publication. For unchanged-version documentation-only main updates, verify that publication steps are skipped and all previously published tags, Releases and assets remain unchanged. Do not manually recreate an existing release.
+## Release 与使用记录
 
-## Identity separation
+每个正式 Release 至少说明：
 
-Git clone/fetch/push use Hermes CLI SSH. GitHub metadata, PRs and Actions queries use an independent, repository-scoped Fine-grained PAT: Metadata Read, Contents Read/Write, Pull requests Read/Write, Actions Read. No Issues permission is needed here. Never place tokens or private keys in source, docs, logs or PR bodies. Repository role flags returned by GitHub are not evidence of a token's exact permission scopes.
+1. 版本、日期、准确源码提交，以及相对上一版本的 GitHub diff。
+2. 新增功能、修复、兼容性或配置迁移变化。
+3. 适用的 Komari Server/Agent 版本、依赖及安装 ZIP。
+4. 本版本实际完成的验证、包 SHA256、已知限制和回滚方法。
+5. 涉及其他项目时，保留来源、准确引用版本、许可证和作者署名。
+
+“本地包已生成”“测试通过”“Release 已发布”“用户环境已安装”“用户已验收”应分别报告，不能互相替代。后续生产部署使用已验收且可下载的版本，并记录安装版本、时间、配置迁移与回滚点。
+
+## 自动化与授权边界
+
+当前 Fork 的 GitHub Actions 处于关闭状态。本次只建立规范，**没有配置完成自动发布流水线**。继承的工作流仍针对上游旧分支、旧发行说明及额外归档；启用前须单独适配本 Fork 的分支、版本、ZIP、验收和不覆盖历史的要求，并实际验证。
+
+本规范本身不授权自动实施后续功能、创建新 Release、更新市场或部署到生产。已有具体步骤或版本的授权时，完成相应验证后继续执行，不重复要求确认；缺少任务范围时维持在相应已授权步骤内。
+
+## 上游历史
+
+直接上游来源和版权见 [FORK.md](../FORK.md)、[LICENSE](../LICENSE) 与 [THIRD_PARTY.md](../THIRD_PARTY.md)。原始上游发行流程可在固定的 [v1.2.1 提交](https://github.com/casiuna/Glassmorphism-Enhanced/blob/0332d5f7c73f7994ba21c01e4b739d04835120b1/docs/releasing.md) 中查阅，其旧仓库权限、发布批准和验收数字不代表本 Fork 的当前状态。
