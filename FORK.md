@@ -9,15 +9,15 @@
 
 ## 固定的原始版本
 
-| 项目 | 固定值 |
-| --- | --- |
-| 上游发行版 | [v1.2.1](https://github.com/casiuna/Glassmorphism-Enhanced/releases/tag/v1.2.1) |
-| 上游提交 | `0332d5f7c73f7994ba21c01e4b739d04835120b1` |
-| 上游附注标签对象 | `fa9d12529bccbd3cd004f6522f54dd9ff2d970ec` |
-| 原始基线分支 | `baseline/v1.2.1`，指向上述原始提交 |
-| 默认开发分支 | `personal/main`，从上述原始提交开始 |
-| 原始主题名称及标识 | `Glassmorphism Enhanced` / `Enhanced` |
-| 当前主题清单版本 | `1.2.1`，未修改的上游版本号 |
+| 项目               | 固定值                                                                          |
+| ------------------ | ------------------------------------------------------------------------------- |
+| 上游发行版         | [v1.2.1](https://github.com/casiuna/Glassmorphism-Enhanced/releases/tag/v1.2.1) |
+| 上游提交           | `0332d5f7c73f7994ba21c01e4b739d04835120b1`                                      |
+| 上游附注标签对象   | `fa9d12529bccbd3cd004f6522f54dd9ff2d970ec`                                      |
+| 原始基线分支       | `baseline/v1.2.1`，指向上述原始提交                                             |
+| 默认开发分支       | `personal/main`，从上述原始提交开始                                             |
+| 原始主题名称及标识 | `Glassmorphism Enhanced` / `Enhanced`                                           |
+| 当前主题清单版本   | `1.2.1`，未修改的上游版本号                                                     |
 
 Fork 网络中继承的其他分支、标签或发行历史属于上游历史，不自动成为本项目的开发基线。本项目自己的功能修改、兼容性验证和发行版本将在相应提交及变更记录中另行说明。
 

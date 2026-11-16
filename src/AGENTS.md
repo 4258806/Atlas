@@ -121,6 +121,6 @@ bun run lint
 bun run build
 ```
 
-There is no test suite. Do not invent one.
+Playwright tests exist. Run the applicable unit/component and browser tests documented in the root guide; helper tests require Linux. Do not claim Windows fixture collection failures as passed tests.
 
 Update [../AICACHE.md](../AICACHE.md) with validation results or explain why validation was skipped.
