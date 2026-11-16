@@ -1,0 +1,41 @@
+{
+  "kind": "official-Komari-1.6.1-loopback-native-reset-acceptance",
+  "productionTouched": false,
+  "history": "explicit synthetic SQL fixture",
+  "backendSHA256": "0c6e73c42ac166d34562e57037007a21692599e9e868ddae18217691e0f5d932",
+  "baselineSHA256": "54ef15efe37707109ce721ed22608745a575b3683038951b02b05d1724d3ff17",
+  "candidateSHA256": "9ac099deccf5eecf3ef0b156b06b32113a99d3f0bdb72171a5cc41117899e459",
+  "checks": [
+    {
+      "name": "fresh official backend and verified native administrator session",
+      "status": "passed"
+    },
+    {
+      "name": "install exact baseline, upgrade candidate and preserve settings",
+      "status": "passed"
+    },
+    {
+      "name": "installed desktop and mobile UI persists independent minute and IANA zone",
+      "status": "passed"
+    },
+    {
+      "name": "native per-metric retention and tier configuration read back without disabling metrics",
+      "status": "passed"
+    },
+    {
+      "name": "native persisted minute edge and hourly body sum exactly without history mutation",
+      "status": "passed"
+    },
+    {
+      "name": "rollback restores baseline ZIP plus exact v1 settings and re-upgrade retains configuration",
+      "status": "passed"
+    }
+  ],
+  "syntheticRows": 15412,
+  "status": "passed",
+  "source_commit": "0ebf2e58277ad9e67c611c7e7131d3e557049529",
+  "stage": 2,
+  "unit_tests_passed": 91,
+  "quality_ci": "https://github.com/MagnetOscar/Glassmorphism-Enhanced/actions/runs/43928786060",
+  "browser_ci": "https://github.com/MagnetOscar/Glassmorphism-Enhanced/actions/runs/43928785834"
+}
