@@ -4,7 +4,7 @@ on:
   pull_request:
   push:
     branches:
-      - main
+      - personal/main
   workflow_dispatch:
 
 permissions:
@@ -27,14 +27,39 @@ jobs:
         with:
           bun-version: 1.3.14
 
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
       - name: Lint
-        run: bun run lint
+        run: bun run lint:check
 
-      - name: Verify lint made no changes
-        run: git diff --exit-code
+      - name: Unit and component tests
+        run: bun run test:unit
+
+      - name: Linux companion and research tests
+        run: |
+          node --test tests/companion/*.test.cjs tests/full/protocol-management.test.cjs
+          python3 tests/companion/test_helper.py
+          python3 tests/companion/test_probe_v2.py
+          python3 tests/companion/test_cdn.py
+          python3 tests/companion/test_archive_safety.py
+          python3 tests/feasibility/test_read_google_fx.py
 
       - name: Build
         run: bun run build
+
+      - name: Validate native ZIP and clean source
+        run: |
+          python3 scripts/verify-theme.py komari-theme-Glassmorphism-build-*.zip --release
+          git diff --exit-code
+
+      - name: Retain candidate ZIP (not a Release)
+        uses: actions/upload-artifact@v6
+        with:
+          name: theme-candidate-${{ github.sha }}
+          path: komari-theme-Glassmorphism-build-*.zip
+          retention-days: 14
