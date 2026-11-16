@@ -55,4 +55,9 @@ Emerald's current region-to-visitor hub-and-spoke behavior was studied as a visu
 
 ## License compatibility
 
-All four reviewed projects use the MIT License. The licenses permit use, modification, distribution, and sublicensing provided their copyright and permission notices are retained. The upstream root `LICENSE` is unchanged; this file records the additional provenance and attribution relevant to the enhanced patches.
+The four theme reference projects above use MIT. The upstream root `LICENSE` is unchanged. Bundled dependencies retain their own licenses and notices, including the following additions.
+
+## Temporal calendar implementation
+
+- `@js-temporal/polyfill` 0.5.1, <https://github.com/js-temporal/temporal-polyfill>, ISC, Copyright 2017–2020 ECMA International. Used unmodified for IANA/fixed-offset calendar boundaries and DST disambiguation. Full notice: `public/licenses/temporal-polyfill-ISC.txt`.
+- Its dependency `jsbi`, Apache-2.0, <https://github.com/GoogleChromeLabs/jsbi>. Used unmodified; full license: `public/licenses/jsbi-Apache-2.0.txt`. Both notices ship inside `dist/licenses/` in the native ZIP. Exact dependency versions are recorded in `bun.lock`.

@@ -1,14 +1,16 @@
+import type { ResetSchedule } from '@/utils/resetSchedule'
+import { schedulePeriod, validSchedule, validTimeZone } from '@/utils/resetSchedule'
+
 export const TRAFFIC_TIME_ZONE = 'Asia/Shanghai'
 export const TRAFFIC_CONFIG_KEY = 'trafficCycleConfig'
 export const TRAFFIC_METRICS = ['traffic.up', 'traffic.down', 'net.total.up', 'net.total.down'] as const
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const HOUR = 3600000
-const OFFSET = 8 * HOUR
 // Same reset-aware plausibility bound as Komari 1.6.0, per original sample,
 // NOT per rollup bucket. Never clamp a real aggregate to a small quota.
 const MAX_SAMPLE_BYTES = 64 * 1024 ** 3
 
-export interface TrafficCycleConfig { version: 1, timeZone: typeof TRAFFIC_TIME_ZONE, nodes: Record<string, { resetDay: number }> }
+export interface TrafficCycleConfig { version: 2, timeZone?: string, nodes: Record<string, ResetSchedule>, [key: string]: unknown }
 export interface TrafficPeriod { start: number, end: number }
 export type TrafficCycleStatus = 'loading' | 'ready' | 'insufficient' | 'unsupported' | 'error'
 export interface TrafficCycleSnapshot {
@@ -28,54 +30,51 @@ export function validResetDay(value: unknown): value is number {
   return typeof value === 'number' && Number.isInteger(value) && value >= 1 && value <= 31
 }
 export function parseTrafficCycleConfig(raw: unknown): { document: TrafficCycleConfig, error: string | null } {
-  const empty: TrafficCycleConfig = { version: 1, timeZone: TRAFFIC_TIME_ZONE, nodes: {} }
+  const empty: TrafficCycleConfig = { version: 2, nodes: {} }
   if (raw === undefined || raw === null || raw === '')
     return { document: empty, error: null }
   try {
     const value = typeof raw === 'string' ? JSON.parse(raw) : raw
-    if (!value || typeof value !== 'object' || Array.isArray(value) || value.version !== 1 || value.timeZone !== TRAFFIC_TIME_ZONE || !value.nodes || typeof value.nodes !== 'object' || Array.isArray(value.nodes) || Object.keys(value).some(k => !['version', 'timeZone', 'nodes'].includes(k)) || Object.keys(value.nodes).length > 5000)
+    if (!value || typeof value !== 'object' || Array.isArray(value) || ![1, 2].includes(value.version) || !value.nodes || typeof value.nodes !== 'object' || Array.isArray(value.nodes) || Object.keys(value.nodes).length > 5000 || (value.version === 1 && !validTimeZone(value.timeZone)))
       throw new Error('schema')
+    const document = structuredClone(value) as TrafficCycleConfig
     for (const [uuid, node] of Object.entries(value.nodes)) {
       const row = node as Record<string, unknown>
-      if (!UUID.test(uuid) || !row || Array.isArray(row) || !validResetDay(row.resetDay) || Object.keys(row).some(k => k !== 'resetDay'))
+      if (!UUID.test(uuid) || !row || Array.isArray(row) || !validResetDay(row.resetDay))
         throw new Error('node')
+      const migrated = value.version === 1
+        ? { ...row, timeZone: row.timeZone ?? value.timeZone, hour: row.hour ?? 0, minute: row.minute ?? 0 }
+        : row
+      if (!validSchedule(migrated))
+        throw new Error('schedule')
+      document.nodes[uuid] = migrated
     }
-    return { document: structuredClone(value) as TrafficCycleConfig, error: null }
+    document.version = 2
+    return { document, error: null }
   }
   catch {
     return { document: empty, error: '流量周期配置无效；不会按月初重置或覆盖原配置' }
   }
 }
-export function changeTrafficReset(raw: unknown, uuid: string, resetDay: number | null): string {
+export function changeTrafficReset(raw: unknown, uuid: string, resetDay: number | ResetSchedule | null): string {
   const parsed = parseTrafficCycleConfig(raw)
-  if (parsed.error || !UUID.test(uuid) || (resetDay !== null && !validResetDay(resetDay)))
+  const schedule = typeof resetDay === 'number'
+    ? { ...parsed.document.nodes[uuid], resetDay, timeZone: parsed.document.nodes[uuid]?.timeZone ?? TRAFFIC_TIME_ZONE, hour: parsed.document.nodes[uuid]?.hour ?? 0, minute: parsed.document.nodes[uuid]?.minute ?? 0 }
+    : resetDay
+  if (parsed.error || !UUID.test(uuid) || (schedule !== null && !validSchedule(schedule)))
     throw new Error('无效的 UUID、重置日或已有周期配置；未写入')
   if (resetDay === null)
     delete parsed.document.nodes[uuid]
   else
-    parsed.document.nodes[uuid] = { resetDay }
+    parsed.document.nodes[uuid] = { ...parsed.document.nodes[uuid], ...schedule! }
   const serialized = JSON.stringify(parsed.document)
   if (parseTrafficCycleConfig(serialized).error)
     throw new Error('流量周期配置超过支持范围；未写入')
   return serialized
 }
-function boundary(year: number, month: number, day: number): number {
-  const lastDay = new Date(Date.UTC(year, month + 1, 0)).getUTCDate()
-  return Date.UTC(year, month, Math.min(day, lastDay)) - OFFSET
-}
-/** Shanghai midnight calendar boundaries, [start,end); never add 30 days. */
-export function trafficPeriod(resetDay: number, now = Date.now()): TrafficPeriod {
-  if (!validResetDay(resetDay) || !Number.isFinite(now))
-    throw new Error('需要有效的重置日和时间')
-  const local = new Date(now + OFFSET)
-  const year = local.getUTCFullYear()
-  const month = local.getUTCMonth()
-  if (year < 2000 || year > 9998)
-    throw new Error('不支持的计费日历年份')
-  const current = boundary(year, month, resetDay)
-  return now >= current
-    ? { start: current, end: boundary(year, month + 1, resetDay) }
-    : { start: boundary(year, month - 1, resetDay), end: current }
+/** Numeric legacy calls keep the original Shanghai-midnight meaning. */
+export function trafficPeriod(resetDay: number | ResetSchedule, now = Date.now()): TrafficPeriod {
+  return schedulePeriod(typeof resetDay === 'number' ? { resetDay, timeZone: TRAFFIC_TIME_ZONE, hour: 0, minute: 0 } : resetDay, now)
 }
 export function trafficByMode(up: number, down: number, mode: string | undefined): number {
   switch (mode) {
@@ -88,6 +87,35 @@ export function trafficByMode(up: number, down: number, mode: string | undefined
 }
 export function trafficSnapshot(status: TrafficCycleStatus, period: TrafficPeriod, asOf: number, reason: string): TrafficCycleSnapshot {
   return { status, period, asOf, up: null, down: null, reason }
+}
+
+/** Query only the first partial hour at minute precision; the rest is hourly. */
+export function trafficQueryRanges(period: TrafficPeriod, asOf: number): Array<{ start: number, end: number, maxPoints: number }> {
+  const split = Math.ceil(period.start / HOUR) * HOUR
+  const edges = period.start % HOUR !== 0 && split < asOf
+    ? [[period.start, split, 60000], [split, asOf, HOUR]]
+    : [[period.start, asOf, period.start % HOUR === 0 ? HOUR : 60000]]
+  return edges.map(([start, end, width]) => ({ start: start!, end: end!, maxPoints: Math.max(1, Math.ceil((end! - start! + HOUR) / width!)) }))
+}
+
+export function combineTrafficSnapshots(snapshots: TrafficCycleSnapshot[], period: TrafficPeriod, asOf: number): TrafficCycleSnapshot {
+  if (!snapshots.length)
+    return trafficSnapshot('insufficient', period, asOf, '缺少可靠的周期分段历史')
+  let cursor = period.start
+  let up = 0
+  let down = 0
+  for (const part of snapshots) {
+    if (part.status !== 'ready' || part.up === null || part.down === null)
+      return trafficSnapshot(part.status, period, asOf, part.reason)
+    if (part.period.start !== cursor || part.asOf !== part.period.end)
+      return trafficSnapshot('insufficient', period, asOf, '周期分段存在缺口或重叠')
+    up += part.up
+    down += part.down
+    cursor = part.asOf
+  }
+  if (cursor !== asOf || !Number.isSafeInteger(up + down))
+    return trafficSnapshot('insufficient', period, asOf, '周期分段不完整或超出安全精度')
+  return { status: 'ready', period, asOf, up, down, reason: '原生增量：分钟边缘与完整小时分段求和' }
 }
 /**
  * Only native, summable, reset-aware deltas. Counter snapshots prove coverage;
@@ -111,6 +139,8 @@ export function resolveTrafficMetrics(raw: unknown, uuid: string, period: Traffi
       const step = row.downsampled ? Number(row.interval_seconds) * 1000 : 1000
       if (!Number.isFinite(step) || step <= 0 || step > HOUR || HOUR % step !== 0)
         return missing('历史聚合精度不足以按重置边界计费')
+      if (row.downsampled && period.start % step !== 0)
+        return missing('历史聚合跨越重置分钟；需要覆盖该边界的更细原生增量')
       if (row.downsampled && row.downsample_algorithm !== (row.metric_key.startsWith('traffic.') ? 'sum' : 'last'))
         return missing('流量历史没有使用可求和的原生增量')
       interval = Math.max(interval, step)

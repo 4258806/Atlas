@@ -10,12 +10,13 @@ export function useNodeTraffic(node: MaybeRefOrGetter<NodeData | undefined>) {
   const app = useAppStore()
   const snapshot = shallowRef<TrafficCycleSnapshot | null>(null)
   let release: (() => void) | undefined
-  const resetDay = computed(() => app.trafficCycleConfig.document.nodes[toValue(node)?.uuid ?? '']?.resetDay)
-  watch([() => toValue(node)?.uuid, resetDay, () => app.privateFeaturesAllowed], ([uuid, day]) => {
+  const schedule = computed(() => app.trafficCycleConfig.document.nodes[toValue(node)?.uuid ?? ''])
+  const resetDay = computed(() => schedule.value?.resetDay)
+  watch([() => toValue(node)?.uuid, schedule, () => app.privateFeaturesAllowed], ([uuid, plan]) => {
     release?.()
     snapshot.value = null
-    if (uuid && day && !app.trafficCycleConfig.error) {
-      const subscription = subscribeTrafficCycle(uuid, day)
+    if (uuid && plan && !app.trafficCycleConfig.error) {
+      const subscription = subscribeTrafficCycle(uuid, plan)
       release = subscription.release
       snapshot.value = subscription.snapshot.value
       const stop = watch(subscription.snapshot, value => snapshot.value = value)
@@ -31,6 +32,7 @@ export function useNodeTraffic(node: MaybeRefOrGetter<NodeData | undefined>) {
   onScopeDispose(() => release?.())
   const accounting = computed(() => trafficAccounting(toValue(node), resetDay.value, snapshot.value, app.trafficCycleConfig.error))
   return {
+    schedule,
     resetDay,
     snapshot,
     configured: computed(() => accounting.value.configured),

@@ -13,7 +13,7 @@ const nodes = useNodesStore()
       流量周期
     </h3>
     <p class="text-xs text-muted-foreground">
-      按节点独立保存，每月 1–31 日，北京时间 Asia/Shanghai 00:00 重置统计起点。短月份取最后一天，下月自动恢复所选日期；区间左闭右开。不会清零或删除累计计数器、历史样本，也不修改其他节点。
+      每台独立保存时区、每月 1–31 日和时分。IANA 时区自动处理夏令时；固定偏移不会随季节变化。短月份取最后一天，下月恢复原日期；夏令时跳过的时刻按实际时差顺延，重复时刻取第一次。区间左闭右开，不删除累计计数器或历史。历史精度不能覆盖重置分钟时显示数据不足，不估算账单。
     </p>
     <p v-if="app.trafficCycleConfig.error" role="alert" class="text-sm text-destructive">
       {{ app.trafficCycleConfig.error }}
@@ -25,7 +25,7 @@ const nodes = useNodesStore()
             <th class="px-2 py-2">
               节点 / UUID
             </th><th class="px-2 py-2">
-              自定义重置日
+              独立重置计划
             </th><th class="px-2 py-2">
               当前计费周期起止时间
             </th><th class="px-2 py-2">

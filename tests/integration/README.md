@@ -1,5 +1,19 @@
 # Isolated real-backend compatibility tests
 
+## Personal fork reset acceptance (official 1.6.1)
+
+`reset-native.mjs` is a separate targeted runner for the independent reset schedule. It starts a fresh official backend on a random **127.0.0.1** port under `test-results/full/native-lab-reset-*`, exercises real chunked theme upload, v1 migration, desktop/mobile persistence, native retention settings, metric RPC sums and baseline rollback/re-upgrade. It never connects to production or installs an Agent.
+
+```text
+node tests/integration/reset-native.mjs BACKEND_BINARY PYTHON_BINARY BASELINE_THEME_ZIP CANDIDATE_THEME_ZIP
+```
+
+Verified toolchain: Node 24, Playwright Chromium, standard-library Python, official Komari Windows amd64 1.6.1 (release SHA256 `0c6e73c42ac166d34562e57037007a21692599e9e868ddae18217691e0f5d932`). Verify the official digest for another platform before using it. The baseline is the original Enhanced 1.2.1 native ZIP, not a source archive.
+
+Traffic history is explicitly synthetic and inserted only into the newly created lab by `seed-reset-history.py`; HTTP/RPC responses are from the actual backend. This proves native query/retention/calendar integration, not real network billing accuracy. Public-safe results and screenshots are written under `test-results/native-reset/`; private lab databases/logs stay ignored. Backend and browser processes are stopped by the runner. Native ZIP and settings must both be restored for a v2-to-v1 rollback.
+
+The older broader compatibility runner below has its own requirements and evidence scope.
+
 These scripts do not mock Komari responses, metrics or Ping history. They install and exercise theme ZIPs against disposable official backends. Never use an existing or production installation.
 
 ## Prerequisites
