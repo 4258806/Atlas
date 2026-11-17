@@ -114,7 +114,8 @@ def post(config, endpoint, data):
     payload = json.dumps({**data, 'token': token}).encode()
     if len(payload) > 16384:
         raise HelperError('request-output-limit')
-    req = urllib.request.Request(config['panel'] + ROOT + endpoint, data=payload, headers={'Content-Type': 'application/json'}, method='POST')
+    version = json.loads(Path(__file__).with_name('helper-version.json').read_text())['version']
+    req = urllib.request.Request(config['panel'] + ROOT + endpoint, data=payload, headers={'Content-Type': 'application/json', 'User-Agent': 'Atlas-Route-Helper/' + version}, method='POST')
     try:
         with urllib.request.build_opener(urllib.request.ProxyHandler({}), NoRedirect()).open(req, timeout=15) as response:
             source = response.read(16385)
