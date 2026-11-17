@@ -1,7 +1,7 @@
 {
   "version": "0.0.3",
   "status": "passed",
-  "source_commit": "7541b7ce1a5064f732e4bc290106228429b6f1e7",
+  "source_commit": "f205a49c1822c6ba6cbf7b7f1cde66d259af7b89",
   "baseline_commit": "aae95c6f96360ccbc1ff07e4ecfc833c70ce4e43",
   "scope": "home-connection-and-return-route",
   "branding": {

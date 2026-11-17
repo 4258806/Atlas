@@ -1,6 +1,6 @@
 {
   "version": "0.0.3",
-  "source_commit": "7541b7ce1a5064f732e4bc290106228429b6f1e7",
+  "source_commit": "f205a49c1822c6ba6cbf7b7f1cde66d259af7b89",
   "status": "passed",
   "productionTouched": true,
   "releasePublished": false,
@@ -12,6 +12,7 @@
     "connectionBrowserCases": 12
   },
   "ci": {
+    "source_commit": "7541b7ce1a5064f732e4bc290106228429b6f1e7",
     "unitCases": 428,
     "browserCases": 255,
     "requiredChecks": [
@@ -46,7 +47,7 @@
     "file": "komari-theme-Atlas-build-e13f110.zip",
     "entries": 785
   },
-  "candidateSourceDifference": "The native-tested CI merge-preview tree exactly matches the accepted source tree, verified by full git diff.",
+  "candidateSourceDifference": "The native-tested CI merge-preview exactly matches tested runtime 7541b7c. Accepted source adds only verification records and reviewed helper README corrections; git diff verifies identical runtime, configuration, dependencies and packaged executable logic. Required checks run again on the final protected-merge head.",
   "native": {
     "kind": "official-Komari-1.6.1-loopback-native-reset-acceptance",
     "productionTouched": false,
