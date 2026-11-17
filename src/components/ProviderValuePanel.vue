@@ -14,7 +14,7 @@ interface NodeValueRow {
   key: string
   node: NodeData
   provider: string
-  monthlyCostCNY: number
+  monthlyCostNative: number
   cpuName: string
   cpuCores: number
   cpuCoreLabel: string
@@ -26,15 +26,13 @@ interface NodeValueRow {
   costPerTrafficGb: number | null
 }
 
-type SortKey = 'name' | 'provider' | 'monthlyCostCNY' | 'costPerCore' | 'costPerMemoryGb' | 'costPerTrafficGb'
+type SortKey = 'name' | 'provider' | 'monthlyCostNative' | 'costPerCore' | 'costPerMemoryGb' | 'costPerTrafficGb'
 
 const props = defineProps<{
   nodes: NodeData[]
 }>()
 
 const appStore = useAppStore()
-const exchangeRates = ref(financeHelper.DEFAULT_EXCHANGE_RATES)
-const financeCurrency = ref<financeHelper.CurrencyCode>('CNY')
 const excludeFreeNodes = ref(true)
 const sortKey = ref<SortKey>('costPerCore')
 const sortDir = ref<1 | -1>(1)
@@ -47,11 +45,8 @@ const { getNodeProviderMetadata } = useNodeProviderMetadata({
   geoPermission: 'providerValue',
 })
 
-onMounted(async () => {
-  financeCurrency.value = financeHelper.getStoredFinanceCurrency()
+onMounted(() => {
   excludeFreeNodes.value = financeHelper.shouldExcludeFreeNodes()
-  const { rates } = await financeHelper.getDailyExchangeRates()
-  exchangeRates.value = rates
 })
 
 function shouldExcludeNode(node: NodeData): boolean {
@@ -83,18 +78,8 @@ function getEffectiveCpuCores(node: NodeData): { cores: number, label: string, l
   return { cores: logicalCores, label: logicalCores > 0 ? '逻辑核' : '核', logicalCores }
 }
 
-function formatMoneyCNY(amountCNY: number): string {
-  if (!Number.isFinite(amountCNY))
-    return '-'
-  const targetRate = exchangeRates.value[financeCurrency.value] || 1
-  const formatted = financeHelper.formatFinanceAmount(amountCNY * targetRate, financeCurrency.value)
-  return `${formatted.symbol}${formatted.value}`
-}
-
-function formatCost(value: number | null): string {
-  if (value === null || !Number.isFinite(value))
-    return '-'
-  return formatMoneyCNY(value)
+function formatCost(value: number | null, currency: string): string {
+  return value === null ? '-' : financeHelper.formatNativeAmount(value, currency)
 }
 
 function formatBytes(bytes: number): string {
@@ -103,10 +88,10 @@ function formatBytes(bytes: number): string {
 
 function formatRankValue(row: NodeValueRow, key: SortKey): string {
   switch (key) {
-    case 'monthlyCostCNY': return formatMoneyCNY(row.monthlyCostCNY)
-    case 'costPerMemoryGb': return `${formatCost(row.costPerMemoryGb)} / GB 内存`
-    case 'costPerTrafficGb': return `${formatCost(row.costPerTrafficGb)} / GB 流量`
-    case 'costPerCore': return `${formatCost(row.costPerCore)} / 核`
+    case 'monthlyCostNative': return formatCost(row.monthlyCostNative, row.node.currency)
+    case 'costPerMemoryGb': return `${formatCost(row.costPerMemoryGb, row.node.currency)} / GB 内存`
+    case 'costPerTrafficGb': return `${formatCost(row.costPerTrafficGb, row.node.currency)} / GB 流量`
+    case 'costPerCore': return `${formatCost(row.costPerCore, row.node.currency)} / 核`
     case 'provider': return row.provider
     case 'name':
     default: return row.node.name
@@ -126,7 +111,7 @@ function compareNullableCost(left: number | null, right: number | null, dir: 1 |
 const nodeRows = computed<NodeValueRow[]>(() => props.nodes
   .filter(node => !shouldExcludeNode(node))
   .map((node) => {
-    const monthlyCostCNY = financeHelper.calculateMonthlyCostCNY(node, exchangeRates.value)
+    const monthlyCostNative = financeHelper.calculateMonthlyCostNative(node)
     const effectiveCpuCores = getEffectiveCpuCores(node)
     const cpuCores = effectiveCpuCores.cores
     const memoryBytes = Math.max(0, node.mem_total || 0)
@@ -138,16 +123,16 @@ const nodeRows = computed<NodeValueRow[]>(() => props.nodes
       key: node.uuid,
       node,
       provider: getProviderName(node),
-      monthlyCostCNY,
+      monthlyCostNative,
       cpuName: node.cpu_name || '-',
       cpuCores,
       cpuCoreLabel: effectiveCpuCores.label,
       logicalCpuCores: effectiveCpuCores.logicalCores,
       memoryBytes,
       trafficBytes,
-      costPerCore: cpuCores > 0 ? monthlyCostCNY / cpuCores : null,
-      costPerMemoryGb: memoryGb > 0 ? monthlyCostCNY / memoryGb : null,
-      costPerTrafficGb: trafficGb > 0 ? monthlyCostCNY / trafficGb : null,
+      costPerCore: cpuCores > 0 ? monthlyCostNative / cpuCores : null,
+      costPerMemoryGb: memoryGb > 0 ? monthlyCostNative / memoryGb : null,
+      costPerTrafficGb: trafficGb > 0 ? monthlyCostNative / trafficGb : null,
     }
   }))
 
@@ -159,15 +144,17 @@ const sortedRows = computed(() => {
       return dir * left.node.name.localeCompare(right.node.name, 'zh-CN')
     if (key === 'provider')
       return dir * left.provider.localeCompare(right.provider, 'zh-CN')
-    if (key === 'monthlyCostCNY')
-      return dir * (left.monthlyCostCNY - right.monthlyCostCNY)
+    const currencyOrder = left.node.currency.localeCompare(right.node.currency)
+    if (currencyOrder)
+      return currencyOrder
+    if (key === 'monthlyCostNative')
+      return dir * (left.monthlyCostNative - right.monthlyCostNative)
     return compareNullableCost(left[key], right[key], dir)
   })
 })
 
 const bestRows = computed(() => sortedRows.value.slice(0, 3))
 const totalComparableNodes = computed(() => nodeRows.value.length)
-const totalMonthlyCost = computed(() => nodeRows.value.reduce((sum, row) => sum + row.monthlyCostCNY, 0))
 const providerCount = computed(() => new Set(nodeRows.value.map(row => row.provider)).size)
 
 function setSort(key: SortKey): void {
@@ -214,13 +201,13 @@ function sortMark(key: SortKey): string {
       </CardX>
       <CardX size="small" class="border-none bg-background/50 sm:col-span-2 lg:col-span-1">
         <div class="text-xs text-muted-foreground">
-          月成本估算
+          金额口径
         </div>
         <div class="mt-1 text-2xl font-bold">
-          {{ formatMoneyCNY(totalMonthlyCost) }}
+          各节点本币
         </div>
         <div class="mt-1 text-[11px] text-muted-foreground">
-          使用现有 financeHelper 汇率缓存
+          同币种内比较成本；统一换算见首页顶栏
         </div>
       </CardX>
     </div>
@@ -267,8 +254,8 @@ function sortMark(key: SortKey): string {
             <th class="px-2 py-2 font-medium">
               CPU
             </th>
-            <th class="cursor-pointer px-2 py-2 font-medium" @click="setSort('monthlyCostCNY')">
-              月成本{{ sortMark('monthlyCostCNY') }}
+            <th class="cursor-pointer px-2 py-2 font-medium" @click="setSort('monthlyCostNative')">
+              月成本{{ sortMark('monthlyCostNative') }}
             </th>
             <th class="cursor-pointer px-2 py-2 font-medium" @click="setSort('costPerCore')">
               每核月成本{{ sortMark('costPerCore') }}
@@ -311,16 +298,16 @@ function sortMark(key: SortKey): string {
               </div>
             </td>
             <td class="px-2 py-3 tabular-nums">
-              {{ formatMoneyCNY(row.monthlyCostCNY) }}
+              {{ formatCost(row.monthlyCostNative, row.node.currency) }}
             </td>
             <td class="px-2 py-3 tabular-nums">
-              {{ formatCost(row.costPerCore) }}
+              {{ formatCost(row.costPerCore, row.node.currency) }}
             </td>
             <td class="px-2 py-3 tabular-nums">
-              {{ formatCost(row.costPerMemoryGb) }}
+              {{ formatCost(row.costPerMemoryGb, row.node.currency) }}
             </td>
             <td class="px-2 py-3 tabular-nums">
-              {{ formatCost(row.costPerTrafficGb) }}
+              {{ formatCost(row.costPerTrafficGb, row.node.currency) }}
             </td>
             <td class="px-2 py-3 text-xs text-muted-foreground">
               <div>{{ row.cpuCores }} {{ row.cpuCoreLabel }} · {{ formatBytes(row.memoryBytes) }} 内存</div>

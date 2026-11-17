@@ -23,12 +23,12 @@ class PackageTests(unittest.TestCase):
     def tearDown(self):
         self.temp.cleanup()
 
-    def archive(self, extra=None, dirty=False, commit=None, omit=None):
+    def archive(self, extra=None, dirty=False, commit=None, omit=None, mode="production"):
         files = {"komari-theme.json": json.dumps(self.manifest),
                  "preview.png": (ROOT / "docs/preview.png").read_bytes(),
                  "dist/index.html": "<html></html>",
                  "dist/BUILD.json": json.dumps({"version": self.manifest["version"],
-                                                "commit": commit or self.commit, "dirty": dirty}),
+                                                "commit": commit or self.commit, "dirty": dirty, "mode": mode}),
                  "dist/licenses/MIT.txt": (ROOT / "LICENSE").read_bytes()}
         files.update(extra or {})
         if omit:
@@ -53,6 +53,13 @@ class PackageTests(unittest.TestCase):
         self.archive(commit="0" * 40)
         with self.assertRaisesRegex(ValueError, "commit mismatch"):
             module.validate(self.path)
+
+    def test_visual_and_unknown_modes_cannot_be_released(self):
+        for mode in ("visual-test", "development", None):
+            with self.subTest(mode=mode):
+                self.archive(mode=mode)
+                with self.assertRaisesRegex(ValueError, "production-mode"):
+                    module.validate(self.path, True)
 
     def test_unsafe_paths(self):
         for name in ("../escape", "/absolute", "dist/../escape", "dist\\escape", "dist/C:secret"):

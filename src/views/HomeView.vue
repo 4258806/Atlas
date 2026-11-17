@@ -85,7 +85,6 @@ const searchText = ref('')
 const debouncedSearchText = ref('')
 const activeHomeTool = ref<HomeToolKey>('nodes')
 const activeQuickControl = ref<HomeQuickControlKey | null>(null)
-const exchangeRates = ref(financeHelper.DEFAULT_EXCHANGE_RATES)
 const excludeFreeNodes = ref(true)
 const pingDialogNode = ref<NodeData | null>(null)
 
@@ -153,10 +152,8 @@ watch(
   { immediate: true },
 )
 
-onMounted(async () => {
+onMounted(() => {
   excludeFreeNodes.value = financeHelper.shouldExcludeFreeNodes()
-  const { rates } = await financeHelper.getDailyExchangeRates()
-  exchangeRates.value = rates
 })
 
 watch(
@@ -174,7 +171,7 @@ function getNodeMonthlyCostCNY(node: NodeData): number {
   if (excludeFreeNodes.value && isFreeNode(node))
     return 0
 
-  return financeHelper.calculateMonthlyCostCNY(node, exchangeRates.value)
+  return financeHelper.calculateMonthlyCostNative(node)
 }
 
 function sortNodesByComputedValue(nodes: NodeData[], selector: (node: NodeData) => number): NodeData[] {
@@ -202,7 +199,7 @@ function getQuickControlNodes(nodes: NodeData[], control: HomeQuickControlKey | 
     case 'favorite':
       return nodes.filter(node => appStore.isFavoriteNode(node.uuid))
     case 'monthlyCost':
-      result = sortNodesByComputedValue(nodes, getNodeMonthlyCostCNY)
+      result = [...nodes].sort((a, b) => a.currency.localeCompare(b.currency) || getNodeMonthlyCostCNY(b) - getNodeMonthlyCostCNY(a))
       break
     case 'totalTraffic':
       result = sortNodesByComputedValue(nodes, getTotalTraffic)

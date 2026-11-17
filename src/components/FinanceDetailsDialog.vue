@@ -32,6 +32,8 @@ const props = defineProps<{
   source: ExchangeRateSource | 'loading'
   ratesUpdatedAt: number | null
   currency: CurrencyCode
+  summaryRemaining: string
+  summaryMonthly: string
   excludeFree: boolean
   now: Date
 }>()
@@ -51,12 +53,6 @@ const usageSnapshots = ref<Map<string, UsageSnapshot>>(new Map())
 const selectedNodeUuid = ref(visibleNodes.value[0]?.uuid ?? '')
 const meteredSettings = ref<MeteredEstimateSettings>(financeHelper.getStoredMeteredEstimateSettings(selectedNodeUuid.value))
 
-const displayRate = computed<number | null>(() => {
-  if (props.currency === 'CNY')
-    return 1
-  const rate = props.rates[props.currency]
-  return Number.isFinite(rate) && rate > 0 ? rate : null
-})
 const selectedNode = computed(() => visibleNodes.value.find(node => node.uuid === selectedNodeUuid.value) ?? null)
 const selectedSnapshot = computed(() => selectedNode.value ? usageSnapshots.value.get(selectedNode.value.uuid) ?? null : null)
 const snapshotUptimeAvailable = computed(() => typeof selectedSnapshot.value?.uptime === 'number')
@@ -71,7 +67,8 @@ const sourceLabels: Record<ExchangeRateSource | 'loading', string> = {
   'network': '今日网络汇率',
   'cache': '今日缓存汇率',
   'stale-cache': '历史缓存汇率',
-  'default': '内置参考汇率',
+  'default': '旧参考汇率',
+  'unavailable': '汇率不可用',
 }
 
 const trafficModeLabels: Record<MeteredTrafficMode, string> = {
@@ -81,27 +78,8 @@ const trafficModeLabels: Record<MeteredTrafficMode, string> = {
   down: '仅下行',
 }
 
-function toCNY(amount: number, currencyValue: string): number | null {
-  const currency = financeHelper.normalizeCurrency(currencyValue)
-  if (currency === 'CNY')
-    return amount
-  const rate = props.rates[currency]
-  return Number.isFinite(rate) && rate > 0 ? amount / rate : null
-}
-
-function formatDisplayAmount(amountCNY: number): string {
-  if (displayRate.value === null)
-    return '汇率不可用'
-  const formatted = financeHelper.formatFinanceAmount(amountCNY * displayRate.value, props.currency)
-  return `${formatted.symbol}${formatted.value}`
-}
-
-function formatRemainingValue(node: NodeData, amountCNY: number): string {
-  return isFreePrice(node.price) ? '无' : formatDisplayAmount(amountCNY)
-}
-
-function formatOptionalDisplayAmount(amountCNY: number | null): string {
-  return amountCNY === null ? '不可用' : formatDisplayAmount(amountCNY)
+function formatRemainingValue(node: NodeData, amount: number): string {
+  return isFreePrice(node.price) ? '无' : financeHelper.formatNativeAmount(amount, node.currency)
 }
 
 function formatPricingAmount(amount: number): string {
@@ -110,8 +88,8 @@ function formatPricingAmount(amount: number): string {
 }
 
 const fixedRows = computed(() => visibleNodes.value.map((node) => {
-  const remainingCNY = financeHelper.calculateRemainingValueCNY(node, props.rates, props.now)
-  const monthlyCNY = financeHelper.calculateMonthlyCostCNY(node, props.rates)
+  const remainingNative = financeHelper.calculateRemainingValueNative(node, props.now)
+  const monthlyNative = financeHelper.calculateMonthlyCostNative(node)
   const expireStatus = getExpireStatus(node.expired_at)
   const days = getDaysUntilExpired(node.expired_at)
   const expiryLabel = expireStatus === 'unknown'
@@ -124,7 +102,7 @@ const fixedRows = computed(() => visibleNodes.value.map((node) => {
           ? '今天'
           : `${days} 天`
 
-  return { node, remainingCNY, monthlyCNY, expiryLabel }
+  return { node, remainingNative, monthlyNative, expiryLabel }
 }))
 
 const selectedEstimate = computed(() => {
@@ -139,12 +117,6 @@ const selectedEstimate = computed(() => {
     net_total_down: snapshot.down ?? 0,
   }, meteredSettings.value)
 })
-
-const totalRemainingCNY = computed(() => fixedRows.value.reduce((sum, row) => sum + row.remainingCNY, 0))
-const totalMonthlyCNY = computed(() => fixedRows.value.reduce((sum, row) => sum + row.monthlyCNY, 0))
-const totalMeteredCNY = computed(() => selectedEstimate.value
-  ? toCNY(selectedEstimate.value.totalCost, meteredSettings.value.currency)
-  : null)
 
 watch(visibleNodes, (nodes) => {
   if (nodes.some(node => node.uuid === selectedNodeUuid.value))
@@ -257,7 +229,7 @@ function formatTraffic(tib: number): string {
             剩余价值
           </div>
           <div class="mt-1 truncate text-lg font-semibold tabular-nums">
-            {{ formatDisplayAmount(totalRemainingCNY) }}
+            {{ summaryRemaining }}
           </div>
         </div>
         <div class="min-w-0 px-2">
@@ -265,7 +237,7 @@ function formatTraffic(tib: number): string {
             固定月均支出
           </div>
           <div class="mt-1 truncate text-lg font-semibold tabular-nums">
-            {{ formatDisplayAmount(totalMonthlyCNY) }}
+            {{ summaryMonthly }}
           </div>
         </div>
         <div class="min-w-0 px-2">
@@ -273,7 +245,7 @@ function formatTraffic(tib: number): string {
             当前节点估算
           </div>
           <div class="mt-1 truncate text-lg font-semibold tabular-nums">
-            {{ formatOptionalDisplayAmount(totalMeteredCNY) }}
+            {{ selectedEstimate ? formatPricingAmount(selectedEstimate.totalCost) : '不可用' }}
           </div>
         </div>
       </div>
@@ -359,10 +331,10 @@ function formatTraffic(tib: number): string {
                     {{ row.expiryLabel }}
                   </td>
                   <td class="whitespace-nowrap px-3 py-2.5">
-                    {{ formatRemainingValue(row.node, row.remainingCNY) }}
+                    {{ formatRemainingValue(row.node, row.remainingNative) }}
                   </td>
                   <td class="whitespace-nowrap px-3 py-2.5 text-right font-semibold tabular-nums">
-                    {{ formatDisplayAmount(row.monthlyCNY) }}
+                    {{ financeHelper.formatNativeAmount(row.monthlyNative, row.node.currency) }}
                   </td>
                 </tr>
                 <tr v-if="fixedRows.length === 0">
@@ -494,7 +466,7 @@ function formatTraffic(tib: number): string {
                 显示金额
               </div>
               <div class="mt-1 text-lg font-semibold tabular-nums">
-                {{ formatOptionalDisplayAmount(totalMeteredCNY) }}
+                {{ selectedEstimate ? formatPricingAmount(selectedEstimate.totalCost) : '不可用' }}
               </div>
               <div class="mt-1 text-[11px] text-muted-foreground">
                 源币种小计 {{ formatPricingAmount(selectedEstimate.totalCost) }}
@@ -536,7 +508,7 @@ function formatTraffic(tib: number): string {
                 min="0"
                 step="any"
                 :disabled="item === 'CNY'"
-                :model-value="rates[item]"
+                :model-value="Number.isFinite(rates[item]) ? rates[item] : ''"
                 class="h-8 px-2 text-xs tabular-nums"
                 @update:model-value="handleRateChange(item, $event)"
               />

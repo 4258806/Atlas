@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { DetailMetricCardKey } from '@/stores/app'
-import type { CurrencyCode } from '@/utils/financeHelper'
 import { Icon } from '@iconify/vue'
 import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -37,8 +36,6 @@ const router = useRouter()
 
 const appStore = useAppStore()
 const nodesStore = useNodesStore()
-const exchangeRates = ref(financeHelper.DEFAULT_EXCHANGE_RATES)
-const financeCurrency = ref<CurrencyCode>('CNY')
 
 // 近一天网速峰值（B/s）
 const peakNetOut = ref(0)
@@ -94,11 +91,8 @@ async function fetchTrafficPeak(uuid: string): Promise<void> {
   peakNetIn.value = down
 }
 
-onMounted(async () => {
+onMounted(() => {
   window.scrollTo({ top: 0, behavior: 'instant' })
-  financeCurrency.value = financeHelper.getStoredFinanceCurrency()
-  const { rates } = await financeHelper.getDailyExchangeRates()
-  exchangeRates.value = rates
 })
 
 // 当节点数据加载后尝试获取厂商信息
@@ -271,10 +265,7 @@ const remainingValueText = computed(() => {
     return '-'
   if (isFreePrice(data.value.price))
     return appStore.lang === 'zh-CN' ? '无' : 'N/A'
-  const remainingValueCNY = financeHelper.calculateRemainingValueCNY(data.value, exchangeRates.value)
-  const targetRate = exchangeRates.value[financeCurrency.value] || 1
-  const formattedValue = financeHelper.formatFinanceAmount(remainingValueCNY * targetRate, financeCurrency.value)
-  return `${formattedValue.symbol}${formattedValue.value}`
+  return financeHelper.formatNativeAmount(financeHelper.calculateRemainingValueNative(data.value), data.value.currency)
 })
 
 const remainingTimeValueClass = computed(() => {

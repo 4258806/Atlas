@@ -55,7 +55,7 @@ function getCommitHash(): string {
  * ├── preview.png
  * └── dist/
  */
-function komariThemeZip(): Plugin {
+function komariThemeZip(mode: string): Plugin {
   return {
     name: 'komari-theme-zip',
     apply: 'build',
@@ -63,7 +63,7 @@ function komariThemeZip(): Plugin {
       this.emitFile({
         type: 'asset',
         fileName: 'BUILD.json',
-        source: `${JSON.stringify({ schema: 1, product: 'Glassmorphism Enhanced', version: getThemeVersion(), commit: execSync('git rev-parse HEAD', { encoding: 'utf-8' }).trim(), dirty: Boolean(execSync('git status --porcelain=v1', { encoding: 'utf-8' }).trim()) }, null, 2)}\n`,
+        source: `${JSON.stringify({ schema: 1, product: 'Glassmorphism Enhanced', mode, version: getThemeVersion(), commit: execSync('git rev-parse HEAD', { encoding: 'utf-8' }).trim(), dirty: Boolean(execSync('git status --porcelain=v1', { encoding: 'utf-8' }).trim()) }, null, 2)}\n`,
       })
     },
     closeBundle: async () => {
@@ -116,7 +116,7 @@ function komariThemeZip(): Plugin {
   }
 }
 
-export default defineConfig(() => ({
+export default defineConfig(({ mode }) => ({
   define: {
     __BUILD_VERSION__: JSON.stringify(getThemeVersion()),
     __BUILD_GIT_HASH__: JSON.stringify(getCommitHash()),
@@ -126,7 +126,7 @@ export default defineConfig(() => ({
     vue(),
     vueDevTools(),
     tailwindcss(),
-    komariThemeZip(),
+    komariThemeZip(mode),
   ],
   resolve: {
     alias: {

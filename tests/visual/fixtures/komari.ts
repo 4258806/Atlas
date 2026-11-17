@@ -1,4 +1,5 @@
 import type { Page, Route } from '@playwright/test'
+import { DEFAULT_EXCHANGE_RATES } from '../../../src/utils/financeHelper'
 
 const FIXED_NOW = '2026-07-25T12:00:00.000Z'
 const GIB = 1024 ** 3
@@ -64,6 +65,8 @@ export interface VisualFixtureOptions {
   trafficMetricNullNode?: number
   trafficFirstNode?: { billing_cycle?: number, expired_at?: string, traffic_limit?: number | null }
   largeLifetimeTraffic?: boolean
+  preserveStorage?: boolean
+  financeNodes?: Record<number, { price: number, currency: string, billing_cycle: number, expired_at?: string }>
 }
 
 function uuidFor(index: number): string {
@@ -121,6 +124,7 @@ function buildClients(options: VisualFixtureOptions = {}) {
       created_at: '2026-01-01T00:00:00.000Z',
       updated_at: FIXED_NOW,
       ...(index === 0 ? options.trafficFirstNode : {}),
+      ...options.financeNodes?.[index],
     }]
   }))
 }
@@ -521,19 +525,21 @@ export async function installKomariFixture(page: Page, options: VisualFixtureOpt
   }
 
   if (options.useNativeClock) {
-    await page.addInitScript(() => {
-      localStorage.clear()
+    await page.addInitScript(({ preserveStorage }) => {
+      if (!preserveStorage)
+        localStorage.clear()
       // The real /admin -> /admin-app document bridge consumes this once.
       // Clearing it between documents would fabricate a native-admin 404.
       const officialRoute = sessionStorage.getItem('komariOfficialAppRoute')
       sessionStorage.clear()
       if (officialRoute)
         sessionStorage.setItem('komariOfficialAppRoute', officialRoute)
-    })
+    }, { preserveStorage: options.preserveStorage ?? false })
   }
   else {
-    await page.addInitScript(({ fixedNow }) => {
-      localStorage.clear()
+    await page.addInitScript(({ fixedNow, preserveStorage }) => {
+      if (!preserveStorage)
+        localStorage.clear()
       const officialRoute = sessionStorage.getItem('komariOfficialAppRoute')
       sessionStorage.clear()
       if (officialRoute)
@@ -549,8 +555,13 @@ export async function installKomariFixture(page: Page, options: VisualFixtureOpt
         }
       }
       window.Date = FixedDate as DateConstructor
-    }, { fixedNow: options.trafficNow ?? FIXED_NOW })
+    }, { fixedNow: options.trafficNow ?? FIXED_NOW, preserveStorage: options.preserveStorage ?? false })
   }
+
+  // Explicit reference-rate fixture; do not contact real providers from UI tests.
+  const quoteTime = Math.floor((options.useNativeClock ? Date.now() : Date.parse(options.trafficNow ?? FIXED_NOW)) / 1000)
+  await page.route('https://open.er-api.com/v6/latest/CNY', route => route.fulfill({ json: { result: 'success', base_code: 'CNY', time_last_update_unix: quoteTime - 60, time_next_update_unix: quoteTime + 86400, rates: DEFAULT_EXCHANGE_RATES } }))
+  await page.route('https://api.frankfurter.app/latest?from=CNY', route => route.fulfill({ status: 503, json: { fixture: 'backup unavailable' } }))
 
   await page.route('**/api/public', route => route.fulfill({
     contentType: 'application/json',

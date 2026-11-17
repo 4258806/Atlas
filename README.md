@@ -4,7 +4,7 @@
 
 开发基线固定为上游 **v1.2.1**，提交 [`0332d5f7c73f7994ba21c01e4b739d04835120b1`](https://github.com/casiuna/Glassmorphism-Enhanced/commit/0332d5f7c73f7994ba21c01e4b739d04835120b1)。`baseline/v1.2.1` 保留该原始提交，默认开发分支为 `personal/main`。主题清单当前的 `1.2.1` 仍是上游原始版本号，不表示本 Fork 已发布新的二次开发版本。
 
-**当前完成 Fork 初始化、来源许可声明及开发发布规范；未修改功能源码，未发布自有构建或部署到服务器。** 初始化修改见 [FORK.md](FORK.md)，后续变更保留在本仓库提交和 diff 中；下方功能和验收记录属于上游 v1.2.1，不是本 Fork 新完成的功能或测试。
+**当前为个人 Fork 开发版本，尚未发布自有正式版或部署到生产。** 已建立工程 CI 和 ZIP 发布门禁；新增开发见[独立重置时间](docs/traffic-cycles.md)、[本币金额与单币种汇总](docs/finance.md)，验收记录保存在 `docs/verification/`。初始化来源见 [FORK.md](FORK.md)，每步保留 GitHub PR/diff。下方标注的上游 v1.2.1 说明是历史基线，不代替本 Fork 的验证记录。
 
 后续开发遵循 [开发验收与发布规范](docs/releasing.md)：所有交付改动同步 GitHub，每个正式软件版本保留独立 Release、可上传的主题 ZIP、源码 diff 与验证记录，已发布版本和附件不静默覆盖。
 
