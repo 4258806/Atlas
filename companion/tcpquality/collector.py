@@ -172,7 +172,7 @@ def collect(cfg):
     run_dir.mkdir(mode=0o700)
     save_private(run_dir / 'ownership.json', {'component': 'komari-tcpquality-attachment', 'uuid': cfg['uuid']})
     subprocess.run(['/usr/bin/unshare', '--mount', '--propagation', 'private', '/bin/true'], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    env = {'PATH': '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', 'HOME': str(data), 'TERM': 'dumb', 'LANG': 'C.UTF-8', 'LC_ALL': 'C.UTF-8', 'TCPQUALITY_MOUNT_NS': '1', 'TCPQUALITY_RAW_BASE': 'https://raw.githubusercontent.com/ibsgss/TcpQuality/' + UPSTREAM}
+    env = {'PATH': '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', 'HOME': str(data), 'TERM': 'xterm', 'LANG': 'C.UTF-8', 'LC_ALL': 'C.UTF-8', 'TCPQUALITY_MOUNT_NS': '1', 'TCPQUALITY_RAW_BASE': 'https://raw.githubusercontent.com/ibsgss/TcpQuality/' + UPSTREAM}
     args = ['/usr/bin/unshare', '--mount', '--propagation', 'private', '/bin/bash', str(ROOT / 'vendor/runTcpQuality-rootfs.sh'), '--rootfs', str(rootfs), '--output', str(run_dir), '--', '--no-rank-upload', '--debug', '-p', '4', '-c', '30']
     ipv6 = bool(subprocess.check_output(['ip', '-6', 'route', 'show', 'default']).strip())
     def limits():

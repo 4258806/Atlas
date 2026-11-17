@@ -1,7 +1,7 @@
 import antfu from '@antfu/eslint-config'
 
 export default antfu({
-  ignores: ['public/admin-app/**'],
+  ignores: ['public/admin-app/**', 'companion/tcpquality/vendor/**'],
   formatters: true,
   vue: true,
 }, {
