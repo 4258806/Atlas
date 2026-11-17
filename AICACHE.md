@@ -2,7 +2,11 @@
 
 Public development records only. Do not add deployment addresses, identifiers, credentials or private infrastructure details. Inherited upstream logs remain in Git history; their permissions and results do not authorize or validate current work.
 
-## Current: Atlas 0.0.2 published (2026-11-17)
+## Current: Atlas v0.0.1 / Atlas v0.0.2 Release titles (2026-11-17)
+
+- Latest user instruction supersedes the earlier retained pre-rename Release requirement: delete only the duplicate personal-v0.0.1 Release and its attached historical build; retain that Git tag/source history and local archive. Release list now contains only Atlas v0.0.1 and Atlas v0.0.2; both formal releases retain their existing tags/assets/checksums. Future Release and versioned material titles use Atlas v<version>; numeric manifest versions, atlas-v<version> tags and build-SHA ZIP filenames are unchanged. Scope is Release metadata, publication title automation and documentation only; no runtime, rebuild, new release or production deployment.
+
+## Previous: Atlas v0.0.2 published (2026-11-17)
 
 - COMPLETE: user authorized publication of 0.0.2. PR #11 merged as aae95c6f96360ccbc1ff07e4ecfc833c70ce4e43; guarded Release run 44088648183 revalidated 426 unit/component and 237 browser cases and published atlas-v0.0.2. Actual downloaded komari-theme-Atlas-build-aae95c6.zip SHA256 5a21440ff77a20a073b4fed0f69c012cb6d0ecc9fb7a955111ddcb31348c4d2b matches SHA256SUMS, build verification and GitHub digest; all nine native Komari 1.6.1 install/configuration/reset/finance/upgrade/downgrade/re-upgrade checks passed again on this exact Release ZIP. Final evidence: docs/verification/atlas-release-0.0.2.json and Release asset atlas-installation-verification.json. Previous versions/tags/assets and CA production are unchanged. Stop without later-roadmap features or production deployment.
 

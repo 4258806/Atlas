@@ -1,0 +1,45 @@
+{
+  "date": "2026-11-17",
+  "scope": "User-authorized Release page cleanup, versioned material titles and future publication title formatting only",
+  "repository": "https://github.com/MagnetOscar/Atlas",
+  "removedRelease": {
+    "tag": "personal-v0.0.1",
+    "releaseId": 448336277,
+    "reason": "Pre-rename duplicate removed at the user's explicit request",
+    "gitTagRetained": true,
+    "sourceHistoryRetained": true,
+    "localHistoricalArchiveRetained": true
+  },
+  "remainingReleases": [
+    {
+      "title": "Atlas v0.0.1",
+      "tag": "atlas-v0.0.1",
+      "releaseId": 448453406,
+      "zip": "komari-theme-Atlas-build-31c69e8.zip",
+      "sha256": "86c4a718e916211194185c1a6d70968a1b553011d4dbd03412c1a0e07b8ebaa6"
+    },
+    {
+      "title": "Atlas v0.0.2",
+      "tag": "atlas-v0.0.2",
+      "releaseId": 448651130,
+      "zip": "komari-theme-Atlas-build-aae95c6.zip",
+      "sha256": "5a21440ff77a20a073b4fed0f69c012cb6d0ecc9fb7a955111ddcb31348c4d2b"
+    }
+  ],
+  "verification": {
+    "githubReleaseListHasExactlyTwoStableReleases": "passed",
+    "releaseTitlesAndBodyHeadingsMatch": "passed",
+    "allEightFormalAssetIdsNamesSizesAndDigestsUnchanged": "passed",
+    "oldGitTagStillExists": "passed",
+    "futureWorkflowChange": "Only add v to --title: Atlas v$VERSION; no permission, gate, packaging, tag or publication-trigger changes",
+    "runtimeChanges": false,
+    "newReleaseOrRebuild": false,
+    "productionChanges": false
+  },
+  "namingContract": {
+    "releaseAndVersionedMaterialTitle": "Atlas v<version>",
+    "tag": "atlas-v<version>",
+    "manifestVersion": "<version>",
+    "nativeZip": "komari-theme-Atlas-build-<short-sha>.zip"
+  }
+}

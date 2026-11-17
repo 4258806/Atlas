@@ -1,4 +1,4 @@
-# Atlas 0.0.2
+# Atlas v0.0.2
 
 Updates since `atlas-v0.0.1`:
 

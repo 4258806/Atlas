@@ -13,6 +13,7 @@
 ## 版本与历史
 
 - `komari-theme.json.version` 仍为软件版本的唯一来源；不增加冲突的 `package.json.version`。
+- Release 显示标题及后续版本说明／交付材料标题统一为 `Atlas v<version>`，例如 `Atlas v0.0.2`。Git 标签仍用 `atlas-v<version>`，清单版本为纯版本号，原生 ZIP 保持 `komari-theme-Atlas-build-<short-sha>.zip`；仅调整标题不重建、覆盖正式安装包。
 - 采用清楚的 SemVer 版本规则，区分修复、兼容功能和破坏性变更。发布前检查继承标签和现有 Release，确定不会与上游历史混淆的自有发行标识；本次规范更新不选择或发布新软件版本。
 - 每个正式软件版本对应独立的 tag、GitHub Release、源码提交和安装 ZIP。试用版本使用明确的 alpha/beta/rc 标识，并标记为预发布。
 - 已发布的 tag、Release 和附件保留可下载，禁止移动旧 tag、覆盖旧 ZIP 或借用旧版本号静默修包。发行包有问题时发布新的修订版本，并记录原因。
@@ -79,4 +80,4 @@ dist/
 
 当前主题使用 `short: Atlas`。首次启用后，在已验证管理员权限下，通过 Komari 1.6.1 原生数据库接口仅复制旧 Enhanced 主题的设置到缺失／空 Atlas 配置；条件写入不覆盖已有 Atlas 设置，旧行不删除。可选 companion 的协议标识保留兼容。页面、主题清单及项目 URL 均为 Atlas。MIT、原作者及上游来源记录不替换为本项目原创。
 
-品牌统一后的正式标签为 `atlas-v0.0.1`，仍使用软件版本 0.0.1，并绑定新的干净源码、原生 Atlas ZIP 和校验值。原 `personal-v0.0.1` 标签、包及记录不移动、不覆盖；其 Release 标题与说明同步标明 Atlas 的改名前历史构建，并引导至最新 Atlas 包。不得把旧包换个文件名冒充新代码构建。之后的正式标签采用 `atlas-v<version>`。
+品牌统一后的正式标签为 `atlas-v0.0.1`，仍使用软件版本 0.0.1，并绑定新的干净源码、原生 Atlas ZIP 和校验值。2026-11-17 用户随后明确要求清理发行列表：删除改名前的重复 `personal-v0.0.1` Release 及其附件，仅保留 `Atlas v0.0.1` 和 `Atlas v0.0.2`。这是对前述保留所有 Release 规则的单次明确例外；旧 Git 标签、源码历史及本地历史包仍保留，两个正式 Atlas 版本的标签／附件不变。不得把旧包换个文件名冒充新代码构建。之后的正式标签采用 `atlas-v<version>`，Release 标题采用 `Atlas v<version>`。

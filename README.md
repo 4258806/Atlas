@@ -4,7 +4,7 @@ Atlas 是面向 Komari 的监控主题，由 MagnetOscar 基于 [Glassmorphism E
 
 ![Atlas 预览（合成演示数据）](docs/preview.png)
 
-## 0.0.2（当前正式版）
+## Atlas v0.0.2（当前正式版）
 
 - 修复费用弹窗的边框、留白、按钮居中和三个原图标。
 - 三网拖动排序并保存，支持触屏上移／下移及键盘操作。
@@ -13,7 +13,7 @@ Atlas 是面向 Komari 的监控主题，由 MagnetOscar 基于 [Glassmorphism E
 
 新选项在「Atlas 管理 → 线路与延迟」保存后全站生效；未设置时保持原显示。见 [正式 Release](https://github.com/MagnetOscar/Atlas/releases/tag/atlas-v0.0.2)、[桌面／手机预览（测试数据）](docs/previews/0.0.2) 和 [正式 ZIP 验证记录](docs/verification/atlas-release-0.0.2.json)。正式包通过 426 项单元／组件检查、237 项浏览器检查，实际下载附件再次通过 9 项原生安装、配置、升级与回滚检查。
 
-## 0.0.1（历史版本）
+## Atlas v0.0.1（历史版本）
 
 - 工程流程：受保护 PR、质量与浏览器检查、原生安装 ZIP、源码及 SHA256 记录。
 - 独立重置时间：逐节点时区、每月日期、小时和分钟，支持夏令时、月底及旧配置迁移。
@@ -27,7 +27,7 @@ Atlas 是面向 Komari 的监控主题，由 MagnetOscar 基于 [Glassmorphism E
 
 上传前保留现有主题 ZIP、主题配置及数据备份。新主题标识为 `short: Atlas`。首次启用后保持管理员登录；Atlas 通过官方受管理员保护的数据库接口，将旧 Enhanced 配置复制到尚未配置的 Atlas 身份。已有 Atlas 设置不会被覆盖，旧 Enhanced 配置也不删除。迁移核对包含节点独立重置时间、币种设置和未知配置字段。现有 Plugin/Helper 的接口标识也不改名、不自动安装或启用。
 
-Atlas 首版仍为 **0.0.1**；`atlas-v0.0.1` 绑定品牌统一后的准确源码。先前 `personal-v0.0.1` 和其 ZIP 保留为改名前的历史记录，不覆盖已发布的文件。
+Release 标题统一为 **Atlas v版本号**；`atlas-v0.0.1` 绑定品牌统一后的准确源码。改名前的重复 Release 已从发行列表删除，原 `personal-v0.0.1` Git 标签及源码历史仍保留供追溯；正式 Atlas 版本的标签与安装包不变。
 
 ## 验证和边界
 
