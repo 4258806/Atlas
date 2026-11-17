@@ -1,0 +1,97 @@
+{
+  "kind": "published-release-download-and-official-Komari-installation",
+  "version": "0.0.1",
+  "date": "2026-11-17",
+  "scope": "steps-1-3",
+  "status": "passed",
+  "release": {
+    "tag": "personal-v0.0.1",
+    "url": "https://github.com/MagnetOscar/Glassmorphism-Enhanced/releases/tag/personal-v0.0.1",
+    "commit": "92e6f827b5cdef105149e096365aebef28fdad74",
+    "publishedAt": "2026-11-17T08:24:43Z",
+    "draft": false,
+    "prerelease": false,
+    "accepted_runtime_source": "6f273742e7e5383e6cd7193bcb79c2d5fb08117f",
+    "runtime_changes_after_acceptance": false,
+    "pull_request": "https://github.com/MagnetOscar/Glassmorphism-Enhanced/pull/6"
+  },
+  "package": {
+    "file": "komari-theme-Glassmorphism-build-92e6f82.zip",
+    "url": "https://github.com/MagnetOscar/Glassmorphism-Enhanced/releases/download/personal-v0.0.1/komari-theme-Glassmorphism-build-92e6f82.zip",
+    "bytes": 8489280,
+    "sha256": "f4f6c72094f42bc1db601bb5540bdef4de816bc0d31e08f972d87f6d463ac861",
+    "entries": 784,
+    "version": "0.0.1",
+    "commit": "92e6f827b5cdef105149e096365aebef28fdad74",
+    "dirty": false,
+    "mode": "production",
+    "downloaded_from_actual_release": true,
+    "sha256_matches_checksum_file_and_github_asset_digest": true,
+    "native_structure_and_source_verification": "passed",
+    "original_and_third_party_license_notices": "preserved"
+  },
+  "ci": {
+    "release": "https://github.com/MagnetOscar/Glassmorphism-Enhanced/actions/runs/44045468212",
+    "release_status": "passed",
+    "unit_component_passed": 412,
+    "desktop_mobile_browser_passed": 221,
+    "main_quality": "https://github.com/MagnetOscar/Glassmorphism-Enhanced/actions/runs/44045445921",
+    "main_quality_status": "passed",
+    "main_visual": "https://github.com/MagnetOscar/Glassmorphism-Enhanced/actions/runs/44045445819",
+    "main_visual_status": "passed"
+  },
+  "native_installation": {
+    "backend": "official Komari Server 1.6.1, Windows amd64",
+    "backendSHA256": "0c6e73c42ac166d34562e57037007a21692599e9e868ddae18217691e0f5d932",
+    "environment": "fresh disposable loopback backend; actual downloaded Release ZIP",
+    "baselineSHA256": "54ef15efe37707109ce721ed22608745a575b3683038951b02b05d1724d3ff17",
+    "checks": [
+      {
+        "name": "fresh official backend and verified native administrator session",
+        "status": "passed"
+      },
+      {
+        "name": "install exact baseline, upgrade release ZIP and preserve settings",
+        "status": "passed"
+      },
+      {
+        "name": "administrator editor persists independent timezone, day and minute on desktop and mobile",
+        "status": "passed"
+      },
+      {
+        "name": "native per-metric retention and tier configuration read back without disabling metrics",
+        "status": "passed"
+      },
+      {
+        "name": "native persisted minute edge and hourly body sum exactly without history mutation",
+        "status": "passed"
+      },
+      {
+        "name": "rollback restores baseline ZIP plus exact v1 settings and re-upgrade retains configuration",
+        "status": "passed"
+      },
+      {
+        "name": "native node billing stays in its own currency while the header selects one currency",
+        "status": "passed"
+      }
+    ],
+    "rate_network_diagnostics": [],
+    "history_and_prices": "explicit synthetic fixtures, 12340 persisted traffic rows",
+    "fx": "actual public API access in the isolated browser; raw quotes not published",
+    "productionTouched": false,
+    "real_billing_or_fleet_acceptance": false
+  },
+  "ui": {
+    "public_layout_styles_globe_map_defaults": "unchanged from fixed fork baseline",
+    "authorized_admin_fields": "independent per-node timezone, day, hour and minute",
+    "api_credit": "existing rate-information text position",
+    "pre_release_evidence": "native-0.0.1.json"
+  },
+  "handoff": {
+    "user_uploads_and_switches_personally": true,
+    "production_modified": false,
+    "backup_before_switch": "retain previous native theme ZIP, theme configuration and data backups",
+    "limitations": "traffic cycles require sufficient retained history; FX quotes are indicative",
+    "future_carrier_sort_display_and_return_route_work": "excluded"
+  }
+}
