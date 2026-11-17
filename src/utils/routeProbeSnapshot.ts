@@ -84,7 +84,7 @@ export function parseProbeSnapshot(raw: unknown): ProbeSnapshot {
           // derived from each independent record below, never a flattened path.
           auto[carrier] = traces.length === 1 ? newest : { ...newest, hops: [], status: 'unknown', reachedTarget: false }
         }
-        if (queries > 8)
+        if (queries > 64)
           throw new Error('ASN query budget exceeded')
       }
     }

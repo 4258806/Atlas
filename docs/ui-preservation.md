@@ -1,5 +1,9 @@
 # Fork UI preservation
 
+## Atlas v0.0.3 authorization
+
+The user authorizes the second-row two-column return-route tile next to the one-column TCP/UDP tile, with saved carrier order, expandable observed ASN summary and accurate unavailable/expired states. A new opt-in `returnRouteHomeTileEnabled` setting retains the legacy position for existing installations; it will be explicitly enabled for this deployment. Public automatic results use only the plugin's explicit opt-in, ASN-only projection; raw evidence remains administrator-only. CA plugin and a single DMIT probe round, native 1.6.1 acceptance, version 0.0.3 and formal ZIP publication are now authorized. Other nodes, services, Cloudflare protections, maps/globe and currency/reset semantics stay protected. Original contracts remain pinned after normalization of exactly this addition and setting; the complete extension has a separate contract.
+
 ## Latest homepage connection tile exception (2026-11-17)
 
 The user explicitly requests TCP/UDP counts on the homepage node cards: retain the original three mini metric tiles and add a fourth on the following row, using one original column's width, padding and glass style. Reuse the existing TCP/UDP visibility switches and live agent data, with no new collector, setting or API request. Both switches off removes the new tile and its row; single-protocol mode retains the original tile height. Missing/offline values display an em dash rather than a fabricated zero. Scope is only this tile; no placeholder tiles or unrelated features are authorized. The original accepted 0.0.2 contract stays pinned after removing this specifically marked addition; a separate contract pins the complete extended NodeCard presentation. Original screenshots/tolerances, maps/globe and the first three tiles remain protected. Development does not authorize replacing published 0.0.2 assets or production deployment.

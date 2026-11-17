@@ -1,0 +1,26 @@
+{
+  "kind": "official-1.6.1-isolated-native-plugin",
+  "routeData": "synthetic; no network probing",
+  "checks": [
+    {
+      "name": "official 1.6.1 native plugin ZIP upload, approval and module/storage compatibility",
+      "status": "passed"
+    },
+    {
+      "name": "native agent identity and administrator-only raw evidence; public disabled by default",
+      "status": "passed"
+    },
+    {
+      "name": "native agent job/result flow and opt-in public ASN projection",
+      "status": "passed"
+    },
+    {
+      "name": "plugin configuration and route evidence survive actual backend restart",
+      "status": "passed"
+    },
+    {
+      "name": "public opt-out immediately removes access without deleting private evidence",
+      "status": "passed"
+    }
+  ]
+}

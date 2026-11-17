@@ -57,7 +57,8 @@ function keys(value, allowed) {
   assert(Object.keys(value).every(key => allowed.includes(key)), 'unexpected fields')
 }
 function policy(raw) {
-  keys(raw, ['enabled', 'nodes', 'cdnTargets'])
+  keys(raw, ['enabled', 'nodes', 'cdnTargets', 'publicSummaryEnabled'])
+  assert(raw.publicSummaryEnabled === undefined || typeof raw.publicSummaryEnabled === 'boolean', 'invalid public summary setting')
   const cdnTargets = cdnProfiles(raw.cdnTargets)
   const nodes = typeof raw.nodes === 'string' ? JSON.parse(raw.nodes) : raw.nodes || {}
   assert(Object.keys(nodes).length <= 200, 'too many nodes')
@@ -69,7 +70,7 @@ function policy(raw) {
     assert(typeof item.enabled === 'boolean' && (CITIES.includes(item.city) || Object.hasOwn(cdnTargets, item.city)), 'invalid node policy')
     assert(Number.isInteger(item.periodMinutes) && item.periodMinutes >= 60 && item.periodMinutes <= 10080, 'period must be 60–10080 minutes')
   }
-  return { enabled: raw.enabled === true, nodes, ...(raw.cdnTargets !== undefined ? { cdnTargets } : {}) }
+  return { enabled: raw.enabled === true, nodes, ...(raw.cdnTargets !== undefined ? { cdnTargets } : {}), ...(raw.publicSummaryEnabled !== undefined ? { publicSummaryEnabled: raw.publicSummaryEnabled } : {}) }
 }
 function normalizeResult(result, uuid, city, now) {
   if (result && [2, 3].includes(result.schema))
@@ -180,7 +181,7 @@ function normalizeV2Result(result, uuid, city, now) {
       carriers[carrier][protocol] = { protocol, family: 4, direction: 'node-to-cn', target: row.target, collectedAt: at, status: row.status, reachedTarget: row.reachedTarget, hops, asnLookup: { ...row.asnLookup } }
     }
   }
-  assert(queries <= 8, 'external ASN query budget exceeded')
+  assert(queries <= 64, 'external ASN query budget exceeded')
   return { schema: cdn ? 3 : 2, uuid, city, collectedAt, source: result.source, protocols: [...result.protocols], carriers, ...(cdn ? { targetBinding: result.targetBinding, dns: JSON.parse(JSON.stringify(result.dns)), captures: JSON.parse(JSON.stringify(result.captures)), captureOrigin: { ...result.captureOrigin } } : {}) }
 }
 class Coordinator {

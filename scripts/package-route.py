@@ -11,7 +11,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / 'test-results/release'
-PLUGIN = ['komari-plugin.json', 'script.js', 'protocol.cjs', 'storage.cjs', 'request-limits.cjs', 'LICENSE']
+PLUGIN = ['komari-plugin.json', 'script.js', 'protocol.cjs', 'storage.cjs', 'request-limits.cjs', 'public-summary.cjs', 'LICENSE']
 HELPER = ['enhanced_route_helper.py', 'enhanced_probe_v2.py', 'install.py', 'helper-version.json', 'enhanced-route-helper.service', 'enhanced-route-helper.openrc', 'helper.example.json', 'README.md', 'LICENSE']
 
 def main():
@@ -53,6 +53,17 @@ def main():
             info.mtime = 0
             archive.addfile(info, io.BytesIO(content))
     assets = [plugin, helper]
+    # Native plugin and standalone helper ZIPs for the Atlas release page.
+    helper_zip = OUTPUT / f'atlas-route-helper-{helper_base}.zip'
+    with tarfile.open(helper, 'r:gz') as source, zipfile.ZipFile(helper_zip, 'w', zipfile.ZIP_DEFLATED) as archive:
+        for member in source.getmembers():
+            if member.isfile():
+                name = member.name.split('/', 1)[1]
+                info = zipfile.ZipInfo(name, date_time=(2026, 1, 1, 0, 0, 0))
+                info.external_attr = member.mode << 16
+                info.compress_type = zipfile.ZIP_DEFLATED
+                archive.writestr(info, source.extractfile(member).read())
+    assets.append(helper_zip)
     theme = ROOT / ('komari-theme-Atlas-build-' + subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD'], cwd=ROOT, text=True).strip() + '.zip')
     if theme.is_file():
         assets.append(theme)

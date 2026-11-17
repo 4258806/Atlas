@@ -8,6 +8,7 @@ const path = require('path')
 const server = require('server')
 const manifest = require('./komari-plugin.json')
 const { Coordinator, policy, keys, UUID } = require('./protocol.cjs')
+const { publicSummary } = require('./public-summary.cjs')
 const { ClientRequestLimiter } = require('./request-limits.cjs')
 const { Store } = require('./storage.cjs')
 
@@ -68,6 +69,19 @@ function route(method, name, isAdmin, handler) {
   })
 }
 function load() {
+  server.route('GET', `${ROOT}/summary`, async (_req, res) => {
+    try {
+      const config = policy(await server.getConfig())
+      if (!config.publicSummaryEnabled)
+        return json(res, 403, { error: 'public-summary-disabled' })
+      if (!storage.healthy)
+        return json(res, 503, { error: 'storage-unavailable' })
+      return json(res, 200, publicSummary(coordinator.snapshot(config)))
+    }
+    catch {
+      return json(res, 503, { error: 'summary-unavailable' })
+    }
+  })
   route('GET', 'snapshot', true, (_req, _uuid, config) => coordinator.snapshot(config))
   route('GET', 'health', true, () => ({ schema: 1, version: manifest.version, storage: storage.healthy ? 'healthy' : 'unavailable', readAccess: 'admin-only' }))
   // Private installer checkpoint: contains short-lived leases, never request it

@@ -921,6 +921,7 @@ const useAppStore = defineStore('app', () => {
   const returnRouteConfig = computed(() => parseReturnRouteConfig(themeSettings.value.returnRouteConfig))
   const trafficCycleConfig = computed(() => parseTrafficCycleConfig(themeSettings.value.trafficCycleConfig))
   const returnRoutesVisible = computed(() => readBooleanSetting(themeSettings.value, 'returnRoutesVisible', false))
+  const returnRouteHomeTileEnabled = computed(() => readBooleanSetting(themeSettings.value, 'returnRouteHomeTileEnabled', false))
   const returnRouteAutoEnabled = computed(() => readBooleanSetting(themeSettings.value, 'returnRouteAutoEnabled', false))
   const returnRouteCompanionEnabled = computed(() => readBooleanSetting(themeSettings.value, 'returnRouteCompanionEnabled', false))
   const returnRouteTtlHours = computed(() => readNumberSetting(themeSettings.value, 'returnRouteTtlHours', 24, 1, 168))
@@ -1374,6 +1375,7 @@ const useAppStore = defineStore('app', () => {
     returnRouteConfig,
     trafficCycleConfig,
     returnRoutesVisible,
+    returnRouteHomeTileEnabled,
     returnRouteAutoEnabled,
     returnRouteCompanionEnabled,
     returnRouteTtlHours,

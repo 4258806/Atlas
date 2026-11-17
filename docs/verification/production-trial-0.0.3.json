@@ -1,0 +1,172 @@
+{
+  "kind": "user-authorized-single-production-node-trial",
+  "date": "2026-11-17",
+  "scope": "One node; six fixed-target TCP/UDP traces; no recurring schedule or other-node rollout",
+  "serverVersion": "1.6.1",
+  "pluginVersion": "0.3.1+git.a0b39e9",
+  "pluginSource": "a0b39e9dffdb9e4a3f105b5fd1aa4062590410d9",
+  "pluginSHA256": "e4a378bdc45411abbf11d09e3321d7fc9ed5ff9f1844a5e0699203a0ca4347e0",
+  "helperVersion": "0.3.1+git.df41985",
+  "helperSource": "df41985f6374e892121a73726c211755543e180d",
+  "helperSHA256": "7a1bcff0d2b58f39a1fbeded010d419484a637d89ba24fe609d6fb6c644e01ba",
+  "elapsedSeconds": 13.19,
+  "sampledPeakMemoryBytes": 20299776,
+  "cpuMeasurement": "Unavailable after the oneshot cgroup exited; not inferred or rerun",
+  "bandwidthMeasurement": "Not isolated from unrelated live traffic; no fabricated byte count",
+  "targetCity": "shanghai",
+  "targetASNVerification": [
+    {
+      "carrier": "telecom",
+      "target": "202.96.209.133",
+      "expected_asn": 4812,
+      "observed_asns": [
+        4812
+      ],
+      "matched": true,
+      "source": "Team Cymru WHOIS"
+    },
+    {
+      "carrier": "unicom",
+      "target": "210.22.97.1",
+      "expected_asn": 17621,
+      "observed_asns": [
+        17621
+      ],
+      "matched": true,
+      "source": "Team Cymru WHOIS"
+    },
+    {
+      "carrier": "mobile",
+      "target": "211.136.112.200",
+      "expected_asn": 24400,
+      "observed_asns": [
+        24400
+      ],
+      "matched": true,
+      "source": "Team Cymru WHOIS"
+    }
+  ],
+  "protocolResults": {
+    "telecom": {
+      "udp": {
+        "status": "unknown",
+        "reached": false,
+        "hops": 20,
+        "asns": [
+          4134,
+          4812
+        ],
+        "lookup": {
+          "enabled": true,
+          "queries": 9,
+          "cacheHits": 0,
+          "failures": 5
+        }
+      },
+      "tcp": {
+        "status": "unknown",
+        "reached": false,
+        "hops": 20,
+        "asns": [
+          4134,
+          4812
+        ],
+        "lookup": {
+          "enabled": true,
+          "queries": 3,
+          "cacheHits": 3,
+          "failures": 2
+        }
+      }
+    },
+    "unicom": {
+      "udp": {
+        "status": "ok",
+        "reached": true,
+        "hops": 13,
+        "asns": [
+          4134,
+          4837,
+          17621
+        ],
+        "lookup": {
+          "enabled": true,
+          "queries": 6,
+          "cacheHits": 4,
+          "failures": 1
+        }
+      },
+      "tcp": {
+        "status": "ok",
+        "reached": true,
+        "hops": 11,
+        "asns": [
+          4134,
+          4837,
+          17621
+        ],
+        "lookup": {
+          "enabled": true,
+          "queries": 4,
+          "cacheHits": 5,
+          "failures": 0
+        }
+      }
+    },
+    "mobile": {
+      "udp": {
+        "status": "unknown",
+        "reached": false,
+        "hops": 20,
+        "asns": [
+          4134,
+          9808,
+          24400
+        ],
+        "lookup": {
+          "enabled": true,
+          "queries": 5,
+          "cacheHits": 6,
+          "failures": 2
+        }
+      },
+      "tcp": {
+        "status": "unknown",
+        "reached": false,
+        "hops": 20,
+        "asns": [
+          4134,
+          24400
+        ],
+        "lookup": {
+          "enabled": true,
+          "queries": 2,
+          "cacheHits": 5,
+          "failures": 2
+        }
+      }
+    }
+  },
+  "limitations": [
+    "Only the Unicom target was reached over both protocols. Telecom/mobile traces contain partial ASN evidence and did not reach the targets.",
+    "UDP/TCP paths differ. Homepage chooses one TCP observation with an explicit uncertain status; full independent records remain administrator-only.",
+    "Target replies do not certify a commercial service tier.",
+    "Exactly one round; automatic refresh of the page does not run traceroute."
+  ],
+  "originalAgentConfigurationUnchanged": true,
+  "originalServicesUnchanged": true,
+  "helperRecurringSchedule": false,
+  "gateway": {
+    "authorization": "User explicitly approved only three exact POST routes on the existing Agent host",
+    "exactPaths": [
+      "/api/enhanced-route-probe/v1/register",
+      "/api/enhanced-route-probe/v1/poll",
+      "/api/enhanced-route-probe/v1/result"
+    ],
+    "syntaxCheck": "passed",
+    "otherVirtualHostsUnchanged": true,
+    "cloudflareConfigurationChanged": false
+  },
+  "pluginUpgradePreservedExactPrivateEvidence": true,
+  "privateAddressesTokensUUIDsAndRawHopIPsPublished": false
+}

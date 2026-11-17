@@ -1,0 +1,52 @@
+{
+  "kind": "official-Komari-1.6.1-loopback-native-reset-acceptance",
+  "productionTouched": false,
+  "history": "explicit synthetic SQL fixture",
+  "backendSHA256": "0c6e73c42ac166d34562e57037007a21692599e9e868ddae18217691e0f5d932",
+  "baselineSHA256": "54ef15efe37707109ce721ed22608745a575b3683038951b02b05d1724d3ff17",
+  "candidateSHA256": "5ae83489acaeb3d4cfb2d7e3eed63ec7e5cbd0056a7bc61fa9c538d48dd9af0f",
+  "checks": [
+    {
+      "name": "fresh official backend and verified native administrator session",
+      "status": "passed"
+    },
+    {
+      "name": "install exact baseline, upgrade candidate and preserve settings",
+      "status": "passed"
+    },
+    {
+      "name": "administrator editor persists independent timezone, day and minute on desktop and mobile",
+      "status": "passed"
+    },
+    {
+      "name": "native carrier order and display switches persist on desktop/mobile without changing billing or reset settings",
+      "status": "passed"
+    },
+    {
+      "name": "native per-metric retention and tier configuration read back without disabling metrics",
+      "status": "passed"
+    },
+    {
+      "name": "native persisted minute edge and hourly body sum exactly without history mutation",
+      "status": "passed"
+    },
+    {
+      "name": "Atlas 0.0.1 downgrade and 0.0.2 re-upgrade preserve all display and reset preferences",
+      "status": "passed"
+    },
+    {
+      "name": "rollback restores baseline plus exact legacy settings; re-upgrade never overwrites saved Atlas configuration",
+      "status": "passed"
+    },
+    {
+      "name": "native node billing stays in its own currency while the header selects one currency",
+      "status": "passed"
+    }
+  ],
+  "rateNetworkDiagnostics": [],
+  "syntheticRows": 14620,
+  "status": "passed",
+  "actualAtlasDowngradeVersion": "0.0.2",
+  "actualCandidateVersion": "0.0.3",
+  "inheritedTestTitleClarification": "The downgrade/re-upgrade test name predates this release; the actual command supplied the immutable Atlas v0.0.2 ZIP and the 0.0.3 CI candidate."
+}

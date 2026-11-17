@@ -7,6 +7,31 @@ import subprocess
 BASELINE = "0332d5f7c73f7994ba21c01e4b739d04835120b1"
 BRANDING_BASELINE = "92e6f827b5cdef105149e096365aebef28fdad74"
 ATLAS_001 = "31c69e80cb629a5ccdb0144dabf4164583a54405"
+ATLAS_002 = "aae95c6f96360ccbc1ff07e4ecfc833c70ce4e43"
+ROUTE_RUNTIME = {
+    "src/components/NodeCard.vue", "src/components/NodeReturnRouteTile.vue",
+    "src/stores/app.ts", "src/composables/useNodeReturnRoutes.ts",
+    "src/services/routeProbe.service.ts", "src/services/atlasManagement.service.ts",
+    "src/utils/routeProbeSnapshot.ts",
+}
+
+
+def audit_route_scope(source):
+    for path in git("diff", "--name-only", ATLAS_002, source).splitlines():
+        if path.startswith("src/") and not path.endswith(".md") and path not in ROUTE_RUNTIME:
+            raise ValueError(f"Out-of-scope 0.0.3 runtime: {path}")
+        if path.startswith("public/"):
+            raise ValueError(f"Out-of-scope 0.0.3 public asset: {path}")
+    before = json.loads(git("show", f"{ATLAS_002}:komari-theme.json"))
+    after = json.loads(git("show", f"{source}:komari-theme.json"))
+    extra = [f for f in after["configuration"]["data"] if f.get("key") == "returnRouteHomeTileEnabled"]
+    if len(extra) != 1 or extra[0].get("default") is not False or after.get("version") != "0.0.3":
+        raise ValueError("Invalid 0.0.3 opt-in setting/version")
+    after["configuration"]["data"] = [f for f in after["configuration"]["data"] if f.get("key") != "returnRouteHomeTileEnabled"]
+    validate_manifest(before, after)
+    for path in ("package.json", "bun.lock"):
+        if git("show", f"{ATLAS_002}:{path}") != git("show", f"{source}:{path}"):
+            raise ValueError("0.0.3 cannot change dependencies")
 DISPLAY_RUNTIME = {
     "src/components/FinanceDetailsDialog.vue", "src/constants/financeIcons.ts",
     "src/components/CarrierOrderEditor.vue", "src/components/PingHistoryLine.vue",
@@ -155,6 +180,11 @@ def main():
             raise SystemExit("0.0.2 is limited to finance dialog, carrier sorting and display options")
         audit_display_scope(source)
         stages = ("engineering", "reset", "finance", "sorting", "display", "ui-preservation", "integration", "package", "previews")
+    elif version == "0.0.3":
+        if report.get("scope") != "home-connection-and-return-route" or report.get("baseline_commit") != ATLAS_002:
+            raise SystemExit("0.0.3 is limited to homepage connection/return-route and companion integration")
+        audit_route_scope(source)
+        stages = ("engineering", "reset", "finance", "sorting", "display", "return-route", "integration", "package", "previews", "production-trial")
     else:
         stages = ("reset", "finance", "sorting", "display", "return-route", "integration")
     for stage in stages:

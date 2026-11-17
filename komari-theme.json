@@ -2,7 +2,7 @@
   "name": "Atlas",
   "short": "Atlas",
   "description": "Atlas — Komari theme with independent reset schedules and native-currency node billing",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "MagnetOscar",
   "url": "https://github.com/MagnetOscar/Atlas",
   "preview": "preview.png",
@@ -53,6 +53,7 @@
 
       { "name": "03 · 线路与延迟", "type": "title" },
       { "key": "returnRoutesVisible", "name": "显示回程线路", "type": "switch", "default": false, "help": "手动线路只需本主题，无需 Plugin、Helper 或远程执行。在卡片及详情显示三等分线路摘要；无有效结果整块隐藏，不从 Ping 延迟推断，不修改节点 tags。" },
+      { "key": "returnRouteHomeTileEnabled", "name": "首页双格回程块", "type": "switch", "default": false, "help": "首页第二行 TCP/UDP 右侧占两格；无数据显示未测，点击展开详情。旧配置默认保留原位置。" },
       { "key": "returnRouteAutoEnabled", "name": "消费已采集的自动结果", "type": "switch", "default": false, "help": "可选增强，默认关闭。只消费已有证据，不会开启远控或从浏览器启动 traceroute；生产实时自动探测尚未通过验收。" },
       { "key": "returnRouteCompanionEnabled", "name": "连接 Enhanced 回程伴生插件（管理员）", "type": "switch", "default": false, "help": "仅可选自动链路需要：Plugin 在 Komari 服务端安装一次，Helper 只在自愿参与探测的节点本地授权安装。手动线路不依赖这些组件；本页面不安装软件或开启远控，私有结果仅管理员读取。" },
       { "key": "returnRouteTtlHours", "name": "自动结果有效期（小时）", "type": "number", "default": 24, "help": "1–168 小时，过期自动结果在摘要隐藏，仅管理员详情保留状态，不以旧结果冒充当前线路。手动覆盖不参与自动 TTL。" },

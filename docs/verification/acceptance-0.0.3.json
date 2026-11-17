@@ -1,0 +1,52 @@
+{
+  "version": "0.0.3",
+  "status": "passed",
+  "source_commit": "f205a49c1822c6ba6cbf7b7f1cde66d259af7b89",
+  "baseline_commit": "aae95c6f96360ccbc1ff07e4ecfc833c70ce4e43",
+  "scope": "home-connection-and-return-route",
+  "branding": {
+    "name": "Atlas"
+  },
+  "checks": {
+    "engineering": {
+      "status": "passed",
+      "evidence": "docs/verification/release-candidate-0.0.3.json"
+    },
+    "reset": {
+      "status": "passed",
+      "evidence": "docs/verification/release-candidate-0.0.3.json"
+    },
+    "finance": {
+      "status": "passed",
+      "evidence": "docs/verification/release-candidate-0.0.3.json"
+    },
+    "sorting": {
+      "status": "passed",
+      "evidence": "docs/verification/release-candidate-0.0.3.json"
+    },
+    "display": {
+      "status": "passed",
+      "evidence": "docs/verification/release-candidate-0.0.3.json"
+    },
+    "return-route": {
+      "status": "passed",
+      "evidence": "docs/verification/release-candidate-0.0.3.json"
+    },
+    "integration": {
+      "status": "passed",
+      "evidence": "docs/verification/native-0.0.3.json"
+    },
+    "package": {
+      "status": "passed",
+      "evidence": "docs/verification/release-candidate-0.0.3.json"
+    },
+    "previews": {
+      "status": "passed",
+      "evidence": "docs/verification/release-candidate-0.0.3.json"
+    },
+    "production-trial": {
+      "status": "passed",
+      "evidence": "docs/verification/production-trial-0.0.3.json"
+    }
+  }
+}
