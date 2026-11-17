@@ -7,7 +7,7 @@ for (const width of [390, 1440]) {
   for (const dark of [false, true]) {
     test(`home TCP/UDP tile preserves original three columns at ${width}px ${dark ? 'dark' : 'light'}`, async ({ page }) => {
       await page.setViewportSize({ width, height: 1050 })
-      await installKomariFixture(page, { siteName: 'Atlas · 合成数据预览', hideEarth: true, dark, themeSettings: { showTcpConnections: true, showUdpConnections: true, carrierOrder: 'mobile,unicom,telecom' } })
+      await installKomariFixture(page, { siteName: 'Atlas · 合成数据预览', hideEarth: true, dark, pingTaskOrdering: true, themeSettings: { showTcpConnections: true, showUdpConnections: true, carrierOrder: 'mobile,unicom,telecom' } })
       await page.goto('/')
       const card = page.getByRole('button', { name: firstNode, exact: true })
       const tile = card.locator('[data-node-connections]')
@@ -26,6 +26,8 @@ for (const width of [390, 1440]) {
       expect(Math.abs(boxes[3]!.width - boxes[0]!.width)).toBeLessThan(1)
       expect(Math.abs(boxes[3]!.height - boxes[0]!.height)).toBeLessThan(1)
       expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(width)
+      await expect(card.locator('[data-node-metric-icon=cpu]')).toBeVisible()
+      await expect(card.locator('[data-node-ping-bars=latency]')).toContainText('ms')
       mkdirSync('docs/previews/home-connections', { recursive: true })
       await page.screenshot({ path: `docs/previews/home-connections/${width}-${dark ? 'dark' : 'light'}.png` })
     })
