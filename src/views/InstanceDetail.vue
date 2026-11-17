@@ -354,7 +354,7 @@ function getDetailMetricCard(key: DetailMetricCardKey): MetricCard {
     case 'processes':
       return { key, label: '进程数', value: Math.round(node?.process ?? 0).toLocaleString('zh-CN'), icon: 'tabler:list-numbers' }
     case 'connections':
-      return { key, label: '连接数', value: Math.round((node?.connections ?? 0) + (node?.connections_udp ?? 0)).toLocaleString('zh-CN'), icon: 'tabler:plug-connected', tooltip: `TCP ${node?.connections ?? 0} / UDP ${node?.connections_udp ?? 0}` }
+      return { key, label: '连接数', value: Math.round((appStore.showTcpConnections ? node?.connections ?? 0 : 0) + (appStore.showUdpConnections ? node?.connections_udp ?? 0 : 0)).toLocaleString('zh-CN'), icon: 'tabler:plug-connected', tooltip: [appStore.showTcpConnections ? `TCP ${node?.connections ?? 0}` : '', appStore.showUdpConnections ? `UDP ${node?.connections_udp ?? 0}` : ''].filter(Boolean).join(' / ') }
     case 'uptime':
       return { key, label: '运行时间', value: formatUptime(node?.uptime ?? 0), icon: 'tabler:clock-up' }
     case 'uploadSpeed': {
@@ -440,7 +440,7 @@ const trafficProgressClass = computed(() => {
   return 'bg-emerald-500/20'
 })
 
-const metricCards = computed<MetricCard[]>(() => appStore.detailMetricCardOrder.map(getDetailMetricCard))
+const metricCards = computed<MetricCard[]>(() => appStore.detailMetricCardOrder.filter(key => appStore.connectionCountsVisible || key !== 'connections').map(getDetailMetricCard))
 </script>
 
 <template>

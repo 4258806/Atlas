@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { useIntersectionObserver } from '@vueuse/core'
 import { ref, useTemplateRef } from 'vue'
+import PingHistoryLine from '@/components/PingHistoryLine.vue'
 import { useNodePingDisplay } from '@/composables/useNodePingDisplay'
+import { useAppStore } from '@/stores/app'
 
 const props = defineProps<{
   uuid: string
@@ -13,6 +15,7 @@ const emit = defineEmits<{
   click: []
 }>()
 
+const app = useAppStore()
 const pingRoot = useTemplateRef<HTMLButtonElement>('pingRoot')
 const pingVisible = ref(false)
 const { isSupported } = useIntersectionObserver(
@@ -24,6 +27,7 @@ const { isSupported } = useIntersectionObserver(
 )
 
 const {
+  pingStats,
   latencyRenderBars,
   lossRenderBars,
 } = useNodePingDisplay(() => props.uuid, {
@@ -40,7 +44,11 @@ const {
     @click.stop="emit('click')"
   >
     <div class="group/panel relative items-center gap-1 opacity-80 hover:opacity-100">
+      <div v-if="app.pingDisplayStyle === 'line'" class="h-1">
+        <PingHistoryLine :values="pingStats.history.value.map(p => p.latency)" label="延迟" />
+      </div>
       <div
+        v-else
         class="grid h-1 cursor-auto items-end gap-[1px] transition-all hover:h-2.5"
         :style="{ gridTemplateColumns: `repeat(${latencyRenderBars.length}, minmax(0, 1fr))` }"
       >
@@ -56,7 +64,11 @@ const {
       </div>
     </div>
     <div class="group/panel relative items-center gap-1 opacity-80 hover:opacity-100">
+      <div v-if="app.pingDisplayStyle === 'line'" class="h-1">
+        <PingHistoryLine :values="pingStats.history.value.map(p => p.loss)" label="丢包" />
+      </div>
       <div
+        v-else
         class="grid h-1 cursor-auto items-end gap-[1px] transition-all hover:h-2.5"
         :style="{ gridTemplateColumns: `repeat(${lossRenderBars.length}, minmax(0, 1fr))` }"
       >

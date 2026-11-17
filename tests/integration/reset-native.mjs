@@ -196,6 +196,45 @@ async function main() {
         await page.screenshot({ path: join(out, `native-reset-${width}.png`), fullPage: true })
       }
     })
+    if (process.argv.includes('--display')) {
+      await check('native carrier order and display switches persist on desktop/mobile without changing billing or reset settings', async () => {
+        for (const width of [1440, 390]) {
+          const before = (await rpc('public:getPublicSettings')).theme_settings
+          await page.setViewportSize({ width, height: 1000 })
+          await open()
+          await page.getByRole('tab', { name: '线路与延迟', exact: true }).click()
+          const editor = page.locator('[data-carrier-order-editor]')
+          await expect(editor).toBeVisible()
+          // Move using accessible controls; real drag/touch is separately exercised by browser fixtures.
+          const target = width === 1440 ? '移动' : '联通'
+          const up = page.getByRole('button', { name: `上移${target}`, exact: true })
+          for (let i = 0; i < 2; i++) {
+            if (await up.isEnabled())
+              await up.click()
+          }
+          await page.getByRole('combobox', { name: '延迟与丢包显示', exact: true }).selectOption(width === 1440 ? '波浪线' : '方块')
+          await page.getByRole('checkbox', { name: '显示 TCP 连接数', exact: true }).setChecked(width !== 1440)
+          await page.getByRole('checkbox', { name: '显示 UDP 连接数', exact: true }).setChecked(width === 1440)
+          await page.getByRole('button', { name: '保存本分类设置', exact: true }).click()
+          await expect(page.locator('[data-theme-settings-panel] > [role=status]')).toContainText('已保存并读回')
+          const after = (await rpc('public:getPublicSettings')).theme_settings
+          const changed = new Set(['carrierOrder', 'pingDisplayStyle', 'showTcpConnections', 'showUdpConnections'])
+          for (const key of Object.keys(before)) {
+            if (!changed.has(key))
+              assert.deepEqual(after[key], before[key], key)
+          }
+          assert.equal(after.pingDisplayStyle, width === 1440 ? '波浪线' : '方块')
+          assert.equal(after.showTcpConnections, width !== 1440)
+          assert.equal(after.showUdpConnections, width === 1440)
+          await page.reload()
+          await page.getByRole('button', { name: 'Atlas 管理', exact: true }).click()
+          await page.getByRole('tab', { name: '线路与延迟', exact: true }).click()
+          await expect(page.getByRole('combobox', { name: '延迟与丢包显示', exact: true })).toHaveValue(after.pingDisplayStyle)
+          const persisted = await rpc('admin:dbQuery', { sql: 'SELECT data FROM theme_configurations WHERE short = ?', args: ['Atlas'], limit: 1 })
+          assert.deepEqual(JSON.parse(persisted.rows[0][0]), after)
+        }
+      })
+    }
     await check('native per-metric retention and tier configuration read back without disabling metrics', async () => {
       await rpc('admin:editSettings', { metric_rollup_minute_retention_minutes: 48000, metric_rollup_five_minute_retention_minutes: 49000, metric_rollup_hour_retention_hours: 840 })
       for (const name of ['traffic.up', 'traffic.down', 'net.total.up', 'net.total.down']) {
@@ -230,6 +269,19 @@ async function main() {
       const verify = JSON.parse(execFileSync(python, [join(root, 'tests/integration/seed-reset-history.py'), join(state, 'data/metrics.db'), join(state, 'fixture-plan.json'), '--verify'], { encoding: 'utf8' }))
       assert.equal(verify.sha256, seeded.sha256)
     })
+    const atlasBaselineIndex = process.argv.indexOf('--atlas-baseline')
+    if (atlasBaselineIndex >= 0) {
+      await check('Atlas 0.0.1 downgrade and 0.0.2 re-upgrade preserve all display and reset preferences', async () => {
+        const saved = (await rpc('public:getPublicSettings')).theme_settings
+        await upload(resolve(process.argv[atlasBaselineIndex + 1]))
+        await page.goto(origin)
+        assert.deepEqual((await rpc('public:getPublicSettings')).theme_settings, saved)
+        await expect(page.locator('[data-ping-line]')).toHaveCount(0)
+        await upload(candidate)
+        await page.reload()
+        assert.deepEqual((await rpc('public:getPublicSettings')).theme_settings, saved)
+      })
+    }
     await check('rollback restores baseline plus exact legacy settings; re-upgrade never overwrites saved Atlas configuration', async () => {
       const savedAtlas = (await rpc('public:getPublicSettings')).theme_settings
       await upload(baseline)

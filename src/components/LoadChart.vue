@@ -1422,7 +1422,7 @@ const connectionsChartOption = computed(() => ({
     },
   },
   legend: {
-    data: ['TCP', 'UDP'],
+    data: [appStore.showTcpConnections ? 'TCP' : '', appStore.showUdpConnections ? 'UDP' : ''].filter(Boolean),
     bottom: 4,
     itemWidth: 12,
     itemHeight: 12,
@@ -1459,7 +1459,7 @@ const connectionsChartOption = computed(() => ({
       showSymbol: false,
       lineStyle: { width: 1.5, color: chartColors.tertiary, cap: 'round' as const },
     },
-  ],
+  ].filter(series => series.name === 'TCP' ? appStore.showTcpConnections : appStore.showUdpConnections),
 }))
 
 // 进程数图表
@@ -1773,13 +1773,13 @@ onMounted(() => {
         />
 
         <!-- 连接数卡片 -->
-        <CardX v-if="isChartCardEnabled('connections')" size="small" class="bg-background/50 border-none hover:bg-background transition-all rounded-md" :style="getChartCardStyle('connections')">
+        <CardX v-if="appStore.connectionCountsVisible && isChartCardEnabled('connections')" size="small" class="bg-background/50 border-none hover:bg-background transition-all rounded-md" :style="getChartCardStyle('connections')">
           <template #header>
             <MetricChartHeader title="网络连接" icon="tabler:binary-tree" tone="amber">
               <div class="text-xs flex gap-1 items-baseline">
-                <span>TCP: {{ latestStatus?.connections ?? '-' }}</span>
-                <span>·</span>
-                <span>UDP: {{ latestStatus?.connections_udp ?? '-' }}</span>
+                <span v-if="appStore.showTcpConnections">TCP: {{ latestStatus?.connections ?? '-' }}</span>
+                <span v-if="appStore.showTcpConnections && appStore.showUdpConnections">·</span>
+                <span v-if="appStore.showUdpConnections">UDP: {{ latestStatus?.connections_udp ?? '-' }}</span>
               </div>
             </MetricChartHeader>
           </template>

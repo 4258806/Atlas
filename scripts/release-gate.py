@@ -6,6 +6,49 @@ import subprocess
 
 BASELINE = "0332d5f7c73f7994ba21c01e4b739d04835120b1"
 BRANDING_BASELINE = "92e6f827b5cdef105149e096365aebef28fdad74"
+ATLAS_001 = "31c69e80cb629a5ccdb0144dabf4164583a54405"
+DISPLAY_RUNTIME = {
+    "src/components/FinanceDetailsDialog.vue", "src/constants/financeIcons.ts",
+    "src/components/CarrierOrderEditor.vue", "src/components/PingHistoryLine.vue",
+    "src/components/LoadChart.vue", "src/components/NodeCard.vue",
+    "src/components/NodeGeneralCards.vue", "src/components/NodePingListCell.vue",
+    "src/components/ThemeSettingsPanel.vue", "src/composables/useNodeCarrierPingDisplay.ts",
+    "src/stores/app.ts", "src/utils/displayPreferences.ts", "src/utils/themeSettings.ts",
+    "src/views/InstanceDetail.vue",
+}
+DISPLAY_DEFAULTS = {"carrierOrder": "unicom,telecom,mobile", "pingDisplayStyle": "方块",
+                    "showTcpConnections": True, "showUdpConnections": True}
+
+
+def validate_display_paths(paths):
+    for path in paths:
+        if path.startswith("src/") and not path.endswith(".md") and path not in DISPLAY_RUNTIME:
+            raise ValueError(f"Out-of-scope 0.0.2 runtime: {path}")
+        if path.startswith("public/") and path != "public/licenses/tabler-icons-MIT.txt":
+            raise ValueError(f"Out-of-scope 0.0.2 public asset: {path}")
+
+
+def validate_display_manifest(before, after):
+    after = json.loads(json.dumps(after))
+    fields = after["configuration"]["data"]
+    added = [f for f in fields if f.get("key") in DISPLAY_DEFAULTS]
+    if len(added) != 4 or any(f.get("default") != DISPLAY_DEFAULTS[f["key"]] for f in added):
+        raise ValueError("Missing or invalid 0.0.2 display defaults")
+    after["configuration"]["data"] = [f for f in fields if f.get("key") not in DISPLAY_DEFAULTS]
+    validate_manifest(before, after)
+
+
+def audit_display_scope(source):
+    changes = git("diff", "--name-only", ATLAS_001, source).splitlines()
+    validate_display_paths(changes)
+    before = json.loads(git("show", f"{ATLAS_001}:komari-theme.json"))
+    after = json.loads(git("show", f"{source}:komari-theme.json"))
+    if after.get("version") != "0.0.2":
+        raise ValueError("Expected 0.0.2 source")
+    validate_display_manifest(before, after)
+    for path in ("package.json", "bun.lock"):
+        if git("show", f"{ATLAS_001}:{path}") != git("show", f"{source}:{path}"):
+            raise ValueError("0.0.2 cannot change dependency manifests/lockfile")
 BRANDING_RUNTIME = {
     "src/components/Header.vue", "src/components/Footer.vue",
     "src/components/EnhancedManagementDialog.vue", "src/components/AtlasManagementDialog.vue",
@@ -107,6 +150,11 @@ def main():
             raise SystemExit("0.0.1 is authorized for engineering, independent reset and finance only")
         audit_scope(source)
         stages = ("engineering", "reset", "finance", "ui-preservation", "integration", "package")
+    elif version == "0.0.2":
+        if report.get("scope") != "finance-dialog-sorting-display" or report.get("baseline_commit") != ATLAS_001:
+            raise SystemExit("0.0.2 is limited to finance dialog, carrier sorting and display options")
+        audit_display_scope(source)
+        stages = ("engineering", "reset", "finance", "sorting", "display", "ui-preservation", "integration", "package", "previews")
     else:
         stages = ("reset", "finance", "sorting", "display", "return-route", "integration")
     for stage in stages:

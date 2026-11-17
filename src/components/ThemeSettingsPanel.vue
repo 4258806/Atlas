@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { SettingsGroup } from '@/utils/themeSettings'
 import { computed, onMounted, ref, watch } from 'vue'
+import CarrierOrderEditor from '@/components/CarrierOrderEditor.vue'
 import ManualRouteManager from '@/components/ManualRouteManager.vue'
 import TrafficCycleManager from '@/components/TrafficCycleManager.vue'
 import { Button } from '@/components/ui/button'
@@ -89,7 +90,8 @@ watch(() => app.publicSettings?.theme_settings, (settings) => {
       <div class="grid gap-3 sm:grid-cols-2">
         <label v-for="field in basicFields" :key="field.key" class="min-w-0 space-y-1 rounded-md border border-border/50 p-3 text-sm" :class="field.type === 'richtext' && 'sm:col-span-2'">
           <span class="block font-medium">{{ settingText(field.name) }}</span>
-          <input v-if="field.type === 'switch'" type="checkbox" :checked="draft[field.key] === true" :aria-label="settingText(field.name)" :disabled="busy" @change="setField(field.key, field.type, $event)">
+          <CarrierOrderEditor v-if="field.key === 'carrierOrder'" :model-value="String(draft[field.key])" :disabled="busy" @update:model-value="draft[field.key] = $event" />
+          <input v-else-if="field.type === 'switch'" type="checkbox" :checked="draft[field.key] === true" :aria-label="settingText(field.name)" :disabled="busy" @change="setField(field.key, field.type, $event)">
           <select v-else-if="field.type === 'select'" :value="draft[field.key]" :aria-label="settingText(field.name)" :disabled="busy" class="h-9 w-full rounded-md border border-border bg-background px-2" @change="setField(field.key, field.type, $event)"><option v-for="option in field.options?.split(',').map(s => s.trim()).filter(Boolean)" :key="option" :value="option">{{ option }}</option></select>
           <textarea v-else-if="field.type === 'richtext'" :value="String(draft[field.key] ?? '')" :aria-label="settingText(field.name)" :disabled="busy" rows="3" class="w-full rounded-md border border-border bg-background p-2 font-mono text-xs" @input="setField(field.key, field.type, $event)" />
           <input v-else :type="field.type === 'number' ? 'number' : field.key === 'exportSecondaryPassword' ? 'password' : 'text'" :value="String(draft[field.key] ?? '')" :aria-label="settingText(field.name)" :disabled="busy" class="h-9 w-full rounded-md border border-border bg-background px-2" @input="setField(field.key, field.type, $event)">

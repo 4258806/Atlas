@@ -20,6 +20,8 @@ export interface CarrierPingDisplay {
   taskNames: string[]
   latencyDisplay: string
   lossDisplay: string
+  latencyHistory: Array<number | null>
+  lossHistory: Array<number | null>
   latencyBars: CarrierPingBar[]
   lossBars: CarrierPingBar[]
   latencyTooltip: string
@@ -109,7 +111,7 @@ export function useNodeCarrierPingDisplay(
   const appStore = useAppStore()
   const carrierStats = computed(() => transit?.value?.carriers ?? aggregateChinaCarrierPingStats(source.taskStats.value))
 
-  const carrierDisplays = computed<CarrierPingDisplay[]>(() => carrierStats.value.map((carrier) => {
+  const carrierDisplays = computed<CarrierPingDisplay[]>(() => [...carrierStats.value].sort((a, b) => appStore.carrierOrder.indexOf(a.key) - appStore.carrierOrder.indexOf(b.key)).map((carrier) => {
     const isZh = appStore.lang === 'zh-CN'
     const label = isZh ? carrier.labelZh : carrier.labelEn
     const loadingText = isZh ? '加载中' : 'Loading'
@@ -170,6 +172,8 @@ export function useNodeCarrierPingDisplay(
       taskNames: carrier.taskNames,
       latencyDisplay: estimate ? (carrier.hasLatency ? `≈${latencyDisplay}` : '--') : latencyDisplay,
       lossDisplay: estimate ? (carrier.stats.hasData ? `≈${lossDisplay}` : '--') : lossDisplay,
+      latencyHistory: carrier.stats.history.map(p => p.latency),
+      lossHistory: carrier.stats.history.map(p => p.loss),
       latencyBars,
       lossBars,
       latencyTooltip: estimate ? transitLatencyTooltip : latencyTooltip,

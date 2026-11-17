@@ -7,8 +7,8 @@ The 2026-11-17 UI constraint preserves the fork-time public layout, styles, defa
 1. Engineering: non-mutating lint, Linux unit/helper tests, browser regression, clean-source native ZIP validation and guarded manual release.
 2. Node reset schedules: timezone/day/hour/minute, DST and month-end rules, migration without deleting traffic history.
 3. Finance: native node currencies; support multiple currencies but display only one selected currency in the home aggregate; validated, attributed, fresh FX sources. No simultaneous extra-currency UI.
-4. Carrier ordering: suspended under the later UI constraint; no drag handles, keyboard/touch UI or new controls are currently authorized.
-5. Display: suspended under the later UI constraint; no blocks/sparklines or TCP/UDP presentation changes are currently authorized.
+4. Carrier ordering: re-authorized for 0.0.2 on 2026-11-17; persist drag ordering with touch/keyboard equivalents through native global settings.
+5. Display: re-authorized for 0.0.2; blocks/line choice and TCP/UDP count visibility in existing positions, preserving collection and original defaults. Include finance-dialog PR #10 and generate desktop/mobile previews before release preparation. See [0.0.2 scope](plan-0.0.2.md).
 6. Return routes: audit existing opt-in helper/plugin; verify targets/ASN and measured DMIT trial before rollout.
 7. Acceptance: desktop/mobile, persisted settings, boundary cases, actual theme install/upgrade/rollback.
 8. Release: independent version/tag, native ZIP, SHA256, source and acceptance links, downloaded asset verification.
