@@ -1,0 +1,117 @@
+{
+  "version": "0.0.2",
+  "status": "published-and-downloaded-asset-verified",
+  "tag": "atlas-v0.0.2",
+  "release": "https://github.com/MagnetOscar/Atlas/releases/tag/atlas-v0.0.2",
+  "published_at": "2026-11-17T13:12:09Z",
+  "source_commit": "aae95c6f96360ccbc1ff07e4ecfc833c70ce4e43",
+  "accepted_runtime_source": "597df8cb27be935a838dd134c1b36725df7f2ff9",
+  "diff": "https://github.com/MagnetOscar/Atlas/compare/atlas-v0.0.1...atlas-v0.0.2",
+  "run": "https://github.com/MagnetOscar/Atlas/actions/runs/44088648183",
+  "package": {
+    "version": "0.0.2",
+    "commit": "aae95c6f96360ccbc1ff07e4ecfc833c70ce4e43",
+    "dirty": false,
+    "mode": "production",
+    "sha256": "5a21440ff77a20a073b4fed0f69c012cb6d0ecc9fb7a955111ddcb31348c4d2b",
+    "file": "komari-theme-Atlas-build-aae95c6.zip",
+    "entries": 785,
+    "download": "https://github.com/MagnetOscar/Atlas/releases/download/atlas-v0.0.2/komari-theme-Atlas-build-aae95c6.zip",
+    "github_digest": "sha256:5a21440ff77a20a073b4fed0f69c012cb6d0ecc9fb7a955111ddcb31348c4d2b",
+    "digestMatches": true
+  },
+  "validation": {
+    "unitCases": 426,
+    "browserCases": 237,
+    "nativeChecks": [
+      {
+        "name": "fresh official backend and verified native administrator session",
+        "status": "passed"
+      },
+      {
+        "name": "install exact baseline, upgrade candidate and preserve settings",
+        "status": "passed"
+      },
+      {
+        "name": "administrator editor persists independent timezone, day and minute on desktop and mobile",
+        "status": "passed"
+      },
+      {
+        "name": "native carrier order and display switches persist on desktop/mobile without changing billing or reset settings",
+        "status": "passed"
+      },
+      {
+        "name": "native per-metric retention and tier configuration read back without disabling metrics",
+        "status": "passed"
+      },
+      {
+        "name": "native persisted minute edge and hourly body sum exactly without history mutation",
+        "status": "passed"
+      },
+      {
+        "name": "Atlas 0.0.1 downgrade and 0.0.2 re-upgrade preserve all display and reset preferences",
+        "status": "passed"
+      },
+      {
+        "name": "rollback restores baseline plus exact legacy settings; re-upgrade never overwrites saved Atlas configuration",
+        "status": "passed"
+      },
+      {
+        "name": "native node billing stays in its own currency while the header selects one currency",
+        "status": "passed"
+      }
+    ],
+    "nativeEvidence": {
+      "kind": "official-Komari-1.6.1-loopback-native-reset-acceptance",
+      "productionTouched": false,
+      "history": "explicit synthetic SQL fixture",
+      "backendSHA256": "0c6e73c42ac166d34562e57037007a21692599e9e868ddae18217691e0f5d932",
+      "baselineSHA256": "54ef15efe37707109ce721ed22608745a575b3683038951b02b05d1724d3ff17",
+      "candidateSHA256": "5a21440ff77a20a073b4fed0f69c012cb6d0ecc9fb7a955111ddcb31348c4d2b",
+      "checks": [
+        {
+          "name": "fresh official backend and verified native administrator session",
+          "status": "passed"
+        },
+        {
+          "name": "install exact baseline, upgrade candidate and preserve settings",
+          "status": "passed"
+        },
+        {
+          "name": "administrator editor persists independent timezone, day and minute on desktop and mobile",
+          "status": "passed"
+        },
+        {
+          "name": "native carrier order and display switches persist on desktop/mobile without changing billing or reset settings",
+          "status": "passed"
+        },
+        {
+          "name": "native per-metric retention and tier configuration read back without disabling metrics",
+          "status": "passed"
+        },
+        {
+          "name": "native persisted minute edge and hourly body sum exactly without history mutation",
+          "status": "passed"
+        },
+        {
+          "name": "Atlas 0.0.1 downgrade and 0.0.2 re-upgrade preserve all display and reset preferences",
+          "status": "passed"
+        },
+        {
+          "name": "rollback restores baseline plus exact legacy settings; re-upgrade never overwrites saved Atlas configuration",
+          "status": "passed"
+        },
+        {
+          "name": "native node billing stays in its own currency while the header selects one currency",
+          "status": "passed"
+        }
+      ],
+      "rateNetworkDiagnostics": [],
+      "syntheticRows": 13744,
+      "status": "passed"
+    }
+  },
+  "previews": "https://github.com/MagnetOscar/Atlas/tree/atlas-v0.0.2/docs/previews/0.0.2",
+  "productionTouched": false,
+  "previousReleasesPreserved": true
+}
