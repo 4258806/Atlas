@@ -83,6 +83,11 @@ const nodeCardCarrierPingPanelClass = computed(() => {
 
 const formatBytes = (bytes: number) => formatBytesWithConfig(bytes, appStore.byteDecimals)
 const formatBytesPerSecond = (bytes: number) => formatBytesPerSecondWithConfig(bytes, appStore.byteDecimals)
+function formatConnectionCount(value: number | undefined): string {
+  return props.node.online && typeof value === 'number' && Number.isFinite(value) && value >= 0
+    ? Math.round(value).toLocaleString('en-US')
+    : '—'
+}
 const offlineTime = computed(() => formatDateTime(props.node.time))
 
 const cpuStatus = computed(() => getStatus(props.node.cpu ?? 0))
@@ -419,7 +424,7 @@ function hasRegion(region: string | null | undefined): boolean {
           </div>
         </div>
 
-        <!-- 三列：网速 / 总流量 / 剩余天数+价格或负载 -->
+        <!-- 三列：网速 / 总流量 / 剩余天数+价格或负载；下一行显示连接数 -->
         <div class="grid gap-1.5" :class="nodeCardMetricGridClass">
           <!-- 实时网速 -->
           <div class="flex flex-col gap-0.5 rounded-lg bg-slate-500/5 min-w-0 overflow-hidden" :class="nodeCardMetricBoxClass">
@@ -471,6 +476,24 @@ function hasRegion(region: string | null | undefined): boolean {
               </div>
             </template>
           </div>
+
+          <!-- TCP/UDP connection counts -->
+          <div
+            v-if="appStore.connectionCountsVisible"
+            data-node-connections
+            class="grid grid-rows-2 gap-0.5 rounded-lg bg-slate-500/5 min-w-0 overflow-hidden"
+            :class="nodeCardMetricBoxClass"
+          >
+            <div v-if="appStore.showTcpConnections" data-node-connection="tcp" class="text-[11px] text-muted-foreground flex items-center justify-between gap-1">
+              <span class="shrink-0">TCP</span>
+              <span class="truncate min-w-0 tabular-nums" :title="formatConnectionCount(props.node.connections)">{{ formatConnectionCount(props.node.connections) }}</span>
+            </div>
+            <div v-if="appStore.showUdpConnections" data-node-connection="udp" class="text-[11px] text-muted-foreground flex items-center justify-between gap-1">
+              <span class="shrink-0">UDP</span>
+              <span class="truncate min-w-0 tabular-nums" :title="formatConnectionCount(props.node.connections_udp)">{{ formatConnectionCount(props.node.connections_udp) }}</span>
+            </div>
+          </div>
+          <!-- /TCP/UDP connection counts -->
         </div>
 
         <!-- 联通 / 电信 / 移动三网延迟 + 丢包 -->

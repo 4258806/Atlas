@@ -4,6 +4,8 @@ This guide applies to [src/](./). For full project context, read [../AIAGENTREAD
 
 ## Source-tree rule of thumb
 
+- Latest homepage-card authorization: add only a fourth mini metric tile on a new second row of the existing three-column grid in NodeCard.vue, showing TCP/UDP live counts under the existing switches. Match the existing individual tile size/style; both switches off hides the tile and row. Do not alter the first three tiles or unrelated UI/data semantics.
+
 - Latest 0.0.2 authorization permits only finance-dialog PR #10, saved carrier ordering, blocks/line selection and TCP/UDP count visibility, with desktop/mobile previews. This supersedes the earlier suspension for steps 4–5 only. Reuse native settings, existing data sources/positions; do not change map/globe, collection, reset or FX semantics.
 
 - Later Atlas naming authorization permits the exact theme text, footer project link, document title, metadata and source-symbol renames. Public layout/style/renderers stay fixed. The current short is Atlas. Enhanced appears only as the old configuration migration source. Preserve existing Atlas settings, the old configuration, optional companion protocol IDs and original copyright/source notices.

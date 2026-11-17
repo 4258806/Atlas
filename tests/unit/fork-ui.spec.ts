@@ -4,6 +4,15 @@ import { expect, test } from '@playwright/test'
 import { BASELINE, BRAND_RENAMES, digest, headerLayout, presentation, protectedContent, RESET_EDITOR } from '../feasibility/fork-ui-contract.mjs'
 
 const root = resolve(import.meta.dirname, '../..')
+const homeConnectionContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-connection-ui.json'), 'utf8')) as { presentation: string }
+function inheritedPresentation(path: string): string {
+  const source = readFileSync(resolve(root, path), 'utf8')
+  // The user explicitly authorized exactly one additional metric tile. Keep
+  // the 0.0.2 contract unchanged for everything outside its marked subtree.
+  return presentation(path === 'src/components/NodeCard.vue'
+    ? source.replace(/<!-- TCP\/UDP connection counts -->[\s\S]*?<!-- \/TCP\/UDP connection counts -->/, '')
+    : source)
+}
 const displayContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/display-ui-0.0.2.json'), 'utf8')) as { components: Record<string, string>, protectedFiles: Record<string, string>, headerLayout: string }
 const contract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/fork-ui-contract.json'), 'utf8')) as {
   baseline: string
@@ -27,7 +36,7 @@ for (const [path, expected] of Object.entries(contract.components)) {
     // The 2026-11-17 request permits only the finance dialog's closed border
     // and compact layout. All other inherited presentation remains pinned.
     const accepted = displayContract.components[currentPath] ?? (path === 'src/components/FinanceDetailsDialog.vue' ? contract.financeDialogPresentation : expected)
-    expect(presentation(readFileSync(resolve(root, currentPath), 'utf8'))).toBe(accepted)
+    expect(inheritedPresentation(currentPath)).toBe(accepted)
   })
 }
 
@@ -46,7 +55,14 @@ test('0.0.2 UI exceptions are limited to the requested display surfaces', () => 
   expect(Object.keys(displayContract.components).sort()).toEqual(['src/components/CarrierOrderEditor.vue', 'src/components/LoadChart.vue', 'src/components/NodeCard.vue', 'src/components/NodeGeneralCards.vue', 'src/components/NodePingListCell.vue', 'src/components/PingHistoryLine.vue', 'src/components/ThemeSettingsPanel.vue', 'src/views/InstanceDetail.vue'].sort())
   expect(Object.keys(displayContract.protectedFiles).sort()).toEqual(['komari-theme.json', 'src/stores/app.ts'])
   for (const [path, expected] of Object.entries(displayContract.components))
-    expect(presentation(readFileSync(resolve(root, path), 'utf8')), path).toBe(expected)
+    expect(inheritedPresentation(path), path).toBe(expected)
+})
+
+test('homepage connection tile is the sole newly authorized presentation subtree', () => {
+  const source = readFileSync(resolve(root, 'src/components/NodeCard.vue'), 'utf8')
+  expect(source.match(/<!-- TCP\/UDP connection counts -->/g)).toHaveLength(1)
+  expect(source.match(/<!-- \/TCP\/UDP connection counts -->/g)).toHaveLength(1)
+  expect(presentation(source)).toBe(homeConnectionContract.presentation)
 })
 
 test('the required source credit can only reuse the exact existing text style and target', () => {

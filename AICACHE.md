@@ -2,6 +2,10 @@
 
 Public development records only. Do not add deployment addresses, identifiers, credentials or private infrastructure details. Inherited upstream logs remain in Git history; their permissions and results do not authorize or validate current work.
 
+## Current: homepage TCP/UDP mini tile (2026-11-17)
+
+- Implemented on feat/home-connection-counts: one TCP/UDP tile below the existing three metric tiles at the same individual width/style. Reuses existing visibility switches/live counters, unavailable values display a dash, both off removes the tile/row. Only NodeCard.vue runtime changed; no reset/finance/collection changes. Local lint/type/production build and 81 unit/contract cases pass; 12 dedicated browser cases passed assertions across desktop/mobile, light/dark, all sizes, switches, live/zero/missing/offline/large values. Full local unit collection is blocked by missing python3 on Windows PATH; wait for complete GitHub Linux CI. Synthetic previews: docs/previews/home-connections. Evidence/boundaries: docs/verification/home-connections.md. Preserve old 0.0.2 presentation hashes and screenshot references, checking inherited screenshots with only the new authorized tile hidden. This is development only: do not overwrite Atlas v0.0.2, select/publish a new version or deploy production without a subsequent instruction.
+
 ## Current: Atlas v0.0.1 / Atlas v0.0.2 Release titles (2026-11-17)
 
 - Latest user instruction supersedes the earlier retained pre-rename Release requirement: delete only the duplicate personal-v0.0.1 Release and its attached historical build; retain that Git tag/source history and local archive. Release list now contains only Atlas v0.0.1 and Atlas v0.0.2; both formal releases retain their existing tags/assets/checksums. Future Release and versioned material titles use Atlas v<version>; numeric manifest versions, atlas-v<version> tags and build-SHA ZIP filenames are unchanged. Scope is Release metadata, publication title automation and documentation only; no runtime, rebuild, new release or production deployment.
