@@ -1,11 +1,17 @@
 # Fork UI preservation
 
-The user's 2026-11-17 correction takes precedence over earlier feature and UI plans.
+The user's 2026-11-17 correction and subsequent explicit 0.0.1 release scope take precedence over earlier plans.
 
 - Reference: original fork baseline `0332d5f7c73f7994ba21c01e4b739d04835120b1` (`baseline/v1.2.1`). Preserve its layout, styles, visual attributes, defaults, globe/map components and assets.
 - Development scope is backend parameters and features. Do not add frontend controls, redesign panels, change sizes/spacing/colors/icons, or modify the original rendering choices. Existing positions may display corrected business data without a new layout or extra currency badges.
 - A future three-network synthesis display may be considered only after explicit discussion, using exactly the existing UI form. It is not authorized now. Earlier drag-order and display-toggle plans are suspended.
 - This repository builds a Vue theme. Its services, composables and calculations execute on the client; they are not the Komari Server backend. A real server implementation needs the relevant backend source and a separately defined implementation scope.
+
+## Authorized 0.0.1 configuration fields
+
+The user subsequently required steps 1–3 together and explicitly retained independent reset time. The accepted timezone/day/hour/minute administrator editor from commit `2d658f641ef9401b7426527014ec73bfa9404f5f` is included in 0.0.1. Only its two configuration-table components use that exact presentation reference; the remaining public UI/components retain the original fork reference. This restores the ability to configure the feature without changing public cards, maps or layout.
+
+The independent manifest version is release metadata; every other manifest field/default stays unchanged. ExchangeRate-API requires a link on the application using its data. The link reuses the exact existing rate-information text position and visual class in the finance dialog, with no added header row. The UI contract normalizes only this exact fixed link/style; changed targets/styles or extra nested elements still fail. Earlier day-only-editor rollback records remain historical and do not describe the final 0.0.1 capability.
 
 ## Corrective rollback
 

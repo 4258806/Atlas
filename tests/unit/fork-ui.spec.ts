@@ -1,11 +1,12 @@
 import { readdirSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { expect, test } from '@playwright/test'
-import { BASELINE, digest, headerLayout, presentation } from '../feasibility/fork-ui-contract.mjs'
+import { BASELINE, digest, headerLayout, presentation, protectedContent, RESET_EDITOR } from '../feasibility/fork-ui-contract.mjs'
 
 const root = resolve(import.meta.dirname, '../..')
 const contract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/fork-ui-contract.json'), 'utf8')) as {
   baseline: string
+  configurationReference: string
   components: Record<string, string>
   protectedFiles: Record<string, string>
   headerLayout: string
@@ -13,6 +14,7 @@ const contract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/fork-ui-c
 
 test('fork UI contract is bound to the immutable original source', () => {
   expect(contract.baseline).toBe(BASELINE)
+  expect(contract.configurationReference).toBe(RESET_EDITOR)
   const files = readdirSync(resolve(root, 'src'), { recursive: true }).map(String).filter(path => path.endsWith('.vue')).map(path => `src/${path.replaceAll('\\', '/')}`).sort()
   expect(files).toEqual(Object.keys(contract.components).sort())
 })
@@ -30,7 +32,14 @@ test('header layout helpers exactly match the inherited grid and dimensions', ()
 test('fork globe/map sources, image assets, styles, defaults and screenshot references stay unchanged', () => {
   for (const [path, expected] of Object.entries(contract.protectedFiles)) {
     const value = readFileSync(resolve(root, path))
-    const normalized = /\.(?:vue|ts|css|json|svg)$/.test(path) ? value.toString('utf8').replaceAll('\r\n', '\n') : value
-    expect(digest(normalized), path).toBe(expected)
+    expect(digest(protectedContent(path, value)), path).toBe(expected)
   }
+})
+
+test('the required source credit can only reuse the exact existing text style and target', () => {
+  const original = '<template><p class="text-xs text-muted-foreground">{{ sourceLabels[source] }} {{ formatRateUpdatedAt() }}</p></template>'
+  const credit = '<template><a href="https://www.exchangerate-api.com" target="_blank" rel="noopener noreferrer" class="text-xs text-muted-foreground">{{ sourceLabels[source] }} {{ formatRateUpdatedAt() }} Rates By Exchange Rate API</a></template>'
+  expect(presentation(credit)).toBe(presentation(original))
+  expect(presentation(credit.replace('text-xs', 'text-xl'))).not.toBe(presentation(original))
+  expect(presentation(credit.replace('www.exchangerate-api.com', 'example.com'))).not.toBe(presentation(original))
 })

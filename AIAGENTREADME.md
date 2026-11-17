@@ -21,7 +21,7 @@
 
 当前维护仓库为 **[MagnetOscar/Glassmorphism-Enhanced](https://github.com/MagnetOscar/Glassmorphism-Enhanced)**，由 casiuna/Glassmorphism-Enhanced 公开 Fork，用于个人服务器监控主题的二次开发。固定原始基线为上游 v1.2.1（`0332d5f7c73f7994ba21c01e4b739d04835120b1`），详见 [FORK.md](FORK.md)。使用 Vue 3 + Vite 构建，发布产物是 Komari 可以导入的 ZIP。
 
-当前清单 `1.2.1` 仍是未修改的上游版本，不是本 Fork 自有新发行。后续正式软件版本采用明确且与继承历史区分的 SemVer、独立 tag、GitHub Release 和安装 ZIP，保留旧版本；所有交付改动先同步到本账号仓库并提供 diff。文档变更不制造软件版本。验收、使用、打包、发布与部署遵循 [docs/releasing.md](docs/releasing.md)，上游旧日志中的发布批准不能作为当前授权。
+用户选定本 Fork 首次独立正式发行版本为 `0.0.1`，范围为路线第 1–3 步，保留已验收的后台独立时区／日期／时分参数和本币金额／单一币种汇总。前台布局、地图和地球保持原样。正式软件版本采用与继承历史区分的 SemVer、独立 tag、GitHub Release 和原生安装 ZIP，保留旧版本；所有交付改动先同步到本账号仓库并提供 diff。文档变更不制造软件版本。用户自行上传切换，本次发布不授权改生产。详见 [docs/releasing.md](docs/releasing.md)。
 
 Transit Carrier Ping 遵循 Component → Composable → shared Ping source：store 归一化规则，`transitCarrierPing.ts` 纯函数派生，`useNodeCarrierPingSource` 仅选择一个 direct/relay source，沿用 `useNodeCarrierPingDisplay`。配置默认关闭；不得增加生产名称/地址或第二套请求链。确定性与 UI 测试位于 `tests/visual/transit.spec.ts`，使用现有 Playwright 体系。
 

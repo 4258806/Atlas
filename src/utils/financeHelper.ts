@@ -2,7 +2,7 @@ import type { NodeData } from '@/stores/nodes'
 import { isFreeNode } from '@/utils/tagHelper'
 
 export type CurrencyCode = 'CNY' | 'USD' | 'HKD' | 'EUR' | 'GBP' | 'JPY' | 'RUB' | 'CHF' | 'INR' | 'VND' | 'THB' | 'CAD' | 'SGD'
-export type ExchangeRates = Record<CurrencyCode, number>
+export type ExchangeRates = Record<CurrencyCode, number> & Record<string, number>
 export type ExchangeRateSource = 'cache' | 'network' | 'stale-cache' | 'default' | 'unavailable'
 
 export type MeteredTrafficMode = 'sum' | 'max' | 'up' | 'down'
@@ -103,6 +103,13 @@ export function getTodayDateKey(date = new Date()): string {
   const month = String(date.getMonth() + 1).padStart(2, '0')
   const day = String(date.getDate()).padStart(2, '0')
   return `${year}-${month}-${day}`
+}
+
+/** Node metadata is input, not a request to convert an unknown currency to CNY. */
+export function nativeCurrency(currency: string | null | undefined): string {
+  const input = String(currency ?? '').trim()
+  const normalized = normalizeCurrency(input)
+  return normalized !== 'CNY' || ['', 'CNY', 'RMB', '¥', '￥'].includes(input.toUpperCase()) ? normalized : input
 }
 
 export function shouldExcludeFreeNodes(): boolean {
@@ -344,23 +351,23 @@ export function calculateRemainingValueNative(node: NodeData, now = new Date()):
   return calculateRemainingValueCNY({ ...node, currency: 'CNY' }, { CNY: 1 } as ExchangeRates, now)
 }
 
-export function nativeMonthlyTotals(nodes: NodeData[]): Array<{ currency: CurrencyCode, amount: number }> {
-  const totals = new Map<CurrencyCode, number>()
+export function nativeMonthlyTotals(nodes: NodeData[]): Array<{ currency: string, amount: number }> {
+  const totals = new Map<string, number>()
   for (const node of nodes) {
-    const currency = normalizeCurrency(node.currency)
+    const currency = nativeCurrency(node.currency)
     totals.set(currency, (totals.get(currency) ?? 0) + calculateMonthlyCostNative(node))
   }
   return Array.from(totals, ([currency, amount]) => ({ currency, amount }))
 }
 
 export function formatNativeAmount(amount: number, currency: string): string {
-  const code = normalizeCurrency(currency)
+  const code = nativeCurrency(currency)
   const formatted = formatFinanceAmount(amount, code)
   return `${formatted.symbol}${formatted.value} ${code}`
 }
 
-export function formatFinanceAmount(amount: number, currency: CurrencyCode): {
-  currency: CurrencyCode
+export function formatFinanceAmount<T extends string>(amount: number, currency: T): {
+  currency: T
   symbol: string
   value: string
 } {
@@ -375,12 +382,12 @@ export function formatFinanceAmount(amount: number, currency: CurrencyCode): {
 
   return {
     currency,
-    symbol: CURRENCY_SYMBOLS[currency],
+    symbol: (CURRENCY_SYMBOLS as Record<string, string>)[currency] ?? '',
     value,
   }
 }
 
-export async function getDailyExchangeRates(required: CurrencyCode[] = SUPPORTED_CURRENCIES) {
+export async function getDailyExchangeRates(required: string[] = SUPPORTED_CURRENCIES) {
   const { getSummaryExchangeRates } = await import('@/services/exchangeRates.service')
   return getSummaryExchangeRates(required)
 }
@@ -390,11 +397,12 @@ export function getPriceCNY(node: NodeData, exchangeRates: ExchangeRates): numbe
   if (!Number.isFinite(price) || price <= 0)
     return 0
 
-  const currency = normalizeCurrency(node.currency)
+  const currency = nativeCurrency(node.currency).toUpperCase()
   if (currency === 'CNY')
     return price
 
-  return price / exchangeRates[currency]
+  const rate = exchangeRates[currency]
+  return typeof rate === 'number' && Number.isFinite(rate) && rate > 0 ? price / rate : Number.NaN
 }
 
 function readExchangeRateOverrides(): Partial<ExchangeRates> {

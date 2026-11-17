@@ -1,5 +1,6 @@
 {
   "baseline": "0332d5f7c73f7994ba21c01e4b739d04835120b1",
+  "configurationReference": "2d658f641ef9401b7426527014ec73bfa9404f5f",
   "components": {
     "src/App.vue": "fb3773411050f78a39021661356c2714fa529a7a9c25b5120c3ba5c961b2c2e7",
     "src/components/AuditLogPanel.vue": "84a49ce75b4fc2d2322d00047c1122dc6228f84008b6213fd707921f2c0ea412",
@@ -39,7 +40,7 @@
     "src/components/SnapshotExportPanel.vue": "ef3888b3f3cd0e441c9289eccb846b3a21def9b9b53b14f7e37a09a9cef52c30",
     "src/components/ThemeSettingsPanel.vue": "5893d16c440902daa8df91b52d57f1d92704b5acfa6f12e3e02e80bd320d8ecd",
     "src/components/TrafficCycleManager.vue": "d3a2a5a871260cde3335cea19fbc70de42566c42068e0b653fa27850dfb2fe7a",
-    "src/components/TrafficCycleRow.vue": "c0c340df845f09efb03eee381f204475bd1a6a084ca5b57586c336100b53ff9e",
+    "src/components/TrafficCycleRow.vue": "a986adf5996e94cd896fe7ba6152a854fee5339f63b6c6debde008bcbd6d26a0",
     "src/components/TrafficProgress.vue": "1a1a6bb86a26bea3c4d74ba695d8c6f8c21276183b5f7fe4a1ff74fbbf80de43",
     "src/components/VisitorInfo.vue": "e50e3e5f64ca19174cb7ba3d59584bf0c0e6ade830fa0a918f6752236346bb86",
     "src/components/ui/alert/Alert.vue": "e421348244f84fd10e3e6e0303187508888a7fac6c5a8b4e3739afe47d5d441b",
@@ -75,7 +76,7 @@
     "src/views/InstanceDetail.vue": "b959a95bbc8ad9f0f14bf6456d90f102fef5400308e275b1687d5d7d5fef7352"
   },
   "protectedFiles": {
-    "komari-theme.json": "f184c6d397e95fba2c9c4c6b3d1713be834735dd2af0b61e24d0176abd3571d5",
+    "komari-theme.json": "11048c9c4cbdb1dd257dbc9381c808a9d99442b5b2ea4d6d541b4121b3455167",
     "public/images/default-background-v2.webp": "42377961822666817def3d3b51b2c236a0f5f631dd1475535d9438a6b7ac551b",
     "public/images/earth/earth-blue-marble.jpg": "228deba2e4b600146bdcb6cfa359b8ead6aacc2b1c13550a29cd82824cfa1c01",
     "public/images/earth/earth-night.jpg": "355ab23dd1323315b393d7b91dd2d7ee223a1cbaaba2b48dc72ba90d371ced24",

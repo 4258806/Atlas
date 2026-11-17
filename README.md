@@ -2,9 +2,9 @@
 
 本仓库是 [MagnetOscar/Glassmorphism-Enhanced](https://github.com/MagnetOscar/Glassmorphism-Enhanced)，由 GitHub Fork 功能从 [casiuna/Glassmorphism-Enhanced](https://github.com/casiuna/Glassmorphism-Enhanced) 创建，用于个人服务器监控主题的二次开发。它是社区衍生项目，不是上游官方发行版，不代表原作者或上游维护者。
 
-开发基线固定为上游 **v1.2.1**，提交 [`0332d5f7c73f7994ba21c01e4b739d04835120b1`](https://github.com/casiuna/Glassmorphism-Enhanced/commit/0332d5f7c73f7994ba21c01e4b739d04835120b1)。`baseline/v1.2.1` 保留该原始提交，默认开发分支为 `personal/main`。主题清单当前的 `1.2.1` 仍是上游原始版本号，不表示本 Fork 已发布新的二次开发版本。
+开发基线固定为上游 **v1.2.1**，提交 [`0332d5f7c73f7994ba21c01e4b739d04835120b1`](https://github.com/casiuna/Glassmorphism-Enhanced/commit/0332d5f7c73f7994ba21c01e4b739d04835120b1)。`baseline/v1.2.1` 保留该原始提交，默认开发分支为 `personal/main`。本 Fork 使用独立版本序列，首版为 **0.0.1**，与上游 1.2.1 的编号区分。
 
-**当前为个人 Fork 开发版本，尚未发布自有正式版或部署到生产。** 已建立工程 CI 和 ZIP 发布门禁；新增开发见[独立重置时间](docs/traffic-cycles.md)、[本币金额与单币种汇总](docs/finance.md)，验收记录保存在 `docs/verification/`。初始化来源见 [FORK.md](FORK.md)，每步保留 GitHub PR/diff。下方标注的上游 v1.2.1 说明是历史基线，不代替本 Fork 的验证记录。
+**0.0.1 的范围为工程流程、独立重置时间、本币金额与单一币种汇总。** [下载正式 Release](https://github.com/MagnetOscar/Glassmorphism-Enhanced/releases/tag/personal-v0.0.1)，选择 `komari-theme-Glassmorphism-build-<sha>.zip` 原生主题包，在 Komari 后台主题管理中上传；不要使用 GitHub 的 Source code ZIP。包内包含 `komari-theme.json`、`preview.png`、`dist/`，校验值见 Release 的 `SHA256SUMS.txt`。第 4–6 步未纳入此版。说明见[0.0.1 发行说明](docs/release-notes-personal-0.0.1.md)、[独立重置时间](docs/traffic-cycles.md)、[金额与汇率](docs/finance.md)，验收记录见 `docs/verification/`。下方上游 v1.2.1 说明仅为历史基线。
 
 后续开发遵循 [开发验收与发布规范](docs/releasing.md)：所有交付改动同步 GitHub，每个正式软件版本保留独立 Release、可上传的主题 ZIP、源码 diff 与验证记录，已发布版本和附件不静默覆盖。
 

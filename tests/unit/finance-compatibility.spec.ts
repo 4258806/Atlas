@@ -11,10 +11,12 @@ import {
   clearStoredMeteredEstimateSettings,
   DEFAULT_EXCHANGE_RATES,
   formatFinanceAmount,
+  formatNativeAmount,
   getDailyExchangeRates,
   getPriceCNY,
   getStoredFinanceCurrency,
   getStoredMeteredEstimateSettings,
+  nativeCurrency,
   normalizeCurrency,
   setExchangeRateOverride,
   setStoredFinanceCurrency,
@@ -119,6 +121,21 @@ test('per-node native costs remain independent while one summary currency is sel
   expect(calculateMonthlyCostNative(cny)).toBeCloseTo(134.1)
   expect(calculateRemainingValueNative(usd, now)).toBeCloseTo(4.95)
   expect(calculateRemainingValueNative(cny, now)).toBeCloseTo(67.05)
+})
+
+test('node currency follows its input even outside the old summary selector', async () => {
+  const node = { price: 10, currency: 'AUD', billing_cycle: 30 } as NodeData
+  expect(nativeCurrency('AUD')).toBe('AUD')
+  expect(nativeCurrency('credits')).toBe('credits')
+  expect(formatNativeAmount(10, 'AUD')).toBe('10.00 AUD')
+  expect(formatNativeAmount(10, 'credits')).toBe('10.00 credits')
+  expect(calculateMonthlyCostNative(node)).toBe(10)
+  expect(Number.isNaN(getPriceCNY(node, DEFAULT_EXCHANGE_RATES))).toBe(true)
+  Object.defineProperty(globalThis, 'fetch', { configurable: true, value: async () => Response.json(primary({ ...DEFAULT_EXCHANGE_RATES, AUD: 0.2 })) })
+  const quote = await getDailyExchangeRates(['AUD', 'CNY'])
+  expect(quote.source).toBe('network')
+  expect(getPriceCNY(node, quote.rates)).toBe(50)
+  expect(formatNativeAmount(10, node.currency)).toBe('10.00 AUD')
 })
 
 test('backup accepts only needed currencies and never fills missing RUB/VND with invented rates', async () => {

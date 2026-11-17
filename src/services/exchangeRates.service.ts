@@ -1,4 +1,4 @@
-import type { CurrencyCode, ExchangeRates, ExchangeRateSource } from '@/utils/financeHelper'
+import type { ExchangeRates, ExchangeRateSource } from '@/utils/financeHelper'
 import { requestManager } from '@/services/request.service'
 import { SUPPORTED_CURRENCIES } from '@/utils/financeHelper'
 
@@ -13,6 +13,7 @@ interface Quote { rates: ExchangeRates, fetchedAt: number, updatedAt: number, ex
 const KEY = 'komari_finance_exchange_rates_cny_v2'
 const DAY = 86400000
 const QUOTE_DATE = /^\d{4}-\d{2}-\d{2}$/
+const ISO_CURRENCY = /^[A-Z]{3}$/
 const inflight = new Map<string, Promise<RateResult>>()
 
 export function unavailableRates(): ExchangeRates {
@@ -34,9 +35,8 @@ function ratesFrom(raw: unknown): ExchangeRates | null {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw))
     return null
   const result = unavailableRates()
-  for (const code of SUPPORTED_CURRENCIES) {
-    const value = (raw as Record<string, unknown>)[code]
-    if (value === undefined)
+  for (const [code, value] of Object.entries(raw)) {
+    if (!ISO_CURRENCY.test(code))
       continue
     if (typeof value !== 'number' || !Number.isFinite(value) || value <= 0 || value > 1e12 || (code === 'CNY' && value !== 1))
       return null
@@ -44,7 +44,12 @@ function ratesFrom(raw: unknown): ExchangeRates | null {
   }
   return result
 }
-const covers = (rates: ExchangeRates, codes: CurrencyCode[]) => codes.every(code => Number.isFinite(rates[code]) && rates[code] > 0)
+function covers(rates: ExchangeRates, codes: string[]) {
+  return codes.every((code) => {
+    const rate = rates[code]
+    return typeof rate === 'number' && Number.isFinite(rate) && rate > 0
+  })
+}
 function cached(): Quote | null {
   const value = read(KEY) as Quote & { base?: string } | null
   const rates = ratesFrom(value?.rates)
@@ -84,10 +89,12 @@ export function parseRateQuote(provider: 'primary' | 'backup', raw: unknown, now
   return { rates, fetchedAt: now, updatedAt, expiresAt, provider: provider === 'primary' ? 'ExchangeRate-API' : 'Frankfurter' }
 }
 
-export async function getSummaryExchangeRates(required: CurrencyCode[] = SUPPORTED_CURRENCIES): Promise<RateResult> {
-  const codes = [...new Set<CurrencyCode>(['CNY', ...required])].sort()
+export async function getSummaryExchangeRates(required: string[] = SUPPORTED_CURRENCIES): Promise<RateResult> {
+  const codes = [...new Set(['CNY', ...required])].sort()
   const key = codes.join(',')
   const now = Date.now()
+  if (codes.some(code => !ISO_CURRENCY.test(code)))
+    return { rates: unavailableRates(), source: 'unavailable', updatedAt: null, provider: '', expiresAt: 0 }
   if (codes.length === 1 && codes[0] === 'CNY')
     return { rates: unavailableRates(), source: 'cache', updatedAt: null, provider: 'CNY 本币（无需换算）', expiresAt: now + DAY }
   const quote = cached()

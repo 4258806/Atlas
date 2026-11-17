@@ -1,11 +1,11 @@
 import type { ComputedRef } from 'vue'
-import type { CurrencyCode, ExchangeRateSource } from '@/utils/financeHelper'
+import type { ExchangeRateSource } from '@/utils/financeHelper'
 import { useIntervalFn } from '@vueuse/core'
 import { onActivated, onDeactivated, onMounted, onScopeDispose, ref, watch } from 'vue'
 import { getSummaryExchangeRates, unavailableRates } from '@/services/exchangeRates.service'
 import { applyExchangeRateOverrides } from '@/utils/financeHelper'
 
-export function useSummaryRates(required: ComputedRef<CurrencyCode[]>, enabled: ComputedRef<boolean>) {
+export function useSummaryRates(required: ComputedRef<string[]>, enabled: ComputedRef<boolean>) {
   const rates = ref(unavailableRates())
   const dailyRates = ref(unavailableRates())
   const source = ref<ExchangeRateSource | 'loading'>('loading')
