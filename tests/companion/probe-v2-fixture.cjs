@@ -68,7 +68,7 @@ const invalidV2 = [
   ['query activity while disabled', r => r.carriers.telecom.tcp.asnLookup.queries = 1],
   ['query budget exceeded', r => Object.values(r.carriers).forEach(c => Object.values(c).forEach((p) => {
     p.asnLookup.enabled = true
-    p.asnLookup.queries = 2
+    p.asnLookup.queries = 11
   }))],
   ['negative query count', r => r.carriers.telecom.tcp.asnLookup.failures = -1],
   ['batch time after validity window', r => r.collectedAt = '2099-01-01T00:00:00.000Z'],
