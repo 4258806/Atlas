@@ -1,0 +1,307 @@
+{
+  "version": "0.0.4",
+  "status": "published-downloaded-natively-verified-and-installed",
+  "tag": "atlas-v0.0.4",
+  "release": "https://github.com/MagnetOscar/Atlas/releases/tag/atlas-v0.0.4",
+  "published_at": "2026-11-17T19:35:55Z",
+  "source_commit": "192e4245dfbfe9656eb1e73c443e07e1b67d3f5c",
+  "accepted_source": "0c25c2ef9f1ddcfd385fae229eb7d36d0facdabd",
+  "diff": "https://github.com/MagnetOscar/Atlas/compare/atlas-v0.0.3...atlas-v0.0.4",
+  "package": {
+    "version": "0.0.4",
+    "commit": "192e4245dfbfe9656eb1e73c443e07e1b67d3f5c",
+    "dirty": false,
+    "mode": "production",
+    "sha256": "4177f2823b30054e80f3af54877d10a4cd50f261c7f7f505d9ac1a341bb59e48",
+    "file": "komari-theme-Atlas-build-192e424.zip",
+    "entries": 785,
+    "download": "https://github.com/MagnetOscar/Atlas/releases/download/atlas-v0.0.4/komari-theme-Atlas-build-192e424.zip",
+    "github_digest": "sha256:4177f2823b30054e80f3af54877d10a4cd50f261c7f7f505d9ac1a341bb59e48",
+    "digestMatches": true
+  },
+  "companions": {
+    "source": "192e4245dfbfe9656eb1e73c443e07e1b67d3f5c",
+    "dirty": false,
+    "runtimeMatchesTrialSource": "0c25c2ef9f1ddcfd385fae229eb7d36d0facdabd",
+    "separateGPLAttachment": true,
+    "upstreamCommit": "db52fc60523320fc4a34b5c369f28be38df21d13",
+    "files": [
+      {
+        "file": "atlas-route-plugin-0.4.0.zip",
+        "sha256": "3cd2fceee4f7436c371fe0fbf221024c12cd1564de7764741a2a0fe15d908ef2"
+      },
+      {
+        "file": "atlas-komari-tcpquality-0.4.0.tar.gz",
+        "sha256": "2d1877758dff4833063ff85ce8f05c90becbd25d46d8b4f07f19ec493cee4817"
+      },
+      {
+        "file": "atlas-tcpquality-installation-0.4.0.md",
+        "sha256": "f4507b7f22e9ec45fbe62a2960f6b4be565b610bf71e67ab3fe9c4813b33aec2"
+      }
+    ]
+  },
+  "validation": {
+    "formalWorkflow": {
+      "url": "https://github.com/MagnetOscar/Atlas/actions/runs/44158434068",
+      "status": "completed",
+      "conclusion": "success",
+      "headSha": "192e4245dfbfe9656eb1e73c443e07e1b67d3f5c"
+    },
+    "protectedPR": {
+      "headRefOid": "1a26dccbc99325b84790db04f3b08fb44fc9fe55",
+      "mergeStateStatus": "CLEAN",
+      "state": "OPEN",
+      "statusCheckRollup": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-11-17T19:16:02Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/MagnetOscar/Atlas/actions/runs/44156578038/job/134298798144",
+          "name": "lint-and-build",
+          "startedAt": "2026-11-17T19:15:15Z",
+          "status": "COMPLETED",
+          "workflowName": "Code Quality"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-11-17T19:24:53Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/MagnetOscar/Atlas/actions/runs/44156578113/job/134298799329",
+          "name": "screenshots",
+          "startedAt": "2026-11-17T19:15:15Z",
+          "status": "COMPLETED",
+          "workflowName": "Visual Regression"
+        }
+      ]
+    },
+    "unitComponentPassed": 431,
+    "linuxNodePassed": 100,
+    "browserPassed": 261,
+    "nativeEvidence": {
+      "kind": "official-Komari-1.6.1-loopback-native-reset-acceptance",
+      "productionTouched": false,
+      "history": "explicit synthetic SQL fixture",
+      "backendSHA256": "0c6e73c42ac166d34562e57037007a21692599e9e868ddae18217691e0f5d932",
+      "baselineSHA256": "54ef15efe37707109ce721ed22608745a575b3683038951b02b05d1724d3ff17",
+      "candidateSHA256": "4177f2823b30054e80f3af54877d10a4cd50f261c7f7f505d9ac1a341bb59e48",
+      "checks": [
+        {
+          "name": "fresh official backend and verified native administrator session",
+          "status": "passed"
+        },
+        {
+          "name": "install exact baseline, upgrade candidate and preserve settings",
+          "status": "passed"
+        },
+        {
+          "name": "administrator editor persists independent timezone, day and minute on desktop and mobile",
+          "status": "passed"
+        },
+        {
+          "name": "native carrier order and display switches persist on desktop/mobile without changing billing or reset settings",
+          "status": "passed"
+        },
+        {
+          "name": "native per-metric retention and tier configuration read back without disabling metrics",
+          "status": "passed"
+        },
+        {
+          "name": "native persisted minute edge and hourly body sum exactly without history mutation",
+          "status": "passed"
+        },
+        {
+          "name": "Atlas 0.0.1 downgrade and 0.0.2 re-upgrade preserve all display and reset preferences",
+          "status": "passed"
+        },
+        {
+          "name": "rollback restores baseline plus exact legacy settings; re-upgrade never overwrites saved Atlas configuration",
+          "status": "passed"
+        },
+        {
+          "name": "native node billing stays in its own currency while the header selects one currency",
+          "status": "passed"
+        }
+      ],
+      "rateNetworkDiagnostics": [],
+      "syntheticRows": 15612,
+      "status": "passed"
+    },
+    "nativePluginEvidence": {
+      "kind": "official-1.6.1-isolated-native-plugin",
+      "routeData": "synthetic; no network probing",
+      "checks": [
+        {
+          "name": "official 1.6.1 native plugin ZIP upload, approval and module/storage compatibility",
+          "status": "passed"
+        },
+        {
+          "name": "native agent identity and administrator-only raw evidence; public disabled by default",
+          "status": "passed"
+        },
+        {
+          "name": "native agent job/result flow and opt-in public ASN projection",
+          "status": "passed"
+        },
+        {
+          "name": "plugin configuration and route evidence survive actual backend restart",
+          "status": "passed"
+        },
+        {
+          "name": "public opt-out immediately removes access without deleting private evidence",
+          "status": "passed"
+        },
+        {
+          "name": "native TcpQuality attachment leases, authenticated results and separate legacy evidence",
+          "status": "passed"
+        },
+        {
+          "name": "TcpQuality reports/hourly leases persist on real restart; public opt-out retains both private sources",
+          "status": "passed"
+        }
+      ]
+    },
+    "actualDowngradeVersion": "0.0.3",
+    "actualReupgradeVersion": "0.0.4"
+  },
+  "production": {
+    "CA": {
+      "status": "passed",
+      "version": "0.0.4",
+      "source": "192e4245dfbfe9656eb1e73c443e07e1b67d3f5c",
+      "themeSHA256": "4177f2823b30054e80f3af54877d10a4cd50f261c7f7f505d9ac1a341bb59e48",
+      "pluginSHA256": "3cd2fceee4f7436c371fe0fbf221024c12cd1564de7764741a2a0fe15d908ef2",
+      "attachmentSHA256": "2d1877758dff4833063ff85ce8f05c90becbd25d46d8b4f07f19ec493cee4817",
+      "pluginVersion": "0.4.0+git.192e424",
+      "installedAssetsMatchActualRelease": true,
+      "allExistingThemeSettingsRetained": true,
+      "themeSettingsChanged": [],
+      "privateLegacyAndTcpQualityEvidenceAndLeasesRetained": true,
+      "billingResetPingAndOtherTenNodesUnchanged": true,
+      "nginxAndCloudflareUnchanged": true,
+      "nodeCount": 11,
+      "onlineNodeCount": 11,
+      "requestedNativeCurrenciesVerified": true,
+      "backendRestarted": false,
+      "backendHealthy": true,
+      "onlyProbeNode": "DMIT",
+      "periodMinutes": 60
+    },
+    "DMIT": {
+      "status": "passed",
+      "source": "192e4245dfbfe9656eb1e73c443e07e1b67d3f5c",
+      "attachmentSHA256": "2d1877758dff4833063ff85ce8f05c90becbd25d46d8b4f07f19ec493cee4817",
+      "runtimeExactlyMatchesAcceptedTrial": true,
+      "scheduler": "existing-cron",
+      "nativePeriodMinutes": 60,
+      "agentCredentialsConfigAndRootfsUnchanged": true,
+      "priorReportsRetained": true,
+      "protectedServicesAndPIDsUnchanged": true,
+      "oldHelperInactiveRetained": true,
+      "extraProbeStartedForUpgrade": false,
+      "newServiceOrTimerCreated": false,
+      "otherNodesEnrolled": false
+    },
+    "UI": {
+      "status": "passed",
+      "version": "0.0.4",
+      "access": "SSH loopback to existing native Komari; no public Access changes",
+      "checks": [
+        {
+          "width": 1440,
+          "actualProductionData": true,
+          "threeCN2GIARows": true,
+          "savedCarrierOrderRetained": true,
+          "adjacentTcpUdpPanelVisible": true,
+          "allFiveVariantDetailsVisible": true,
+          "ipv6UnavailableExplicit": true,
+          "horizontalOverflow": false,
+          "administratorCredentialsUsed": false,
+          "productionSettingsWritten": false,
+          "privateScreenshotSaved": true
+        },
+        {
+          "width": 390,
+          "actualProductionData": true,
+          "threeCN2GIARows": true,
+          "savedCarrierOrderRetained": true,
+          "adjacentTcpUdpPanelVisible": true,
+          "allFiveVariantDetailsVisible": true,
+          "ipv6UnavailableExplicit": true,
+          "horizontalOverflow": false,
+          "administratorCredentialsUsed": false,
+          "productionSettingsWritten": false,
+          "privateScreenshotSaved": true
+        }
+      ],
+      "screenshots": "Private local operations folder only; real node information not published"
+    },
+    "gateway": {
+      "status": "passed",
+      "agent_gateway_checks": [
+        {
+          "path": "/api/enhanced-route-probe/v1/register",
+          "get_status": 403,
+          "unauthenticated_post_status": 401,
+          "passed": true
+        },
+        {
+          "path": "/api/enhanced-route-probe/v1/poll",
+          "get_status": 403,
+          "unauthenticated_post_status": 401,
+          "passed": true
+        },
+        {
+          "path": "/api/enhanced-route-probe/v1/result",
+          "get_status": 403,
+          "unauthenticated_post_status": 401,
+          "passed": true
+        },
+        {
+          "path": "/",
+          "status": 404,
+          "passed": true
+        },
+        {
+          "path": "/api/admin/client/list",
+          "status": 404,
+          "passed": true
+        },
+        {
+          "path": "/api/enhanced-route-probe/v1/snapshot",
+          "status": 404,
+          "passed": true
+        },
+        {
+          "path": "/api/enhanced-route-probe/v1/checkpoint",
+          "status": 404,
+          "passed": true
+        },
+        {
+          "path": "/api/enhanced-route-probe/v1/summary",
+          "status": 404,
+          "passed": true
+        }
+      ],
+      "main_site_access_redirect_status": 302,
+      "credentials_used": false,
+      "network_probe_executed": false
+    },
+    "actualSchedulerObservation": {
+      "status": "passed",
+      "actualCronDueChecksObserved": 10,
+      "allChecksStartedNoExtraProbe": true,
+      "completedRealRounds": 1,
+      "nativeHourlyLeaseRespected": true,
+      "otherNodesEnrolled": false,
+      "newDaemonCreated": false
+    },
+    "trialEvidence": "docs/verification/production-trial-0.0.4.json",
+    "hourlyDMITOnly": true,
+    "otherTenNodesEnrolled": false,
+    "rawEvidenceKeptPrivate": true,
+    "rollbackBackupsRetained": true,
+    "extraProbeStartedForUpgrade": false
+  },
+  "previews": "https://github.com/MagnetOscar/Atlas/tree/atlas-v0.0.4/docs/previews/0.0.4",
+  "previousReleasesPreserved": true
+}
