@@ -130,12 +130,12 @@ class ProbeV2Tests(unittest.TestCase):
     def test_cymru_budget_and_deadline_bound_all_queries(self):
         query = mock.Mock(side_effect=lambda ip, timeout: f'4134 | {ip} | prefix')
         enrich = v2.AsnEnricher(enabled=True, query=query)
-        for index in range(1, 12):
+        for index in range(1, 70):
             enrich.lookup(f'8.8.8.{index}', time.monotonic() + 2)
-        self.assertEqual(query.call_count, 8)
+        self.assertEqual(query.call_count, 64)
         self.assertTrue(all(0 < args.args[1] <= 2 for args in query.call_args_list))
         enrich.lookup('1.1.1.1', time.monotonic() - 1)
-        self.assertEqual(query.call_count, 8)
+        self.assertEqual(query.call_count, 64)
 
     def test_whois_wire_request_is_newline_delimited_and_bounded_offline(self):
         wire = mock.MagicMock()

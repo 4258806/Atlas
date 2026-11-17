@@ -8,7 +8,7 @@ import zipfile
 from pathlib import Path, PurePosixPath
 from .safety import Refused
 
-PLUGIN_FILES = {'komari-plugin.json', 'script.js', 'protocol.cjs', 'storage.cjs', 'request-limits.cjs', 'LICENSE', 'BUILD.json'}
+PLUGIN_FILES = {'komari-plugin.json', 'script.js', 'protocol.cjs', 'storage.cjs', 'request-limits.cjs', 'public-summary.cjs', 'LICENSE', 'BUILD.json'}
 HELPER_FILES = {'enhanced_route_helper.py', 'enhanced_probe_v2.py', 'install.py', 'helper-version.json', 'enhanced-route-helper.service', 'enhanced-route-helper.openrc', 'helper.example.json', 'README.md', 'LICENSE', 'BUILD.json'}
 PERMISSIONS = {'node': True, 'allowRoutes': True, 'maxHTTPBodyBytes': 16384, 'timeout': 10}
 THEME_SHORT = 'Atlas'

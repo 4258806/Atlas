@@ -1,3 +1,4 @@
+import { Buffer } from 'node:buffer'
 import { readdirSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { expect, test } from '@playwright/test'
@@ -5,12 +6,16 @@ import { BASELINE, BRAND_RENAMES, digest, headerLayout, presentation, protectedC
 
 const root = resolve(import.meta.dirname, '../..')
 const homeConnectionContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-connection-ui.json'), 'utf8')) as { presentation: string }
+const homeRouteContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-route-ui-0.0.3.json'), 'utf8')) as { components: Record<string, string>, protectedFiles: Record<string, string> }
+function withoutRouteTile(source: string): string {
+  return source.replace(/<!-- Homepage return-route tile -->[\s\S]*?<!-- \/Homepage return-route tile -->/, '').replace('NodeReturnRoutes v-if="!appStore.returnRouteHomeTileEnabled"', 'NodeReturnRoutes')
+}
 function inheritedPresentation(path: string): string {
   const source = readFileSync(resolve(root, path), 'utf8')
   // The user explicitly authorized exactly one additional metric tile. Keep
   // the 0.0.2 contract unchanged for everything outside its marked subtree.
   return presentation(path === 'src/components/NodeCard.vue'
-    ? source.replace(/<!-- TCP\/UDP connection counts -->[\s\S]*?<!-- \/TCP\/UDP connection counts -->/, '')
+    ? withoutRouteTile(source).replace(/<!-- TCP\/UDP connection counts -->[\s\S]*?<!-- \/TCP\/UDP connection counts -->/, '')
     : source)
 }
 const displayContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/display-ui-0.0.2.json'), 'utf8')) as { components: Record<string, string>, protectedFiles: Record<string, string>, headerLayout: string }
@@ -27,7 +32,7 @@ test('fork UI contract is bound to the immutable original source', () => {
   expect(contract.baseline).toBe(BASELINE)
   expect(contract.configurationReference).toBe(RESET_EDITOR)
   const files = readdirSync(resolve(root, 'src'), { recursive: true }).map(String).filter(path => path.endsWith('.vue')).map(path => `src/${path.replaceAll('\\', '/')}`).sort()
-  expect(files).toEqual([...new Set([...Object.keys(contract.components).map(path => BRAND_RENAMES[path as keyof typeof BRAND_RENAMES] ?? path), ...Object.keys(displayContract.components)])].sort())
+  expect(files).toEqual([...new Set([...Object.keys(contract.components).map(path => BRAND_RENAMES[path as keyof typeof BRAND_RENAMES] ?? path), ...Object.keys(displayContract.components), ...Object.keys(homeRouteContract.components)])].sort())
 })
 
 for (const [path, expected] of Object.entries(contract.components)) {
@@ -46,7 +51,15 @@ test('header layout helpers exactly match the inherited grid and dimensions', ()
 
 test('fork globe/map sources, image assets, styles, defaults and screenshot references stay unchanged', () => {
   for (const [path, expected] of Object.entries(contract.protectedFiles)) {
-    const value = readFileSync(resolve(root, path))
+    let value = readFileSync(resolve(root, path))
+    if (path === 'komari-theme.json') {
+      const manifest = JSON.parse(value.toString())
+      expect(manifest.configuration.data.filter((f: { key?: string }) => f.key === 'returnRouteHomeTileEnabled')).toHaveLength(1)
+      manifest.configuration.data = manifest.configuration.data.filter((f: { key?: string }) => f.key !== 'returnRouteHomeTileEnabled')
+      value = Buffer.from(JSON.stringify(manifest))
+    }
+    if (path === 'src/stores/app.ts')
+      value = Buffer.from(value.toString().replace(/^.*const returnRouteHomeTileEnabled = .*\r?\n/m, '').replace(/^ {4}returnRouteHomeTileEnabled,\r?\n/m, ''))
     expect(digest(protectedContent(path, value)), path).toBe(displayContract.protectedFiles[path] ?? expected)
   }
 })
@@ -62,7 +75,15 @@ test('homepage connection tile is the sole newly authorized presentation subtree
   const source = readFileSync(resolve(root, 'src/components/NodeCard.vue'), 'utf8')
   expect(source.match(/<!-- TCP\/UDP connection counts -->/g)).toHaveLength(1)
   expect(source.match(/<!-- \/TCP\/UDP connection counts -->/g)).toHaveLength(1)
-  expect(presentation(source)).toBe(homeConnectionContract.presentation)
+  expect(presentation(withoutRouteTile(source))).toBe(homeConnectionContract.presentation)
+})
+
+test('0.0.3 only adds the explicitly requested return-route tile and setting', () => {
+  expect(Object.keys(homeRouteContract.components).sort()).toEqual(['src/components/NodeCard.vue', 'src/components/NodeReturnRouteTile.vue'])
+  for (const [path, hash] of Object.entries(homeRouteContract.components))
+    expect(presentation(readFileSync(resolve(root, path), 'utf8'))).toBe(hash)
+  for (const [path, hash] of Object.entries(homeRouteContract.protectedFiles))
+    expect(digest(protectedContent(path, readFileSync(resolve(root, path))))).toBe(hash)
 })
 
 test('the required source credit can only reuse the exact existing text style and target', () => {

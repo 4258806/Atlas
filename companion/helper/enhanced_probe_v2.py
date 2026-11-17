@@ -81,7 +81,7 @@ class AsnEnricher:
             self.cache_hits += 1
             return list(saved['asns'])
         remaining = deadline - time.monotonic()
-        if self.queries >= 8 or remaining <= 0:
+        if self.queries >= 64 or remaining <= 0:
             self.failures += 1
             return []
         self.queries += 1

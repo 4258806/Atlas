@@ -1,0 +1,11 @@
+{
+  "authorization": "User 2026-11-17: two-column return-route tile beside TCP/UDP; one opt-in setting; preserve all other UI.",
+  "components": {
+    "src/components/NodeCard.vue": "5bfeafd5e244045c201c80da5e04564beca70f4f9a0f638fd2e89907bfd42506",
+    "src/components/NodeReturnRouteTile.vue": "a5bccd2d96228687aa8f1ab7131f33b47f18ea1b16e8e116f45f0ae3b19a03e9"
+  },
+  "protectedFiles": {
+    "komari-theme.json": "48ee8649eca9f1db144668ab1a494a76a9639e0aa853536d4c92383bfb5bf51d",
+    "src/stores/app.ts": "62fbe3eb5a2735cc262803f07bfbb96dcfda9fb7bd0d2be2448612ffb4d20cc7"
+  }
+}

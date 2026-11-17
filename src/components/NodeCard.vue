@@ -6,6 +6,7 @@ import { useIntersectionObserver } from '@vueuse/core'
 import { computed, ref, useTemplateRef } from 'vue'
 import NodeHeaderTags from '@/components/NodeHeaderTags.vue'
 import NodeReturnRoutes from '@/components/NodeReturnRoutes.vue'
+import NodeReturnRouteTile from '@/components/NodeReturnRouteTile.vue'
 import PingHistoryLine from '@/components/PingHistoryLine.vue'
 import { CardX } from '@/components/ui/card-x'
 import { DataTooltip } from '@/components/ui/data-tooltip'
@@ -494,6 +495,9 @@ function hasRegion(region: string | null | undefined): boolean {
             </div>
           </div>
           <!-- /TCP/UDP connection counts -->
+          <!-- Homepage return-route tile -->
+          <NodeReturnRouteTile v-if="appStore.returnRouteHomeTileEnabled" :uuid="props.node.uuid" :class="nodeCardMetricBoxClass" />
+          <!-- /Homepage return-route tile -->
         </div>
 
         <!-- 联通 / 电信 / 移动三网延迟 + 丢包 -->
@@ -598,7 +602,8 @@ function hasRegion(region: string | null | undefined): boolean {
             </div>
           </button>
         </div>
-        <NodeReturnRoutes :uuid="props.node.uuid" />
+
+        <NodeReturnRoutes v-if="!appStore.returnRouteHomeTileEnabled" :uuid="props.node.uuid" />
 
         <!-- 离线遮罩 -->
         <div

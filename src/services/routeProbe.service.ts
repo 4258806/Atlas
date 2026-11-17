@@ -6,6 +6,47 @@ import { parseProbeSnapshot } from '@/utils/routeProbeSnapshot'
 const KEY = 'return-route:companion:snapshot'
 export const probeSnapshot = shallowRef<ReturnType<typeof parseProbeSnapshot>>({ nodes: {} })
 export const probeConnection = shallowRef('未连接')
+export const publicProbeSnapshot = shallowRef<ReturnType<typeof parseProbeSnapshot>>({ nodes: {} })
+let publicReferences = 0
+let publicTimer: ReturnType<typeof setInterval> | undefined
+
+export function subscribePublicRouteProbe(): () => void {
+  async function refreshPublic() {
+    try {
+      const snapshot = await requestManager.run(`${KEY}:public`, async (signal) => {
+        const response = await fetch('/api/enhanced-route-probe/v1/summary', { credentials: 'same-origin', signal, redirect: 'error' })
+        if (!response.ok)
+          throw new Error('public-summary-unavailable')
+        const body = await response.text()
+        if (body.length > 4194304)
+          throw new Error('public-summary-too-large')
+        return parseProbeSnapshot(JSON.parse(body))
+      }, { retryAttempts: 0, timeout: 10000 })
+      if (publicReferences)
+        publicProbeSnapshot.value = snapshot
+    }
+    catch {
+      if (publicReferences)
+        publicProbeSnapshot.value = { nodes: {} }
+    }
+  }
+  if (++publicReferences === 1) {
+    void refreshPublic()
+    publicTimer = setInterval(() => void refreshPublic(), 30000)
+  }
+  let released = false
+  return () => {
+    if (released)
+      return
+    released = true
+    if (--publicReferences === 0) {
+      clearInterval(publicTimer)
+      publicTimer = undefined
+      requestManager.abort(`${KEY}:public`)
+      publicProbeSnapshot.value = { nodes: {} }
+    }
+  }
+}
 let references = 0
 let timer: ReturnType<typeof setInterval> | undefined
 
