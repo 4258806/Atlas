@@ -28,8 +28,8 @@ for (const width of [390, 1440]) {
       expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(width)
       await expect(card.locator('[data-node-metric-icon=cpu]')).toBeVisible()
       await expect(card.locator('[data-node-ping-bars=latency]')).toContainText('ms')
-      mkdirSync('docs/previews/home-connections', { recursive: true })
-      await page.screenshot({ path: `docs/previews/home-connections/${width}-${dark ? 'dark' : 'light'}.png` })
+      mkdirSync('test-results/previews/home-connections', { recursive: true })
+      await page.screenshot({ path: `test-results/previews/home-connections/${width}-${dark ? 'dark' : 'light'}.png` })
     })
   }
 }
