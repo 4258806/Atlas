@@ -11,7 +11,7 @@ export function useNodeReturnRoutes(uuid: MaybeRefOrGetter<string>) {
   let release: (() => void) | undefined
   let releasePublic: (() => void) | undefined
   const connected = computed(() => app.returnRouteCompanionEnabled && app.returnRouteAutoEnabled && app.returnRoutesVisible && app.privateFeaturesAllowed)
-  const publicConnected = computed(() => app.returnRouteCompanionEnabled && app.returnRouteAutoEnabled && app.returnRoutesVisible && !app.privateFeaturesAllowed)
+  const publicConnected = computed(() => app.returnRouteHomeTileEnabled && app.returnRouteCompanionEnabled && app.returnRouteAutoEnabled && app.returnRoutesVisible && !app.privateFeaturesAllowed)
   const activeSnapshot = computed(() => connected.value ? probeSnapshot.value : publicProbeSnapshot.value)
   watch(publicConnected, (enabled) => {
     releasePublic?.()
