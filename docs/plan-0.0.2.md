@@ -12,4 +12,4 @@ New global settings: `carrierOrder` (default `unicom,telecom,mobile`), `pingDisp
 
 Release gates: scoped runtime diff against Atlas 0.0.1; unchanged dependencies, existing defaults and map/globe; lint, types, unit/helper and browser CI; real isolated Komari 1.6.1 install/settings/upgrade/rollback checks; desktop/mobile light/dark previews; clean production ZIP and checksum. Preview data is explicitly synthetic and is not the user's production billing or network measurements. No return-route collection work is part of 0.0.2.
 
-Status: implementing and validating; no release published.
+Implementation and previews are complete. Release acceptance is recorded separately in `docs/verification/acceptance-0.0.2.json` after every gate passes; this plan is not proof of a published Release.

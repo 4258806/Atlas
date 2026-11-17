@@ -11,4 +11,4 @@ Configure the new options in Atlas management → lines/latency and save the cat
 
 Native installation ZIP only: top level `komari-theme.json`, `preview.png`, `dist/`. Compatibility: validated against Komari Server 1.6.1. Before upgrading, retain the 0.0.1 ZIP and back up existing theme settings. Roll back by reinstalling the retained ZIP; new display fields are ignored by 0.0.1 and must be retained for a later re-upgrade. The existing Atlas identity and saved reset/finance settings remain.
 
-Release preparation is in progress. Exact source, validation, SHA256 and preview evidence will be linked before publication. See `docs/plan-0.0.2.md`.
+Scope: `docs/plan-0.0.2.md`. Exact accepted source, CI/native validation, candidate SHA256 and synthetic preview images are linked by `docs/verification/acceptance-0.0.2.json` and `docs/verification/release-candidate-0.0.2.json`. The Release publishes its own CI-built ZIP and SHA256SUMS; a prepared local candidate is not a published Release. Preserve all earlier tags and assets.
