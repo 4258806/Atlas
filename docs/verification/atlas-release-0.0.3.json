@@ -1,0 +1,405 @@
+{
+  "version": "0.0.3",
+  "status": "published-downloaded-natively-verified-and-installed",
+  "tag": "atlas-v0.0.3",
+  "release": "https://github.com/MagnetOscar/Atlas/releases/tag/atlas-v0.0.3",
+  "published_at": "2026-11-17T17:26:27Z",
+  "source_commit": "1762647c7762efb22d5dfac3807d572c95d668db",
+  "accepted_source": "f205a49c1822c6ba6cbf7b7f1cde66d259af7b89",
+  "tested_runtime_source": "7541b7ce1a5064f732e4bc290106228429b6f1e7",
+  "diff": "https://github.com/MagnetOscar/Atlas/compare/atlas-v0.0.2...atlas-v0.0.3",
+  "package": {
+    "version": "0.0.3",
+    "commit": "1762647c7762efb22d5dfac3807d572c95d668db",
+    "dirty": false,
+    "mode": "production",
+    "sha256": "2a4bd9dead758317dd5c5378125e211d327fb946579993e3f48fd0c783618636",
+    "file": "komari-theme-Atlas-build-1762647.zip",
+    "entries": 785,
+    "download": "https://github.com/MagnetOscar/Atlas/releases/download/atlas-v0.0.3/komari-theme-Atlas-build-1762647.zip",
+    "github_digest": "sha256:2a4bd9dead758317dd5c5378125e211d327fb946579993e3f48fd0c783618636",
+    "digestMatches": true
+  },
+  "companions": {
+    "source": "1762647c7762efb22d5dfac3807d572c95d668db",
+    "dirty": false,
+    "pluginRuntimeMatchesTrialSource": "a0b39e9dffdb9e4a3f105b5fd1aa4062590410d9",
+    "helperRuntimeMatchesTrialSource": "df41985f6374e892121a73726c211755543e180d",
+    "files": [
+      {
+        "file": "atlas-route-plugin-0.3.1.zip",
+        "sha256": "084c7f68b3bf5c6c18b2934ef609b1ab6ddf30c3a32f94970531119a4da64939"
+      },
+      {
+        "file": "atlas-route-helper-0.3.1.zip",
+        "sha256": "0160af6c914962e2e0dd05e19d727f7aafe5b6a1122e68a0d087c9041714f26b"
+      }
+    ]
+  },
+  "validation": {
+    "releaseWorkflow": {
+      "conclusion": "success",
+      "headSha": "1762647c7762efb22d5dfac3807d572c95d668db",
+      "jobs": [
+        {
+          "completedAt": "2026-11-17T17:26:32Z",
+          "conclusion": "success",
+          "databaseId": 134223920053,
+          "name": "release",
+          "startedAt": "2026-11-17T17:18:36Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-11-17T17:18:37Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-11-17T17:18:36Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-17T17:18:39Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v6",
+              "number": 2,
+              "startedAt": "2026-11-17T17:18:37Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-17T17:18:41Z",
+              "conclusion": "success",
+              "name": "Run oven-sh/setup-bun@v2",
+              "number": 3,
+              "startedAt": "2026-11-17T17:18:39Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-17T17:18:41Z",
+              "conclusion": "success",
+              "name": "Run actions/setup-node@v6",
+              "number": 4,
+              "startedAt": "2026-11-17T17:18:41Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-17T17:18:42Z",
+              "conclusion": "success",
+              "name": "Check accepted source and unused version",
+              "number": 5,
+              "startedAt": "2026-11-17T17:18:41Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-17T17:18:44Z",
+              "conclusion": "success",
+              "name": "Run bun install --frozen-lockfile",
+              "number": 6,
+              "startedAt": "2026-11-17T17:18:42Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-17T17:18:55Z",
+              "conclusion": "success",
+              "name": "Run bun run lint:check",
+              "number": 7,
+              "startedAt": "2026-11-17T17:18:44Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-17T17:19:02Z",
+              "conclusion": "success",
+              "name": "Run bun run test:unit",
+              "number": 8,
+              "startedAt": "2026-11-17T17:18:55Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-17T17:19:03Z",
+              "conclusion": "success",
+              "name": "Linux helper validation",
+              "number": 9,
+              "startedAt": "2026-11-17T17:19:02Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-17T17:26:10Z",
+              "conclusion": "success",
+              "name": "Desktop and mobile browser validation",
+              "number": 10,
+              "startedAt": "2026-11-17T17:19:03Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-17T17:26:24Z",
+              "conclusion": "success",
+              "name": "Rebuild production ZIP after visual tests",
+              "number": 11,
+              "startedAt": "2026-11-17T17:26:10Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-17T17:26:28Z",
+              "conclusion": "success",
+              "name": "Publish immutable release and download verification",
+              "number": 12,
+              "startedAt": "2026-11-17T17:26:24Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-17T17:26:30Z",
+              "conclusion": "success",
+              "name": "Retain verification results",
+              "number": 13,
+              "startedAt": "2026-11-17T17:26:28Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-17T17:26:30Z",
+              "conclusion": "success",
+              "name": "Post Run actions/setup-node@v6",
+              "number": 24,
+              "startedAt": "2026-11-17T17:26:30Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-17T17:26:30Z",
+              "conclusion": "success",
+              "name": "Post Run oven-sh/setup-bun@v2",
+              "number": 25,
+              "startedAt": "2026-11-17T17:26:30Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-17T17:26:30Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v6",
+              "number": 26,
+              "startedAt": "2026-11-17T17:26:30Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-17T17:26:30Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 27,
+              "startedAt": "2026-11-17T17:26:30Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/MagnetOscar/Atlas/actions/runs/44135531818/job/134223920053"
+        }
+      ],
+      "status": "completed",
+      "url": "https://github.com/MagnetOscar/Atlas/actions/runs/44135531818"
+    },
+    "finalProtectedPRChecks": {
+      "headRefOid": "00c3b1e47d22218c372bfbdefaaf1673a611f4fe",
+      "mergeCommit": {
+        "oid": "1762647c7762efb22d5dfac3807d572c95d668db"
+      },
+      "state": "MERGED",
+      "statusCheckRollup": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-11-17T17:11:47Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/MagnetOscar/Atlas/actions/runs/44134075646/job/134218693147",
+          "name": "lint-and-build",
+          "startedAt": "2026-11-17T17:10:46Z",
+          "status": "COMPLETED",
+          "workflowName": "Code Quality"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-11-17T17:18:15Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/MagnetOscar/Atlas/actions/runs/44134075819/job/134218868058",
+          "name": "screenshots",
+          "startedAt": "2026-11-17T17:11:03Z",
+          "status": "COMPLETED",
+          "workflowName": "Visual Regression"
+        }
+      ]
+    },
+    "nativeEvidence": {
+      "kind": "official-Komari-1.6.1-loopback-native-reset-acceptance",
+      "productionTouched": false,
+      "history": "explicit synthetic SQL fixture",
+      "backendSHA256": "0c6e73c42ac166d34562e57037007a21692599e9e868ddae18217691e0f5d932",
+      "baselineSHA256": "54ef15efe37707109ce721ed22608745a575b3683038951b02b05d1724d3ff17",
+      "candidateSHA256": "2a4bd9dead758317dd5c5378125e211d327fb946579993e3f48fd0c783618636",
+      "checks": [
+        {
+          "name": "fresh official backend and verified native administrator session",
+          "status": "passed"
+        },
+        {
+          "name": "install exact baseline, upgrade candidate and preserve settings",
+          "status": "passed"
+        },
+        {
+          "name": "administrator editor persists independent timezone, day and minute on desktop and mobile",
+          "status": "passed"
+        },
+        {
+          "name": "native carrier order and display switches persist on desktop/mobile without changing billing or reset settings",
+          "status": "passed"
+        },
+        {
+          "name": "native per-metric retention and tier configuration read back without disabling metrics",
+          "status": "passed"
+        },
+        {
+          "name": "native persisted minute edge and hourly body sum exactly without history mutation",
+          "status": "passed"
+        },
+        {
+          "name": "Atlas 0.0.1 downgrade and 0.0.2 re-upgrade preserve all display and reset preferences",
+          "status": "passed"
+        },
+        {
+          "name": "rollback restores baseline plus exact legacy settings; re-upgrade never overwrites saved Atlas configuration",
+          "status": "passed"
+        },
+        {
+          "name": "native node billing stays in its own currency while the header selects one currency",
+          "status": "passed"
+        }
+      ],
+      "rateNetworkDiagnostics": [],
+      "syntheticRows": 14980,
+      "status": "passed"
+    },
+    "nativePluginEvidence": {
+      "kind": "official-1.6.1-isolated-native-plugin",
+      "routeData": "synthetic; no network probing",
+      "checks": [
+        {
+          "name": "official 1.6.1 native plugin ZIP upload, approval and module/storage compatibility",
+          "status": "passed"
+        },
+        {
+          "name": "native agent identity and administrator-only raw evidence; public disabled by default",
+          "status": "passed"
+        },
+        {
+          "name": "native agent job/result flow and opt-in public ASN projection",
+          "status": "passed"
+        },
+        {
+          "name": "plugin configuration and route evidence survive actual backend restart",
+          "status": "passed"
+        },
+        {
+          "name": "public opt-out immediately removes access without deleting private evidence",
+          "status": "passed"
+        }
+      ]
+    },
+    "actualDowngradeVersion": "0.0.2",
+    "actualReupgradeVersion": "0.0.3"
+  },
+  "production": {
+    "theme": {
+      "status": "passed",
+      "version": "0.0.3",
+      "source": "1762647c7762efb22d5dfac3807d572c95d668db",
+      "themeSHA256": "2a4bd9dead758317dd5c5378125e211d327fb946579993e3f48fd0c783618636",
+      "pluginSHA256": "084c7f68b3bf5c6c18b2934ef609b1ab6ddf30c3a32f94970531119a4da64939",
+      "pluginVersion": "0.3.1+git.1762647",
+      "installedAssetsMatchRelease": true,
+      "existingSettingsRetained": true,
+      "onlyChangedThemeFields": [
+        "returnRoutesVisible",
+        "returnRouteHomeTileEnabled",
+        "returnRouteAutoEnabled",
+        "returnRouteCompanionEnabled"
+      ],
+      "privateProbeEvidenceUnchanged": true,
+      "otherNodesBillingResetPingConfigurationUnchanged": true,
+      "serverRestarted": false,
+      "serverHealthy": "healthy",
+      "publicSummaryNodeCount": 1,
+      "nodeCount": 11,
+      "onlineNodeCount": 11,
+      "requestedNativeCurrenciesVerified": true,
+      "productionVisualReview": "not yet observed in authenticated user browser"
+    },
+    "helper": {
+      "status": "passed",
+      "helperSource": "1762647c7762efb22d5dfac3807d572c95d668db",
+      "helperSHA256": "0160af6c914962e2e0dd05e19d727f7aafe5b6a1122e68a0d087c9041714f26b",
+      "executableLogicMatchesCompletedTrial": true,
+      "helperActive": "inactive",
+      "recurringSchedule": false,
+      "newProbeExecuted": false,
+      "existingPrivateStateAgentAndServicesUnchanged": true
+    },
+    "gatewayBoundary": {
+      "status": "passed",
+      "agent_gateway_checks": [
+        {
+          "path": "/api/enhanced-route-probe/v1/register",
+          "get_status": 403,
+          "unauthenticated_post_status": 401,
+          "passed": true
+        },
+        {
+          "path": "/api/enhanced-route-probe/v1/poll",
+          "get_status": 403,
+          "unauthenticated_post_status": 401,
+          "passed": true
+        },
+        {
+          "path": "/api/enhanced-route-probe/v1/result",
+          "get_status": 403,
+          "unauthenticated_post_status": 401,
+          "passed": true
+        },
+        {
+          "path": "/",
+          "status": 404,
+          "passed": true
+        },
+        {
+          "path": "/api/admin/client/list",
+          "status": 404,
+          "passed": true
+        },
+        {
+          "path": "/api/enhanced-route-probe/v1/snapshot",
+          "status": 404,
+          "passed": true
+        },
+        {
+          "path": "/api/enhanced-route-probe/v1/checkpoint",
+          "status": 404,
+          "passed": true
+        },
+        {
+          "path": "/api/enhanced-route-probe/v1/summary",
+          "status": 404,
+          "passed": true
+        }
+      ],
+      "main_site_access_redirect_status": 302,
+      "credentials_used": false,
+      "network_probe_executed": false
+    },
+    "probeTrial": "docs/verification/production-trial-0.0.3.json",
+    "additionalNetworkProbeExecuted": false,
+    "recurringCollectionEnabled": false,
+    "otherTenNodesEnrolled": false,
+    "rawEvidenceKeptPrivate": true
+  },
+  "previews": "https://github.com/MagnetOscar/Atlas/tree/atlas-v0.0.3/docs/previews/0.0.3",
+  "productionBrowserVisualReview": "Not observed: browser control stopped on detected user input; synthetic responsive browser checks and native/static deployment checks are separate evidence.",
+  "temporary520": {
+    "userConfirmedRecovered": true,
+    "configurationChangedForIncident": false,
+    "backendAndLocalProxyReturned200": true,
+    "unauthenticatedPublicAccessRedirected302": true,
+    "cause": "Not established; do not attribute the transient failure to a particular layer."
+  },
+  "previousReleasesPreserved": true
+}
