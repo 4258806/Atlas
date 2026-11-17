@@ -58,6 +58,10 @@ export function presentation(source) {
   // Branding changes only text and the exact footer project link. Preserve all
   // visual attributes/styles, including for the renamed manager component.
   source = source.replaceAll('AtlasManagementDialog', 'EnhancedManagementDialog')
+    .replaceAll('data-atlas-', 'data-enhanced-')
+    .replaceAll('atlas-tab-', 'enhanced-tab-')
+    .replaceAll('atlas-panel-', 'enhanced-panel-')
+    .replaceAll('atlas-emerald-grid', 'glassmorphism-emerald-grid')
     .replaceAll('title="Atlas 集中管理"', 'title="Enhanced 集中管理"')
     .replaceAll('aria-label="Atlas 主题设置分类"', 'aria-label="Enhanced 主题设置分类"')
     .replaceAll('href="https://github.com/MagnetOscar/Atlas"', 'href="https://github.com/sanrokamlan-prog/komari-theme-Glassmorphism"')

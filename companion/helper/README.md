@@ -1,4 +1,4 @@
-# Enhanced fixed-target helper · 0.3.0 development companion
+# Atlas fixed-target helper · 0.3.0 development companion
 
 This separately installed, outbound-only Linux helper is not a Komari Agent replacement. Requires Python >=3.10 and an administrator-provided Linux `traceroute`; it does not install dependencies. UDP remains available. TCP uses fixed port 443. Both use compiled-in IPv4 targets; IPv6 probes are rejected. No command, hostname, executable, port or target is accepted from the panel.
 
@@ -37,7 +37,7 @@ Collection is serial, protected by an owner-only lock and persistent 60-second l
 
 The panel still enforces native UUID identity, leases, request-body limits, per-node token buckets, enqueue cooldown, global concurrency and period caching. No arbitrary target, Shell field, remote protocol override or port is added to its jobs. All results remain administrator-only. Manual UUID overrides win, each protocol retains its own collection time and TTL, and old schema1 results remain readable.
 
-The theme uses one neutral, compact return-route line with tiny carrier-color markers. No current valid result means no card region; unknown, expired, failed, fixture or disagreeing protocol results stay in administrator diagnostics rather than appearing as a confirmed line. Guests see only explicit manual labels, never private auto results or raw evidence. Administrators retain separate hops, IPv4, ASN/provenance, hidden TTLs, target reachability, lookup statistics and fixture/source timestamps in Enhanced management or authorized expanded details. ASN appearance never certifies a commercial product; CN2 GT/GIA remain candidates. IP prefix evidence is explicitly labelled as low-confidence and not ASN. The product's `docs/single-node-route-trial.md` covers separately authorized, foreground `--once` trials and rollback; dirty development Full bundles cannot be used on non-loopback panels.
+The theme uses one neutral, compact return-route line with tiny carrier-color markers. No current valid result means no card region; unknown, expired, failed, fixture or disagreeing protocol results stay in administrator diagnostics rather than appearing as a confirmed line. Guests see only explicit manual labels, never private auto results or raw evidence. Administrators retain separate hops, IPv4, ASN/provenance, hidden TTLs, target reachability, lookup statistics and fixture/source timestamps in Atlas management or authorized expanded details. ASN appearance never certifies a commercial product; CN2 GT/GIA remain candidates. IP prefix evidence is explicitly labelled as low-confidence and not ASN. The product's `docs/single-node-route-trial.md` covers separately authorized, foreground `--once` trials and rollback; dirty development Full bundles cannot be used on non-loopback panels.
 
 ## Stop, uninstall and rollback
 
@@ -49,4 +49,4 @@ To roll back, retain the old code, matching plugin ZIP and private-state backup.
 
 `--fixture-dir PATH` requires a literal loopback panel and explicit `allowLoopback: true`. It reads fixed city/carrier/protocol files (UDP can fall back to old city/carrier filenames), executes neither traceroute nor WHOIS, and marks all results `fixture`. Fixtures are repository test data, not measured routes bundled as production results.
 
-MIT attribution: Transit `ee9f31c5ff104e033ded858171ce0b63c672e878`, Copyright (c) 2026 yyy622hhh and Copyright (c) 2025 Tony Liu. Full permission notice is in LICENSE. Enhanced's root license and existing attributions remain unchanged. TcpQuality GPL-3.0-only is a method reference only; none of its Shell program is included here. See the product's `docs/tcpquality-adaptation.md` for scope and verification boundaries.
+MIT attribution: Transit `ee9f31c5ff104e033ded858171ce0b63c672e878`, Copyright (c) 2026 yyy622hhh and Copyright (c) 2025 Tony Liu. Full permission notice is in LICENSE. Atlas's root license and existing attributions remain unchanged. TcpQuality GPL-3.0-only is a method reference only; none of its Shell program is included here. See the product's `docs/tcpquality-adaptation.md` for scope and verification boundaries.

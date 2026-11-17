@@ -25,7 +25,7 @@ async function current(): Promise<PublicInfo> {
 }
 export async function loadManagedSettings(): Promise<PublicInfo> {
   await authorize()
-  return requestManager.run('enhanced:settings:read', current, { retryAttempts: 0 })
+  return requestManager.run('atlas:settings:read', current, { retryAttempts: 0 })
 }
 async function write(change: (before: Record<string, unknown>) => Record<string, unknown>): Promise<PublicInfo> {
   if (saving)
@@ -33,7 +33,7 @@ async function write(change: (before: Record<string, unknown>) => Record<string,
   saving = true
   try {
     await authorize()
-    return await requestManager.run('enhanced:settings:write', async (signal) => {
+    return await requestManager.run('atlas:settings:write', async (signal) => {
       const before = await current()
       const next = change(before.theme_settings)
       const checked = await current()

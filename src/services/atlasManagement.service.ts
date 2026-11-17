@@ -69,7 +69,7 @@ async function fetchState(signal?: AbortSignal): Promise<AtlasManagementState> {
 }
 export async function loadAtlasManagement(): Promise<AtlasManagementState> {
   await authorize()
-  return requestManager.run('enhanced:management:load', signal => fetchState(signal), { retryAttempts: 0 })
+  return requestManager.run('atlas:management:load', signal => fetchState(signal), { retryAttempts: 0 })
 }
 export function managementFingerprint(state: AtlasManagementState): string {
   return stableValue({ theme: state.public.theme, settings: state.public.theme_settings, version: state.themeVersion, plugin: state.plugin, config: state.config })
@@ -78,7 +78,7 @@ async function putPlugin(data: Record<string, unknown>, signal?: AbortSignal) {
   await getSharedRpc().getClient().call('admin:setPluginConfiguration', { short: PROBE_SHORT, data }, signal)
 }
 async function compensate(before: AtlasManagementState, next: ReturnType<typeof managementChanges>) {
-  return requestManager.run('enhanced:management:compensate', async (signal) => {
+  return requestManager.run('atlas:management:compensate', async (signal) => {
     const current = await fetchState(signal)
     let conflicted = false
     if (stableValue(current.config) === stableValue(next.plugin))
@@ -100,7 +100,7 @@ export async function saveAtlasManagement(expected: AtlasManagementState, draft:
   saving = true
   try {
     await authorize()
-    return await requestManager.run('enhanced:management:write', async (signal) => {
+    return await requestManager.run('atlas:management:write', async (signal) => {
       const before = await fetchState(signal)
       if (managementFingerprint(before) !== managementFingerprint(expected))
         throw new Error('配置已被其他操作修改，请刷新后再确认；本次未写入')
@@ -134,7 +134,7 @@ export async function saveAtlasManagement(expected: AtlasManagementState, draft:
 }
 export async function enableAtlasPlugin(): Promise<AtlasManagementState> {
   await authorize()
-  await requestManager.run('enhanced:management:enable', async (signal) => {
+  await requestManager.run('atlas:management:enable', async (signal) => {
     const state = await fetchState(signal)
     if (!state.plugin || state.komariVersion !== '1.6.0' || state.public.theme !== THEME_SHORT)
       throw new Error('请先用统一 CLI 安装兼容的 Atlas 主题与插件')

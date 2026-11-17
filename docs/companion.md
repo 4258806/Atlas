@@ -1,4 +1,6 @@
-# Enhanced 回程采集 · v1.2.0 稳定伴生模块
+# Atlas · 可选回程伴生模块参考
+
+> Atlas 当前版本为 0.0.1，安装使用 Atlas 原生主题 ZIP。下文保留直接上游的组件／历史安装与验证说明，出现的 Enhanced 名称、旧版本和旧产物属于来源记录；不代表 Atlas 已发布 Full／Helper，也不授权启用实验采集。当前状态以 [README](../README.md) 和 [Atlas 发布说明](release-notes-atlas-0.0.1.md) 为准。
 
 > **v1.2.1 开发树补充（尚未发布）**：当前 0.3.0 开发组件新增独立 TCP/UDP、显式 Team Cymru 同意与本地持久化限频，并移除隐式 `traceroute -A` 查询。新行为、升级顺序与安全边界见 [TCP/UDP 专项说明](tcpquality-adaptation.md)。下文 0.2 系列说明保留为已发布 v1.2.0 的历史安装/回滚参考，不应套用其 `-A` 参数到新 Helper。
 

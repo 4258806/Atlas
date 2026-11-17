@@ -132,7 +132,7 @@ test('invalid raw protocol payload is rejected before DOM rendering', async ({ p
   await expect(node(page)).toHaveCount(0)
   await page.getByRole('button', { name: 'Atlas 管理', exact: true }).click()
   await page.locator('[data-optional-companion] > summary').click()
-  await expect(page.getByRole('dialog').locator('[data-enhanced-management]').getByRole('alert')).toContainText('协议异常')
+  await expect(page.getByRole('dialog').locator('[data-atlas-management]').getByRole('alert')).toContainText('协议异常')
   await expect(page.locator('[data-protocol-evidence]')).toHaveCount(0)
   expect(await page.evaluate(() => '__v2Pwned' in window)).toBe(false)
 })

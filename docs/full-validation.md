@@ -1,4 +1,6 @@
-# Atlas Full v1.2.0 · 验证范围与复现
+# Atlas · 可选 Full 的上游历史验证
+
+> Atlas 当前版本为 0.0.1，安装使用 Atlas 原生主题 ZIP。下文保留直接上游的组件／历史安装与验证说明，出现的 Enhanced 名称、旧版本和旧产物属于来源记录；不代表 Atlas 已发布 Full／Helper，也不授权启用实验采集。当前状态以 [README](../README.md) 和 [Atlas 发布说明](release-notes-atlas-0.0.1.md) 为准。
 
 > **历史与当前候选分开**：本页下方保留已发布 v1.2.0 的真实验收记录，不将旧测试数量冒充 v1.2.1 结果。v1.2.1 最新完整验收在 `test-results/v121/release-final/`；早期预检在 `release-preflight/`，TcpQuality 专项在 `tcpquality/`。当前源码未提交，dirty 验收包不是正式 Release；提交获准后仍须 clean-source 重建和原有正式发行校验。本轮不会改旧 v1.2.0 Tag/Release。v1.2.1 的生产自动探测闭环与可靠商业线路分类仍未验收，不列为本版已支持功能；历史六条 CDN 实测和隔离回放不能代替它。
 

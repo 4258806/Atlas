@@ -370,7 +370,7 @@ async function main() {
       await page.getByRole('button', { name: 'Atlas 管理', exact: true }).click()
       await page.locator('[data-optional-companion] > summary').click()
       await expect(page.getByRole('dialog')).toBeVisible({ timeout: 15000 })
-      await expect(page.locator('[data-enhanced-versions]')).toContainText(manifest.modules.plugin.version)
+      await expect(page.locator('[data-atlas-versions]')).toContainText(manifest.modules.plugin.version)
       await page.getByRole('combobox', { name: '管理节点 UUID', exact: true }).selectOption(client.uuid)
       await expect(page.getByRole('combobox', { name: '管理节点 UUID', exact: true })).toHaveValue(client.uuid)
       await expect(page.locator('[data-helper-status]')).toContainText('已登记，尚未轮询')
@@ -480,7 +480,7 @@ async function main() {
       await guestContext.close()
       await page.getByRole('tab', { name: '线路与延迟', exact: true }).click()
       await page.locator('[data-optional-companion] > summary').click()
-      await expect(page.locator('[data-enhanced-versions]')).toBeVisible()
+      await expect(page.locator('[data-atlas-versions]')).toBeVisible()
       await page.getByRole('combobox', { name: '管理节点 UUID', exact: true }).selectOption(client.uuid)
     })
     await check('one central form writes selected UUID policy and manual override, preserving other configuration', async () => {

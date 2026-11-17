@@ -18,6 +18,7 @@ BRANDING_RUNTIME = {
     "src/utils/returnRouteClassification.ts", "src/utils/themeSettings.ts",
     "src/utils/atlasIdentity.ts", "src/services/atlasIdentity.service.ts",
     "src/utils/init.ts", "src/utils/rpc.ts",
+    "src/components/Background.vue",
 }
 FIRST_THREE_RUNTIME = {
     "src/components/FinanceDetailsDialog.vue", "src/components/NodeGeneralCards.vue",

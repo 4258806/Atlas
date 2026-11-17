@@ -226,7 +226,7 @@ async function main() {
       await page.locator('[data-optional-companion] > summary').click()
       await page.getByRole('combobox', { name: '管理节点 UUID', exact: true }).selectOption(client.uuid)
       await expect(page.locator('[data-helper-status]')).toContainText('模拟 fixture')
-      await expect(page.locator('[data-enhanced-versions]')).toContainText(pluginVersion)
+      await expect(page.locator('[data-atlas-versions]')).toContainText(pluginVersion)
       await page.screenshot({ path: join(out, 'real-1.6.0-fixture-admin.png'), fullPage: true })
       await page.getByRole('button', { name: '关闭', exact: true }).click()
     })

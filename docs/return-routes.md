@@ -1,4 +1,6 @@
-# 节点标签与回程线路（Enhanced v1.2.1 发布准备）
+# Atlas · 节点标签与回程线路参考
+
+> Atlas 当前版本为 0.0.1，安装使用 Atlas 原生主题 ZIP。下文保留直接上游的组件／历史安装与验证说明，出现的 Enhanced 名称、旧版本和旧产物属于来源记录；不代表 Atlas 已发布 Full／Helper，也不授权启用实验采集。当前状态以 [README](../README.md) 和 [Atlas 发布说明](release-notes-atlas-0.0.1.md) 为准。
 
 > v1.2.1 尚未发布；当前稳定发行版仍为 [Atlas Full v1.2.0](full.md)。本版范围见 [v1.2.1 发布说明](release-notes-v1.2.1.md)，内部插件/助手协议参考见 [伴生模块说明](companion.md)。历史六份湖北 CDN TCP/UDP 采集已存在，但 ASN 补全未授权，生产实时自动探测闭环未验收；隔离 fixture/replay 不能替代它。Komari 1.6.1 本轮未实测。
 

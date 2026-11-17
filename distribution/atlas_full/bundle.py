@@ -45,7 +45,7 @@ def native_zip(data, kind, allow_legacy=False):
             if {n.split('/')[0] for n in names} != {'komari-theme.json', 'preview.png', 'dist'} or 'dist/index.html' not in names:
                 raise Refused('invalid-native-theme-layout')
             if manifest.get('short') != THEME_SHORT:
-                raise Refused('not-an-enhanced-theme')
+                raise Refused('not-an-atlas-theme')
         elif set(names) != PLUGIN_FILES or manifest.get('short') != 'enhanced-route-probe' or manifest.get('permissions') != PERMISSIONS or not (manifest.get('channel') == RELEASE_CHANNEL or (allow_legacy and manifest.get('version') == '0.1.0' and 'channel' not in manifest)):
             raise Refused('unexpected-plugin-files-or-privileges')
         return manifest

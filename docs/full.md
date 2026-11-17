@@ -1,4 +1,6 @@
-# Glassmorphism Atlas Full · v1.2.0 稳定单包
+# Atlas · 可选 Full 上游参考
+
+> Atlas 当前版本为 0.0.1，安装使用 Atlas 原生主题 ZIP。下文保留直接上游的组件／历史安装与验证说明，出现的 Enhanced 名称、旧版本和旧产物属于来源记录；不代表 Atlas 已发布 Full／Helper，也不授权启用实验采集。当前状态以 [README](../README.md) 和 [Atlas 发布说明](release-notes-atlas-0.0.1.md) 为准。
 
 > **v1.2.1 本地候选说明（尚未提交或发布）**：当前开发树的主题 manifest 为 `Enhanced` / `1.2.1`，Plugin / Helper 为 `0.3.0` 开发组件，新增独立流量周期和 TCP/UDP 证据。dirty 构建仅用于本地预检，必须标记 `DEVELOPMENT_ONLY`；不能把旧 HEAD 对应的本地产物当作正式 Release。获准提交后须重新构建并执行原有 clean-source 发行门禁。新功能与限制见包内 `docs/traffic-cycles.md`、`docs/tcpquality-adaptation.md`；本轮机器结果见 `test-results/v121/release-preflight/`。以下 v1.2.0 / 0.2 系列说明保留为已发布稳定版的历史安装/回滚参考，当前实际版本以包内 matrix 为准。
 

@@ -73,7 +73,7 @@ async function open(page: Page) {
   await page.goto('/')
   await page.getByRole('button', { name: 'Atlas 管理', exact: true }).click()
   await page.locator('[data-optional-companion] > summary').click()
-  await expect(page.locator('[data-enhanced-versions]')).toBeVisible()
+  await expect(page.locator('[data-atlas-versions]')).toBeVisible()
 }
 
 test('guest has no manager entry and never requests private plugin data', async ({ page }) => {
@@ -116,7 +116,7 @@ test('stale helper and old plugin version are not mistaken for online or matchin
   await fixture(page, { offline: true, legacy: true })
   await open(page)
   await expect(page.locator('[data-helper-status]')).toContainText('离线或心跳已过期')
-  await expect(page.locator('[data-enhanced-upgrade]')).toBeVisible()
+  await expect(page.locator('[data-atlas-upgrade]')).toBeVisible()
 })
 test('central form preserves another UUID, Relay/SGD/unknown fields and requires explicit confirmation', async ({ page }) => {
   const state = await fixture(page)
@@ -176,7 +176,7 @@ test('invalid existing plugin policy disables writes without deleting the source
 test('invalid manual document refuses a save instead of replacing it with an empty document', async ({ page }) => {
   const state = await fixture(page, { corruptManual: true })
   await open(page)
-  await expect(page.locator('[data-enhanced-management] [data-route-config-error]')).toContainText('回程配置无效')
+  await expect(page.locator('[data-atlas-management] [data-route-config-error]')).toContainText('回程配置无效')
   await page.getByRole('checkbox', { name: '确认当前管理操作', exact: true }).check()
   await page.getByRole('button', { name: '保存当前节点及显示设置', exact: true }).click()
   await expect(page.getByRole('alert').filter({ hasText: '不会覆盖' })).toContainText('不会覆盖')
