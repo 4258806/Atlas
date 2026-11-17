@@ -48,7 +48,7 @@ export function useNodeReturnRoutes(uuid: MaybeRefOrGetter<string>) {
   })
   // Legacy inline auto data is not authorization to publish measurements.
   // Live automatic evidence comes only from the administrator-only snapshot.
-  const entries = computed(() => resolveReturnRoutes(document.value, toValue(uuid), app.returnRouteAutoEnabled && (connected.value || publicConnected.value), app.returnRouteTtlHours, app.returnRouteNow).map((entry) => {
+  const entries = computed(() => resolveReturnRoutes(document.value, toValue(uuid), app.returnRouteAutoEnabled && (app.privateFeaturesAllowed || publicConnected.value), app.returnRouteTtlHours, app.returnRouteNow).map((entry) => {
     const paths = protocolEvidence.value?.[entry.carrier]
     return paths ? protocolRouteDisplay(toValue(uuid), entry, paths, app.returnRouteTtlHours, app.returnRouteNow) : entry
   }))
