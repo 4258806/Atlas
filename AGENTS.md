@@ -4,6 +4,8 @@ Root-scope guide for the personal public fork **Atlas** (`MagnetOscar/Atlas`).
 
 ## Mandatory development and release policy
 
+- Latest homepage-card instruction (2026-11-17): add one TCP/UDP mini tile below the existing three metric tiles, at the same single-column width and glass styling. Reuse existing showTcpConnections/showUdpConnections preferences and live counters; both disabled hides the extra row. This explicitly permits that narrow NodeCard presentation addition. Preserve the first three tiles, other UI, maps/globe, collection, currency/reset semantics and published assets; no Release or production deployment is authorized by this request.
+
 - Latest Release-page instruction (2026-11-17): remove only the pre-rename duplicate `personal-v0.0.1` Release and its attached historical build from the public Release list. Retain its Git tag/source history and local archive. Keep the two formal Atlas releases and their tags/assets unchanged. Release display titles and future versioned material headings use `Atlas v<version>` (for example, `Atlas v0.0.2`); tags remain `atlas-v<version>`, manifest versions stay numeric and native ZIP filenames retain their build-SHA contract. This supersedes the earlier requirement to keep the pre-rename Release downloadable.
 
 - Latest 2026-11-17 authorization: prepare 0.0.2 after implementing PR #10 finance-dialog repairs, carrier drag ordering with persistence, blocks/line display selection and TCP/UDP count visibility. Generate desktop/mobile previews before release preparation. These are narrow exceptions to the UI freeze; preserve maps/globe and unrelated layout, reset/finance data, original defaults when new settings are absent. Return-route collection and production deployment remain excluded.

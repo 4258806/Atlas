@@ -14,6 +14,10 @@ const STABLE_STYLE = `
   .earth-globe-canvas { opacity: 0 !important; }
 `
 
+// Keep original screenshot baselines for the inherited surfaces. The sole
+// user-authorized new tile is exercised visibly by home-connections.spec.ts.
+const INHERITED_HOME_SCREENSHOT = { fullPage: false, style: '[data-node-connections] { display: none !important; }' }
+
 async function openStablePage(page: Page, path = '/'): Promise<void> {
   await page.goto(path)
   await expect(page.getByRole('heading', { name: 'Komari Visual Lab' })).toBeVisible()
@@ -64,7 +68,7 @@ test('home light desktop', async ({ page }) => {
   await openStablePage(page)
   await expectNodeMetricIcons(page)
   await expectNodePingBars(page)
-  await expect(page).toHaveScreenshot('home-light-desktop.png', { fullPage: false })
+  await expect(page).toHaveScreenshot('home-light-desktop.png', INHERITED_HOME_SCREENSHOT)
 })
 
 test('home dark mobile', async ({ page }) => {
@@ -72,7 +76,7 @@ test('home dark mobile', async ({ page }) => {
   await installKomariFixture(page, { dark: true })
   await openStablePage(page)
   await expectNodeMetricIcons(page)
-  await expect(page).toHaveScreenshot('home-dark-mobile.png', { fullPage: false })
+  await expect(page).toHaveScreenshot('home-dark-mobile.png', INHERITED_HOME_SCREENSHOT)
 })
 
 test('home accessible list desktop', async ({ page }) => {
@@ -87,7 +91,7 @@ test('home cobe layout desktop', async ({ page }) => {
   await installKomariFixture(page, { earthRenderer: 'cobe' })
   await openStablePage(page)
   await expectNodeMetricIcons(page)
-  await expect(page).toHaveScreenshot('home-cobe-desktop.png', { fullPage: false })
+  await expect(page).toHaveScreenshot('home-cobe-desktop.png', INHERITED_HOME_SCREENSHOT)
 })
 
 test('home tiled layout desktop', async ({ page }) => {
@@ -95,7 +99,7 @@ test('home tiled layout desktop', async ({ page }) => {
   await installKomariFixture(page, { earthRenderer: 'tiled' })
   await openStablePage(page)
   await expectNodeMetricIcons(page)
-  await expect(page).toHaveScreenshot('home-tiled-desktop.png', { fullPage: false })
+  await expect(page).toHaveScreenshot('home-tiled-desktop.png', INHERITED_HOME_SCREENSHOT)
 })
 
 test('home tiled layout respects custom general cards and order', async ({ page }) => {

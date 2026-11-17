@@ -49,6 +49,7 @@ export interface VisualFixtureOptions {
   generalCardKeys?: string[]
   detailMetricCardKeys?: string[]
   latestStatusWithoutTraffic?: boolean
+  firstNodeConnections?: { tcp: number | null, udp: number | null, online: boolean }
   trafficMetricUnavailable?: boolean
   trafficMetricEmptyNode?: number
   trafficMetricZeroNode?: number
@@ -413,6 +414,10 @@ async function handleRpc(route: Route, clientFixtures = clients, options: Visual
       break
     case 'common:getNodesLatestStatus':
       result = options.latestStatusWithoutTraffic ? withoutLatestTrafficFields() : statuses
+      if (options.firstNodeConnections) {
+        const live = options.firstNodeConnections
+        result = { ...(result as Record<string, unknown>), [uuidFor(0)]: { ...statuses[uuidFor(0)], connections: live.tcp, connections_udp: live.udp, online: live.online } }
+      }
       if (options.largeLifetimeTraffic) {
         result = {
           ...(result as Record<string, unknown>),

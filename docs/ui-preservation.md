@@ -1,5 +1,9 @@
 # Fork UI preservation
 
+## Latest homepage connection tile exception (2026-11-17)
+
+The user explicitly requests TCP/UDP counts on the homepage node cards: retain the original three mini metric tiles and add a fourth on the following row, using one original column's width, padding and glass style. Reuse the existing TCP/UDP visibility switches and live agent data, with no new collector, setting or API request. Both switches off removes the new tile and its row; single-protocol mode retains the original tile height. Missing/offline values display an em dash rather than a fabricated zero. Scope is only this tile; no placeholder tiles or unrelated features are authorized. The original accepted 0.0.2 contract stays pinned after removing this specifically marked addition; a separate contract pins the complete extended NodeCard presentation. Original screenshots/tolerances, maps/globe and the first three tiles remain protected. Development does not authorize replacing published 0.0.2 assets or production deployment.
+
 ## Latest narrow 0.0.2 exceptions (2026-11-17)
 
 The user explicitly requests PR #10 finance-dialog fixes, saved drag carrier ordering, block/line history choice and TCP/UDP count visibility, followed by previews and release preparation. Those surfaces alone may change. Defaults and all unrelated public layouts, map/globe, sampling/targets, reset schedules and currency calculations remain protected. The separate `tests/fixtures/display-ui-0.0.2.json` pins the exact accepted display changes while retaining the original baseline contract. The three new display components use existing data and native global settings; these are theme features, not new backend collectors. Earlier suspension statements below are historical for the 0.0.1 release.
