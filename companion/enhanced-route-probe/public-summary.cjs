@@ -13,15 +13,16 @@ function publicSummary(snapshot, now = Date.now()) {
     const carriers = {}
     for (const carrier of ['telecom', 'unicom', 'mobile']) {
       const rows = result.protocols.map(p => result.carriers[carrier][p])
-      const first = rows[0]
+      // Publish one observed protocol, never a union of two different paths.
+      const first = result.carriers[carrier].tcp || rows[0]
       const signature = row => JSON.stringify([row.status, row.reachedTarget, row.hops.map(h => [h.ttl, h.asns])])
       const consistent = rows.every(row => signature(row) === signature(first))
       carriers[carrier] = {
         direction: 'node-to-cn',
         target: first.target,
         status: consistent ? first.status : 'unknown',
-        reachedTarget: consistent && first.reachedTarget,
-        hops: consistent ? first.hops.map(h => ({ ttl: h.ttl, asns: [...h.asns] })) : [],
+        reachedTarget: first.reachedTarget,
+        hops: first.hops.map(h => ({ ttl: h.ttl, asns: [...h.asns] })),
       }
     }
     nodes[uuid] = { enabled: true, state: 'completed', latest: {

@@ -4,11 +4,19 @@ import { useNodeReturnRoutes } from '@/composables/useNodeReturnRoutes'
 import { useAppStore } from '@/stores/app'
 import { RETURN_CARRIER_NAMES } from '@/utils/returnRouteClassification'
 import { compactReturnRoute, returnRouteTime } from '@/utils/returnRouteDisplay'
+import { resolveReturnRoutes } from '@/utils/returnRoutes'
 
 const props = defineProps<{ uuid: string }>()
 const app = useAppStore()
-const { entries, visible } = useNodeReturnRoutes(() => props.uuid)
-const ordered = computed(() => app.carrierOrder.flatMap(c => entries.value.filter(e => e.carrier === c)))
+const { entries, visible, protocolEvidence } = useNodeReturnRoutes(() => props.uuid)
+const ordered = computed(() => app.carrierOrder.flatMap(c => entries.value.filter(e => e.carrier === c)).map((entry) => {
+  const paths = protocolEvidence.value?.[entry.carrier]
+  const trace = paths?.tcp ?? paths?.udp
+  if (!trace || entry.source === 'manual' || entry.protocolState === 'same' || entry.status === 'expired')
+    return entry
+  const selected = resolveReturnRoutes({ version: 1, nodes: { [props.uuid]: { manual: {}, auto: { [entry.carrier]: trace } } } }, props.uuid, true, app.returnRouteTtlHours, app.returnRouteNow).find(e => e.carrier === entry.carrier)!
+  return { ...selected, status: 'unknown' as const, protocolState: 'single' as const, detail: `首页单独显示 ${paths?.tcp ? 'TCP' : 'UDP'} 观测；${entry.detail}；${selected.detail}` }
+}))
 </script>
 
 <template>
@@ -21,7 +29,7 @@ const ordered = computed(() => app.carrierOrder.flatMap(c => entries.value.filte
         </span>
       </summary>
       <div class="mt-2 space-y-1 break-words border-t border-border/50 pt-1" data-route-tile-details>
-        <p>节点 → 国内目标；线路观测，非商业线路认证。</p>
+        <p>节点 → 国内目标；自动摘要优先展示单条 TCP 观测（无 TCP 时取 UDP），不合并分歧路径；非商业线路认证。</p>
         <p v-for="entry in ordered" :key="entry.carrier">
           {{ RETURN_CARRIER_NAMES[entry.carrier] }}：{{ entry.label }} · {{ returnRouteTime(entry.at) }} · {{ entry.detail }}
         </p>

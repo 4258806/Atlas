@@ -38,3 +38,12 @@ test('public summaries require a boolean opt-in; existing policy shape remains c
   assert.equal(policy({ publicSummaryEnabled: true }).publicSummaryEnabled, true)
   assert.throws(() => policy({ publicSummaryEnabled: 'true' }))
 })
+
+test('disagreeing protocols retain only the TCP observation and mark it uncertain', () => {
+  const raw = snapshot()
+  raw.nodes[id].latest.carriers.telecom.udp.hops[0].asns = [4809]
+  const row = publicSummary(raw, now).nodes[id].latest.carriers.telecom
+  assert.equal(row.status, 'unknown')
+  assert.deepEqual(row.hops, [{ ttl: 1, asns: [4134] }])
+  assert.doesNotMatch(JSON.stringify(row), /4809/)
+})
