@@ -31,7 +31,7 @@ for (const scenario of [
     setActivePinia(pinia)
     try {
       const store = useAppStore()
-      store.publicSettings = { theme: 'Enhanced', theme_settings: {}, ...(scenario.field === undefined ? {} : { visitor_audit_enabled: scenario.field }) } as PublicSettings
+      store.publicSettings = { theme: 'Atlas', theme_settings: {}, ...(scenario.field === undefined ? {} : { visitor_audit_enabled: scenario.field }) } as PublicSettings
       const audit = useVisitorAudit()
       expect(audit.supported.value).toBe(scenario.supported)
       expect(audit.enabled.value).toBe(scenario.enabled)

@@ -6,10 +6,10 @@ import ThemeSettingsPanel from '@/components/ThemeSettingsPanel.vue'
 import { AppDialog } from '@/components/ui/app-dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { useEnhancedManagement } from '@/composables/useEnhancedManagement'
+import { useAtlasManagement } from '@/composables/useAtlasManagement'
 import { useAppStore } from '@/stores/app'
 import { RETURN_CARRIERS } from '@/utils/returnRouteClassification'
-import { ENHANCED_SETTINGS_GROUPS } from '@/utils/themeSettings'
+import { ATLAS_SETTINGS_GROUPS } from '@/utils/themeSettings'
 import pluginManifest from '../../companion/enhanced-route-probe/komari-plugin.json'
 import helperManifest from '../../companion/helper/helper-version.json'
 
@@ -21,12 +21,12 @@ function moveTab(event: KeyboardEvent, index: number) {
   if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key))
     return
   event.preventDefault()
-  const next = event.key === 'Home' ? 0 : event.key === 'End' ? ENHANCED_SETTINGS_GROUPS.length - 1 : (index + (event.key === 'ArrowRight' ? 1 : -1) + ENHANCED_SETTINGS_GROUPS.length) % ENHANCED_SETTINGS_GROUPS.length
-  activeGroup.value = ENHANCED_SETTINGS_GROUPS[next]!.id
+  const next = event.key === 'Home' ? 0 : event.key === 'End' ? ATLAS_SETTINGS_GROUPS.length - 1 : (index + (event.key === 'ArrowRight' ? 1 : -1) + ATLAS_SETTINGS_GROUPS.length) % ATLAS_SETTINGS_GROUPS.length
+  activeGroup.value = ATLAS_SETTINGS_GROUPS[next]!.id
   const button = event.currentTarget as HTMLButtonElement
   ;(button.parentElement?.querySelectorAll('button')[next] as HTMLButtonElement | undefined)?.focus()
 }
-const manager = useEnhancedManagement(() => props.open && activeGroup.value === 'routes' && advancedOpen.value)
+const manager = useAtlasManagement(() => props.open && activeGroup.value === 'routes' && advancedOpen.value)
 const app = useAppStore()
 const { state, selected, draft, busy, dirty, confirmed, error, notice, choices, selectedProbe, presence, command, lastResult, refresh, save, enable } = manager
 const labels = { telecom: '电信', unicom: '联通', mobile: '移动' }
@@ -35,20 +35,20 @@ const commit = __BUILD_GIT_HASH__
 </script>
 
 <template>
-  <AppDialog :open="props.open" title="Enhanced 集中管理" description="五分类主题设置 · 每节点独立流量周期 · 自动回程详细结果仅管理员读取" @update:open="emit('update:open', $event)">
+  <AppDialog :open="props.open" title="Atlas 集中管理" description="五分类主题设置 · 每节点独立流量周期 · 自动回程详细结果仅管理员读取" @update:open="emit('update:open', $event)">
     <div class="space-y-4">
-      <nav role="tablist" aria-label="Enhanced 主题设置分类" class="grid grid-cols-3 gap-1 rounded-lg bg-slate-500/5 p-1 sm:grid-cols-5">
-        <button v-for="(group, index) in ENHANCED_SETTINGS_GROUPS" :id="`enhanced-tab-${group.id}`" :key="group.id" type="button" role="tab" :aria-label="group.label" :aria-selected="activeGroup === group.id" :aria-controls="`enhanced-panel-${group.id}`" :tabindex="activeGroup === group.id ? 0 : -1" class="min-w-0 rounded-md px-2 py-2 text-xs font-medium transition-colors" :class="activeGroup === group.id ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'" @click="activeGroup = group.id" @keydown="moveTab($event, index)">
+      <nav role="tablist" aria-label="Atlas 主题设置分类" class="grid grid-cols-3 gap-1 rounded-lg bg-slate-500/5 p-1 sm:grid-cols-5">
+        <button v-for="(group, index) in ATLAS_SETTINGS_GROUPS" :id="`atlas-tab-${group.id}`" :key="group.id" type="button" role="tab" :aria-label="group.label" :aria-selected="activeGroup === group.id" :aria-controls="`atlas-panel-${group.id}`" :tabindex="activeGroup === group.id ? 0 : -1" class="min-w-0 rounded-md px-2 py-2 text-xs font-medium transition-colors" :class="activeGroup === group.id ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'" @click="activeGroup = group.id" @keydown="moveTab($event, index)">
           {{ group.title }}
         </button>
       </nav>
-      <div :id="`enhanced-panel-${activeGroup}`" role="tabpanel" :aria-labelledby="`enhanced-tab-${activeGroup}`" class="space-y-4">
+      <div :id="`atlas-panel-${activeGroup}`" role="tabpanel" :aria-labelledby="`atlas-tab-${activeGroup}`" class="space-y-4">
         <ThemeSettingsPanel :group="activeGroup" />
         <details v-show="activeGroup === 'routes'" data-optional-companion @toggle="advancedOpen = ($event.target as HTMLDetailsElement).open">
           <summary class="cursor-pointer rounded-md border border-border/60 p-3 text-sm font-medium">
             可选自动采集与运行诊断（高级）
           </summary>
-          <div v-if="advancedOpen" class="mt-3 space-y-4 text-sm" data-enhanced-management>
+          <div v-if="advancedOpen" class="mt-3 space-y-4 text-sm" data-atlas-management>
             <p class="rounded-md border border-amber-500/30 bg-amber-500/5 p-3">
               本区仅用于可选实验链路；生产实时自动探测尚未通过验收，历史回放和模拟结果不代表实时识别。手动线路不需要 Plugin 或 Helper。本页面不会登录、安装或开启远端 VPS 的执行权限。
             </p>
@@ -71,10 +71,10 @@ const commit = __BUILD_GIT_HASH__
               正在核验管理员权限和组件状态…
             </p>
             <template v-if="state">
-              <dl class="grid grid-cols-1 gap-2 rounded-md border border-border/60 p-3 sm:grid-cols-2" data-enhanced-versions>
+              <dl class="grid grid-cols-1 gap-2 rounded-md border border-border/60 p-3 sm:grid-cols-2" data-atlas-versions>
                 <div class="min-w-0 break-all">
                   <dt class="text-muted-foreground">
-                    Komari / Enhanced 主题
+                    Komari / Atlas 主题
                   </dt>
                   <dd>{{ state.komariVersion }} / {{ state.themeVersion ?? '未安装' }}</dd>
                 </div>
@@ -97,7 +97,7 @@ const commit = __BUILD_GIT_HASH__
                   <dd>{{ helperManifest.version }}+git.{{ commit }}</dd>
                 </div>
               </dl>
-              <p v-if="state.plugin && state.plugin.version !== `${pluginManifest.version}+git.${commit}`" class="text-warning" data-enhanced-upgrade>
+              <p v-if="state.plugin && state.plugin.version !== `${pluginManifest.version}+git.${commit}`" class="text-warning" data-atlas-upgrade>
                 插件与本次 Full 构建不同；请先用统一 CLI 检查/升级，不要把已安装当作版本匹配。
               </p>
               <p v-if="state.error" role="alert" class="text-destructive">

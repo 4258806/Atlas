@@ -4,7 +4,7 @@
 
 ## 仓库与修改记录
 
-- 唯一维护仓库为 [MagnetOscar/Glassmorphism-Enhanced](https://github.com/MagnetOscar/Glassmorphism-Enhanced)，默认开发分支为 `personal/main`。本地用于开发、验证和构建，交付的更新必须同步到该 GitHub 仓库。
+- 唯一维护仓库为 [MagnetOscar/Atlas](https://github.com/MagnetOscar/Atlas)，默认开发分支为 `personal/main`。本地用于开发、验证和构建，交付的更新必须同步到该 GitHub 仓库。
 - 原始基线 `baseline/v1.2.1` 固定在 `0332d5f7c73f7994ba21c01e4b739d04835120b1`；保留上游历史、标签和来源记录。上游仓库只读，不向其他维护者仓库直接写入。
 - 功能和修复采用范围明确的分支、提交及 PR，说明解决的问题、实现范围、验证结果和兼容性。小范围文档更新可直接使用清楚的提交及 GitHub commit diff。
 - 每次交付提供对应提交或 PR，以及相对上一版本的 compare diff。不能只修改线上构建后的 JS/CSS，或将未推送的本地补丁视为完成。
@@ -42,7 +42,7 @@ preview.png
 dist/
 ```
 
-- 沿用现有 `komari-theme-Glassmorphism-build-<short-sha>.zip` 打包约定；版本由 Release/tag、包内主题清单和构建信息明确标识。
+- 沿用现有 `komari-theme-Atlas-build-<short-sha>.zip` 打包约定；版本由 Release/tag、包内主题清单和构建信息明确标识。
 - 构建来自干净、已提交且已同步 GitHub 的源码，使用锁文件和固定工具链。正式附件应由受控 CI 构建，不发布 dirty 或 visual-test 模式的验收包。
 - 校验 ZIP 路径安全、清单、静态资源、版本、源码提交、预览和许可文件。需要随包保留的许可声明放入兼容的 `dist/licenses/`，不破坏顶层安装结构。
 - 可选 Plugin/Helper 若需要独立交付，也使用用途明确的独立 ZIP，并记录组件版本和兼容关系；不能将其与原生主题 ZIP 混称或混装。
@@ -72,3 +72,11 @@ dist/
 ## 上游历史
 
 直接上游来源和版权见 [FORK.md](../FORK.md)、[LICENSE](../LICENSE) 与 [THIRD_PARTY.md](../THIRD_PARTY.md)。原始上游发行流程可在固定的 [v1.2.1 提交](https://github.com/casiuna/Glassmorphism-Enhanced/blob/0332d5f7c73f7994ba21c01e4b739d04835120b1/docs/releasing.md) 中查阅，其旧仓库权限、发布批准和验收数字不代表本 Fork 的当前状态。
+
+## Atlas 名称统一
+
+2026-11-17 用户明确要求：核对当前官方主题市场无 Atlas 重名后，将项目、仓库、代码中的自身名称、全部可见页面及页脚统一为 Atlas，并同步 0.0.1。市场核验见 `verification/atlas-name-20261117.json`。本次只授权名称／元数据／项目链接和对应符号更名，保留原布局、样式、地球／地图、独立重置与金额逻辑。
+
+当前主题使用 `short: Atlas`。首次启用后，在已验证管理员权限下，通过 Komari 1.6.1 原生数据库接口仅复制旧 Enhanced 主题的设置到缺失／空 Atlas 配置；条件写入不覆盖已有 Atlas 设置，旧行不删除。可选 companion 的协议标识保留兼容。页面、主题清单及项目 URL 均为 Atlas。MIT、原作者及上游来源记录不替换为本项目原创。
+
+品牌统一后的正式标签为 `atlas-v0.0.1`，仍使用软件版本 0.0.1，并绑定新的干净源码、原生 Atlas ZIP 和校验值。原 `personal-v0.0.1` 标签、包及记录不移动、不覆盖；其 Release 标题与说明同步标明 Atlas 的改名前历史构建，并引导至最新 Atlas 包。不得把旧包换个文件名冒充新代码构建。之后的正式标签采用 `atlas-v<version>`。

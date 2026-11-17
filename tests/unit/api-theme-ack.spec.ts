@@ -21,7 +21,7 @@ async function runtime(reply: unknown, status = 200) {
 test('native 1.6.0 managed-theme save omits data: accept ONLY this explicitly void ACK', async () => {
   const r = await runtime({ status: 'success', message: '' })
   try {
-    await expect(r.api.updateThemeSettings('Enhanced', { preserve: 'existing-map' })).resolves.toBeUndefined()
+    await expect(r.api.updateThemeSettings('Atlas', { preserve: 'existing-map' })).resolves.toBeUndefined()
   }
   finally { await r.close() }
 })
@@ -36,7 +36,7 @@ test('a forbidden/error/failed-HTTP theme save is never a success acknowledgment
   for (const [body, status] of [[{ status: 'error', message: 'Permission denied' }, 403], [{ status: 'success', message: '' }, 500]] as const) {
     const r = await runtime(body, status)
     try {
-      await expect(r.api.updateThemeSettings('Enhanced', {})).rejects.toThrow()
+      await expect(r.api.updateThemeSettings('Atlas', {})).rejects.toThrow()
     }
     finally { await r.close() }
   }

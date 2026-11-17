@@ -18,7 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(ROOT / 'distribution'))
-from enhanced_full.bundle import Bundle, helper_members, native_zip
+from atlas_full.bundle import Bundle, helper_members, native_zip
 from extract_bundle import extract
 
 
@@ -57,7 +57,7 @@ def main():
     with zipfile.ZipFile(native) as archive:
         manifest = json.loads(archive.read('komari-theme.json'))
         assert {k: manifest[k] for k in ('name', 'short', 'version', 'author')} == {
-            'name': 'Glassmorphism Enhanced', 'short': 'Enhanced', 'version': version, 'author': 'casiuna'}
+            'name': 'Atlas', 'short': 'Atlas', 'version': version, 'author': 'casiuna'}
         assert archive.read('preview.png') == (ROOT / 'docs/preview.png').read_bytes()
         assert archive.read('dist/licenses/transit-MIT.txt') == transit
         expected_dist = {p.relative_to(ROOT).as_posix(): p.read_bytes() for p in (ROOT / 'dist').rglob('*') if p.is_file()}

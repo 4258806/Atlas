@@ -29,8 +29,8 @@ async function fixture(page: Page, options: { guest?: boolean, single?: boolean,
     latest.carriers.telecom.tcp.hops[0].ips = ['<img src=x onerror=window.__v2Pwned=1>']
   const state = { reads: 0, writes: [] as string[] }
   const settings = { returnRoutesVisible: true, returnRouteAutoEnabled: true, returnRouteCompanionEnabled: true, returnRouteTtlHours: 24, returnRouteConfig: options.manual ? JSON.stringify({ version: 1, nodes: { [UUID]: { manual: { telecom: { label: '我的 手动线路', updatedAt: AT } } } } }) : '{"version":1,"nodes":{}}' }
-  await installKomariFixture(page, { themeShort: 'Enhanced', hideEarth: true, loggedIn: !options.guest, dark: options.narrow, nodeCardSize: options.narrow ? 'mini' : 'compact', themeSettings: settings })
-  await page.route('**/api/admin/theme/list', route => route.fulfill({ json: { status: 'success', data: [{ short: 'Enhanced', version: themeManifest.version }] } }))
+  await installKomariFixture(page, { themeShort: 'Atlas', hideEarth: true, loggedIn: !options.guest, dark: options.narrow, nodeCardSize: options.narrow ? 'mini' : 'compact', themeSettings: settings })
+  await page.route('**/api/admin/theme/list', route => route.fulfill({ json: { status: 'success', data: [{ short: 'Atlas', version: themeManifest.version }] } }))
   await page.route('**/api/enhanced-route-probe/v1/*', (route) => {
     state.reads++
     if (route.request().url().endsWith('/health'))
@@ -41,7 +41,7 @@ async function fixture(page: Page, options: { guest?: boolean, single?: boolean,
     const body = route.request().postDataJSON()
     const result = (value: unknown) => route.fulfill({ json: { jsonrpc: '2.0', id: body.id, result: value } })
     if (body.method === 'public:getPublicSettings')
-      return result({ allow_cors: false, custom_body: '', custom_head: '', description: 'EXPLICIT LOCAL UI MOCK', disable_password_login: false, oauth_enable: false, oauth_provider: '', private_site: false, record_enabled: true, record_preserve_time: 720, ping_record_preserve_time: 720, sitename: 'Komari Visual Lab', theme: 'Enhanced', theme_settings: { hideEarth: true, visitorInfoEnabled: false, rpcTransportMode: 'http', disablePageAnimation: true, ...settings } })
+      return result({ allow_cors: false, custom_body: '', custom_head: '', description: 'EXPLICIT LOCAL UI MOCK', disable_password_login: false, oauth_enable: false, oauth_provider: '', private_site: false, record_enabled: true, record_preserve_time: 720, ping_record_preserve_time: 720, sitename: 'Komari Visual Lab', theme: 'Atlas', theme_settings: { hideEarth: true, visitorInfoEnabled: false, rpcTransportMode: 'http', disablePageAnimation: true, ...settings } })
     if (body.method === 'public:getVersion')
       return result({ version: '1.6.0', hash: 'LOCAL-UI-MOCK' })
     if (body.method === 'admin:listPlugins')
@@ -57,7 +57,7 @@ async function fixture(page: Page, options: { guest?: boolean, single?: boolean,
 }
 const node = (page: Page) => page.locator(`[data-route-node="${UUID}"]`)
 async function details(page: Page) {
-  await page.getByRole('button', { name: 'Enhanced 管理', exact: true }).click()
+  await page.getByRole('button', { name: 'Atlas 管理', exact: true }).click()
   await page.locator('[data-optional-companion] > summary').click()
   return page.getByRole('dialog').locator('[data-protocol-evidence]')
 }
@@ -80,7 +80,7 @@ test('TCP/UDP disagreement is compact and explicit; administrator expands indepe
 })
 test('Enhanced management exposes TCP/UDP source, collection time, hidden hops and path differences without scheduling', async ({ page }) => {
   const state = await fixture(page)
-  await page.getByRole('button', { name: 'Enhanced 管理', exact: true }).click()
+  await page.getByRole('button', { name: 'Atlas 管理', exact: true }).click()
   await page.locator('[data-optional-companion] > summary').click()
   const proof = page.getByRole('dialog').locator('[data-protocol-evidence]')
   await expect(proof).toBeVisible()
@@ -122,7 +122,7 @@ test('guest never fetches or renders private protocol evidence', async ({ page }
   const state = await fixture(page, { guest: true })
   await expect(node(page)).toHaveCount(0)
   await expect(page.locator('[data-protocol-evidence]')).toHaveCount(0)
-  await expect(page.getByRole('button', { name: 'Enhanced 管理', exact: true })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Atlas 管理', exact: true })).toHaveCount(0)
   expect(state.reads).toBe(0)
   expect(state.writes).toEqual([])
   await expect(page.locator('body')).not.toContainText('59.43.2.1')
@@ -130,9 +130,9 @@ test('guest never fetches or renders private protocol evidence', async ({ page }
 test('invalid raw protocol payload is rejected before DOM rendering', async ({ page }) => {
   await fixture(page, { invalid: true })
   await expect(node(page)).toHaveCount(0)
-  await page.getByRole('button', { name: 'Enhanced 管理', exact: true }).click()
+  await page.getByRole('button', { name: 'Atlas 管理', exact: true }).click()
   await page.locator('[data-optional-companion] > summary').click()
-  await expect(page.getByRole('dialog').locator('[data-enhanced-management]').getByRole('alert')).toContainText('协议异常')
+  await expect(page.getByRole('dialog').locator('[data-atlas-management]').getByRole('alert')).toContainText('协议异常')
   await expect(page.locator('[data-protocol-evidence]')).toHaveCount(0)
   expect(await page.evaluate(() => '__v2Pwned' in window)).toBe(false)
 })

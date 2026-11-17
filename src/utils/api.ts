@@ -422,8 +422,8 @@ export class KomariApi {
   }
 
   async updateThemeSettings(short: string, data: Record<string, unknown>, signal?: AbortSignal): Promise<void> {
-    if (short !== 'Enhanced')
-      throw new Error('集中管理只允许写入 Enhanced 主题')
+    if (short !== 'Atlas')
+      throw new Error('集中管理只允许写入 Atlas 主题')
     await this.post<void>(`/admin/theme/settings?theme=${encodeURIComponent(short)}`, data, signal, true)
   }
 

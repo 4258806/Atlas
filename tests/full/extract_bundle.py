@@ -8,8 +8,8 @@ from pathlib import Path
 
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'distribution'))
-from enhanced_full.bundle import Bundle, safe_name
-from enhanced_full.safety import Refused
+from atlas_full.bundle import Bundle, safe_name
+from atlas_full.safety import Refused
 
 
 def extract(archive_path, destination):

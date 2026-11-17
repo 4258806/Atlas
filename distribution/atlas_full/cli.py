@@ -26,7 +26,7 @@ def parser():
     p.add_argument('--username', help='password is read with a hidden interactive prompt, never an argument')
     p.add_argument('--apply', action='store_true', help='explicitly authorize the displayed bounded operation')
     p.add_argument('--approve-route-plugin', action='store_true', help='approve node compatibility + HTTP routes, never exec/system RPC')
-    p.add_argument('--activate', action='store_true', help='select the stable Enhanced theme after a verified install')
+    p.add_argument('--activate', action='store_true', help='select the stable Atlas theme after a verified install')
     p.add_argument('--backup-dir')
     p.add_argument('--previous-theme')
     p.add_argument('--previous-plugin')

@@ -48,18 +48,19 @@ jobs:
           python3 tests/companion/test_cdn.py
           python3 tests/companion/test_archive_safety.py
           python3 tests/feasibility/test_read_google_fx.py
+          python3 tests/feasibility/test_release_scope.py
 
       - name: Build
         run: bun run build
 
       - name: Validate native ZIP and clean source
         run: |
-          python3 scripts/verify-theme.py komari-theme-Glassmorphism-build-*.zip --release
+          python3 scripts/verify-theme.py komari-theme-Atlas-build-*.zip --release
           git diff --exit-code
 
       - name: Retain candidate ZIP (not a Release)
         uses: actions/upload-artifact@v6
         with:
           name: theme-candidate-${{ github.sha }}
-          path: komari-theme-Glassmorphism-build-*.zip
+          path: komari-theme-Atlas-build-*.zip
           retention-days: 14

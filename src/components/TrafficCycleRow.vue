@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { useNodeTraffic } from '@/composables/useNodeTraffic'
 import { saveTrafficReset } from '@/services/themeSettings.service'
 import { useAppStore } from '@/stores/app'
-import { stableValue } from '@/utils/enhancedManagement'
+import { stableValue } from '@/utils/atlasManagement'
 import { formatBytesWithConfig } from '@/utils/helper'
 import { formatScheduleTime, validTimeZone } from '@/utils/resetSchedule'
 

@@ -6,7 +6,7 @@ import TrafficCycleManager from '@/components/TrafficCycleManager.vue'
 import { Button } from '@/components/ui/button'
 import { loadManagedSettings, saveManagedSettings } from '@/services/themeSettings.service'
 import { useAppStore } from '@/stores/app'
-import { stableValue } from '@/utils/enhancedManagement'
+import { stableValue } from '@/utils/atlasManagement'
 import { settingGroup, settingText, THEME_FIELDS } from '@/utils/themeSettings'
 
 const props = defineProps<{ group: SettingsGroup }>()

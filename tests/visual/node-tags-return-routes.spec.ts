@@ -175,7 +175,7 @@ test('native theme-settings save contract round-trips a UUID override (mock only
   }
   await installKomariFixture(page, { hideEarth: true, themeSettings: settings })
   const writes: Record<string, unknown>[] = []
-  await page.route('**/api/admin/theme/settings?theme=Enhanced', async (route) => {
+  await page.route('**/api/admin/theme/settings?theme=Atlas', async (route) => {
     expect(route.request().method()).toBe('POST')
     const payload = route.request().postDataJSON() as Record<string, unknown>
     writes.push(payload)
@@ -187,7 +187,7 @@ test('native theme-settings save contract round-trips a UUID override (mock only
   const normalized = serializeReturnRoutes(parseReturnRouteConfig(manualConfig('保存后的手动线路')).document)
   const payload = { ...settings, returnRouteConfig: normalized }
   const status = await page.evaluate(async (body) => {
-    const response = await fetch('/api/admin/theme/settings?theme=Enhanced', {
+    const response = await fetch('/api/admin/theme/settings?theme=Atlas', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
@@ -202,10 +202,10 @@ test('native theme-settings save contract round-trips a UUID override (mock only
 })
 
 test('invalid route JSON is visible as a configuration error, not a fabricated route', async ({ page }) => {
-  await installKomariFixture(page, { hideEarth: true, themeShort: 'Enhanced', loggedIn: true, themeSettings: { returnRoutesVisible: true, returnRouteConfig: '{broken' } })
+  await installKomariFixture(page, { hideEarth: true, themeShort: 'Atlas', loggedIn: true, themeSettings: { returnRoutesVisible: true, returnRouteConfig: '{broken' } })
   await page.goto('/')
   await expect(card(page).locator('[data-return-routes]')).toHaveCount(0)
-  await page.getByRole('button', { name: 'Enhanced 管理', exact: true }).click()
+  await page.getByRole('button', { name: 'Atlas 管理', exact: true }).click()
   await expect(page.getByRole('dialog').locator('[data-route-config-error]')).toContainText('回程配置无效')
   await expect(page.getByRole('dialog').locator('[data-route-config-error]')).toHaveAttribute('role', 'alert')
 })

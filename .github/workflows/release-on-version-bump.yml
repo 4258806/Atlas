@@ -1,4 +1,4 @@
-name: Accepted ZIP Release
+name: Atlas ZIP Release
 
 on:
   workflow_dispatch:
@@ -7,12 +7,12 @@ permissions:
   contents: write
 
 concurrency:
-  group: personal-release
+  group: atlas-release
   cancel-in-progress: false
 
 jobs:
   release:
-    if: github.repository == 'MagnetOscar/Glassmorphism-Enhanced' && github.ref == 'refs/heads/personal/main'
+    if: github.repository == 'MagnetOscar/Atlas' && github.ref == 'refs/heads/personal/main'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -31,12 +31,12 @@ jobs:
         run: |
           python3 scripts/release-gate.py
           VERSION=$(node -p 'JSON.parse(require("fs").readFileSync("komari-theme.json")).version')
-          TAG="personal-v${VERSION}"
+          TAG="atlas-v${VERSION}"
           if git rev-parse "refs/tags/$TAG" >/dev/null 2>&1; then exit 1; fi
           if gh release view "$TAG" >/dev/null 2>&1; then exit 1; fi
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
           echo "TAG=$TAG" >> "$GITHUB_ENV"
-          test -f "docs/release-notes-personal-${VERSION}.md"
+          test -f "docs/release-notes-atlas-${VERSION}.md"
       - run: bun install --frozen-lockfile
       - run: bun run lint:check
       - run: bun run test:unit
@@ -47,6 +47,7 @@ jobs:
           python3 tests/companion/test_probe_v2.py
           python3 tests/companion/test_cdn.py
           python3 tests/companion/test_archive_safety.py
+          python3 tests/feasibility/test_release_scope.py
       - name: Desktop and mobile browser validation
         run: |
           bunx playwright install --with-deps chromium
@@ -54,8 +55,8 @@ jobs:
       - name: Rebuild production ZIP after visual tests
         run: |
           bun run build
-          python3 scripts/verify-theme.py komari-theme-Glassmorphism-build-*.zip --release > theme-build-verification.json
-          sha256sum komari-theme-Glassmorphism-build-*.zip > SHA256SUMS.txt
+          python3 scripts/verify-theme.py komari-theme-Atlas-build-*.zip --release > theme-build-verification.json
+          sha256sum komari-theme-Atlas-build-*.zip > SHA256SUMS.txt
           git diff --exit-code
       - name: Publish immutable release and download verification
         env:
@@ -63,11 +64,11 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git tag -a "$TAG" -m "Personal release $VERSION"
+          git tag -a "$TAG" -m "Atlas release $VERSION"
           git push origin "$TAG"
           FLAGS=()
           if [[ "$VERSION" == *-* ]]; then FLAGS+=(--prerelease); fi
-          gh release create "$TAG" --verify-tag --title "Glassmorphism Enhanced Personal $VERSION" --notes-file "docs/release-notes-personal-${VERSION}.md" "${FLAGS[@]}" komari-theme-Glassmorphism-build-*.zip SHA256SUMS.txt theme-build-verification.json
+          gh release create "$TAG" --verify-tag --title "Atlas $VERSION" --notes-file "docs/release-notes-atlas-${VERSION}.md" "${FLAGS[@]}" komari-theme-Atlas-build-*.zip SHA256SUMS.txt theme-build-verification.json
           mkdir -p test-results/release-download
           gh release download "$TAG" --pattern '*.zip' --pattern SHA256SUMS.txt --dir test-results/release-download
           (cd test-results/release-download && sha256sum --check SHA256SUMS.txt)
@@ -75,7 +76,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: release-verification-${{ github.sha }}
+          name: atlas-release-verification-${{ github.sha }}
           path: |
             theme-build-verification.json
             SHA256SUMS.txt

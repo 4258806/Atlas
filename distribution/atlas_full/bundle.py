@@ -11,7 +11,7 @@ from .safety import Refused
 PLUGIN_FILES = {'komari-plugin.json', 'script.js', 'protocol.cjs', 'storage.cjs', 'request-limits.cjs', 'LICENSE', 'BUILD.json'}
 HELPER_FILES = {'enhanced_route_helper.py', 'enhanced_probe_v2.py', 'install.py', 'helper-version.json', 'enhanced-route-helper.service', 'enhanced-route-helper.openrc', 'helper.example.json', 'README.md', 'LICENSE', 'BUILD.json'}
 PERMISSIONS = {'node': True, 'allowRoutes': True, 'maxHTTPBodyBytes': 16384, 'timeout': 10}
-THEME_SHORT = 'Enhanced'
+THEME_SHORT = 'Atlas'
 RELEASE_CHANNEL = 'stable'
 
 
@@ -45,7 +45,7 @@ def native_zip(data, kind, allow_legacy=False):
             if {n.split('/')[0] for n in names} != {'komari-theme.json', 'preview.png', 'dist'} or 'dist/index.html' not in names:
                 raise Refused('invalid-native-theme-layout')
             if manifest.get('short') != THEME_SHORT:
-                raise Refused('not-an-enhanced-theme')
+                raise Refused('not-an-atlas-theme')
         elif set(names) != PLUGIN_FILES or manifest.get('short') != 'enhanced-route-probe' or manifest.get('permissions') != PERMISSIONS or not (manifest.get('channel') == RELEASE_CHANNEL or (allow_legacy and manifest.get('version') == '0.1.0' and 'channel' not in manifest)):
             raise Refused('unexpected-plugin-files-or-privileges')
         return manifest
@@ -68,7 +68,7 @@ class Bundle:
         self.directory = Path(directory).absolute()
         self.manifest = json.loads(self.read('full-manifest.json'))
         m = self.manifest
-        if m.get('schema') != 1 or m.get('product') != 'Glassmorphism Enhanced' or m.get('channel') != RELEASE_CHANNEL or m.get('supportedKomari') != ['1.6.0'] or not re.fullmatch('[0-9a-f]{40}', m.get('commit', '')) or m.get('realTracerouteValidated') is not False:
+        if m.get('schema') != 1 or m.get('product') != 'Atlas' or m.get('channel') != RELEASE_CHANNEL or m.get('supportedKomari') != ['1.6.0'] or not re.fullmatch('[0-9a-f]{40}', m.get('commit', '')) or m.get('realTracerouteValidated') is not False:
             raise Refused('unsupported-full-manifest')
         if m.get('dirty') is not False and not (allow_development and m.get('dirty') is True):
             raise Refused('dirty-development-bundle-not-a-deliverable')

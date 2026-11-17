@@ -7,8 +7,8 @@ const B = '00000000-0000-4000-8000-000000000002'
 const OPTIONAL_OR_EXEC_METHOD = /^(?:admin|agent)[:.].*(?:[Pp]lugin|[Tt]ask|[Ee]xec)/
 async function fixture(page: Page, guest = false) {
   const state = { settings: { hideEarth: true, visitorInfoEnabled: false, themeMode: 'light', disablePageAnimation: true, rpcTransportMode: 'http', returnRoutesVisible: true, returnRouteAutoEnabled: false, returnRouteCompanionEnabled: false, returnRouteConfig: '{"version":1,"nodes":{}}', unknownFuture: 'KEEP', transitCarrierPingRules: 'KEEP_RELAY' } as Record<string, unknown>, writes: 0, pluginCalls: 0 }
-  await installKomariFixture(page, { themeShort: 'Enhanced', loggedIn: !guest, hideEarth: true, themeSettings: state.settings })
-  const pub = () => ({ theme: 'Enhanced', theme_settings: state.settings, sitename: 'EXPLICIT SETTINGS MOCK', description: '', private_site: false, custom_head: '', custom_body: '' })
+  await installKomariFixture(page, { themeShort: 'Atlas', loggedIn: !guest, hideEarth: true, themeSettings: state.settings })
+  const pub = () => ({ theme: 'Atlas', theme_settings: state.settings, sitename: 'EXPLICIT SETTINGS MOCK', description: '', private_site: false, custom_head: '', custom_body: '' })
   await page.route('**/api/public', r => r.fulfill({ json: { status: 'success', data: pub() } }))
   await page.route('**/api/rpc2', async (r) => {
     const d = r.request().postDataJSON()
@@ -24,7 +24,7 @@ async function fixture(page: Page, guest = false) {
     state.pluginCalls++
     await r.fulfill({ status: 404, json: {} })
   })
-  await page.route('**/api/admin/theme/settings?theme=Enhanced', async (r) => {
+  await page.route('**/api/admin/theme/settings?theme=Atlas', async (r) => {
     state.writes++
     state.settings = r.request().postDataJSON()
     await r.fulfill({ json: { status: 'success', message: '' } })
@@ -33,7 +33,7 @@ async function fixture(page: Page, guest = false) {
 }
 async function open(page: Page) {
   await page.goto('/')
-  await page.getByRole('button', { name: 'Enhanced 管理', exact: true }).click()
+  await page.getByRole('button', { name: 'Atlas 管理', exact: true }).click()
   await expect(page.locator('[data-manual-route-manager]')).toBeVisible()
   await page.getByRole('combobox', { name: '手动线路节点', exact: true }).selectOption(A)
 }
@@ -58,7 +58,7 @@ test('manual routes save with zero optional dependencies, persist, and share raw
   await page.getByRole('button', { name: '关闭', exact: true }).click()
   await page.reload()
   await expect(page.locator(`[data-route-node="${A}"]`)).toContainText('NATIVE_JSON_EDIT')
-  await page.getByRole('button', { name: 'Enhanced 管理', exact: true }).click()
+  await page.getByRole('button', { name: 'Atlas 管理', exact: true }).click()
   await page.getByRole('combobox', { name: '手动线路节点', exact: true }).selectOption(A)
   await expect(page.getByRole('textbox', { name: '电信手动线路', exact: true })).toHaveValue('NATIVE_JSON_EDIT')
   expect(state.pluginCalls).toBe(0)
@@ -86,7 +86,7 @@ test('04 contains only appearance settings and no optional private reads; 03 ret
 test('anonymous deep link cannot access administrator settings or dispatch anything', async ({ page }) => {
   const state = await fixture(page, true)
   await page.goto('/?enhanced_settings=routes')
-  await expect(page.getByRole('button', { name: 'Enhanced 管理', exact: true })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Atlas 管理', exact: true })).toHaveCount(0)
   await expect(page.locator('[data-manual-route-manager]')).toHaveCount(0)
   expect(state.writes).toBe(0)
   expect(state.pluginCalls).toBe(0)

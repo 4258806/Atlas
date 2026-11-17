@@ -21,7 +21,7 @@ for (const width of [390, 1440]) {
   test(`native node currencies and single-currency header persists at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 1000 })
     await installKomariFixture(page, {
-      themeShort: 'Enhanced',
+      themeShort: 'Atlas',
       loggedIn: true,
       hideEarth: true,
       preserveStorage: true,
@@ -83,7 +83,7 @@ test('no header finance means no rate-provider request', async ({ page }) => {
 for (const entry of [{ currency: 'AUD', price: 10, convertible: true }, { currency: 'credits', price: 10, convertible: false }, { currency: 'credits', price: 0, convertible: true }]) {
   test(`input currency ${entry.currency} at ${entry.price} stays native; summary availability is honest`, async ({ page }) => {
     await installKomariFixture(page, {
-      themeShort: 'Enhanced',
+      themeShort: 'Atlas',
       loggedIn: true,
       hideEarth: true,
       firstNodeName: 'Currency input fixture',

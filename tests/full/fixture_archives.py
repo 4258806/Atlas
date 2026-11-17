@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(ROOT / 'distribution'))
-from enhanced_full.bundle import Bundle, digest
+from atlas_full.bundle import Bundle, digest
 
 RELOAD_FAULT_MARKER = 'enhanced-reload-fault-triggered.json'
 RELOAD_FAULT_MESSAGE = 'ENHANCED_FULL_RELOAD_FAULT_TRIGGERED'
@@ -71,7 +71,7 @@ def main():
     output = Path(args.output)
     output.mkdir(exist_ok=True, mode=0o700)
     theme = bundle.artifact('theme')
-    (output / 'formal-identity-fixture.zip').write_bytes(rewritten_zip(theme, 'komari-theme.json', {'short': 'Enhanced', 'name': 'Enhanced FORMAL IDENTITY TEST FIXTURE', 'version': '1.1.1'}))
+    (output / 'formal-identity-fixture.zip').write_bytes(rewritten_zip(theme, 'komari-theme.json', {'short': 'Atlas', 'name': 'Enhanced FORMAL IDENTITY TEST FIXTURE', 'version': '1.1.1'}))
     # Build ACTUAL historical plugin source, not today's code with a fake
     # version. This is a test artifact, never an official released binary.
     legacy_commit = '37092754388f04d44a3131a4f51130b8b6a1abae'

@@ -1,5 +1,5 @@
 {
-  "name": "Enhanced Return Route Probe",
+  "name": "Atlas Return Route Probe",
   "short": "enhanced-route-probe",
   "description": "Opt-in UUID-bound fixed-target collector relay; administrator-only results, no shell or system RPC",
   "author": "casiuna; Transit reference: yyy622hhh and Tony Liu (MIT)",

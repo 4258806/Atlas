@@ -2,7 +2,7 @@
 // ee9f31c5ff104e033ded858171ce0b63c672e878: routeClassification.ts ASN vocabulary.
 // Copyright (c) 2026 yyy622hhh; Copyright (c) 2025 Tony Liu.
 // Full permission notice: public/licenses/transit-MIT.txt.
-// Enhanced deliberately does NOT inherit upstream's confident GIA/rank claims,
+// Atlas deliberately does NOT inherit upstream's confident GIA/rank claims,
 // treating IP-prefix hints as real ASNs, shell execution, or tag-write transport.
 export const RETURN_CARRIERS = ['telecom', 'unicom', 'mobile'] as const
 export type ReturnCarrier = typeof RETURN_CARRIERS[number]

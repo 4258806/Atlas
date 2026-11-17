@@ -139,10 +139,10 @@ async function main() {
         return createHash('sha256').update(bytes).digest('hex')
       }
       await upload(oldZipArg, 'Glassmorphism', '1.0.8')
-      const candidateSha256 = await upload(newZipArg, 'Enhanced', '1.1.0')
+      const candidateSha256 = await upload(newZipArg, 'Atlas', '1.1.0')
       const installed = await api('/api/admin/theme/list')
       assert(installed.some(t => t.short === 'Glassmorphism'))
-      assert(installed.some(t => t.short === 'Enhanced'))
+      assert(installed.some(t => t.short === 'Atlas'))
       record(version, 'official chunked ZIP installation with both identities retained', { candidateSha256 })
 
       const original = {
@@ -161,19 +161,19 @@ async function main() {
       assert.equal(oldPublic.theme, 'Glassmorphism')
       for (const [key, value] of Object.entries(original))
         assert.equal(oldPublic.theme_settings[key], value)
-      await api('/api/admin/theme/settings?theme=Enhanced', oldPublic.theme_settings)
-      await api('/api/admin/theme/set?theme=Enhanced')
+      await api('/api/admin/theme/settings?theme=Atlas', oldPublic.theme_settings)
+      await api('/api/admin/theme/set?theme=Atlas')
       const newPublic = await api('/api/public')
-      assert.equal(newPublic.theme, 'Enhanced')
+      assert.equal(newPublic.theme, 'Atlas')
       assert.deepEqual(newPublic.theme_settings, oldPublic.theme_settings)
       await api('/api/admin/theme/set?theme=Glassmorphism')
       assert.deepEqual((await api('/api/public')).theme_settings, oldPublic.theme_settings)
-      await api('/api/admin/theme/set?theme=Enhanced')
-      assert.equal((await api('/api/public')).theme, 'Enhanced')
+      await api('/api/admin/theme/set?theme=Atlas')
+      assert.equal((await api('/api/public')).theme, 'Atlas')
       record(version, 'explicit settings copy, identity switch and non-destructive rollback')
 
       for (const mode of ['http', 'websocket']) {
-        await api('/api/admin/theme/settings?theme=Enhanced', { ...oldPublic.theme_settings, rpcTransportMode: mode })
+        await api('/api/admin/theme/settings?theme=Atlas', { ...oldPublic.theme_settings, rpcTransportMode: mode })
         assert.equal((await api('/api/public')).theme_settings.rpcTransportMode, mode)
         const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, locale: 'zh-CN' })
         await context.addCookies([{ name: 'session_token', value: cookie.slice('session_token='.length), url: origin }])

@@ -70,7 +70,7 @@ def plan(bundle, before, operation):
     return {'mode': 'dry-run', 'operation': operation, 'candidateCommit': bundle.manifest['commit'], 'actions': actions,
             'permissions': {'nodeCompatibility': True, 'allowRoutes': True, 'systemRPC': False, 'exec': False},
             'automaticProbeDefault': False, 'nodeInstallation': 'explicit-on-each-node',
-            'constraints': ['quiet administrator window; no server CAS', 'retain formal Enhanced theme and all existing settings', 'uninstall requires stopped helpers and a private checkpoint', 'legacy 0.1 storage stays in place on upgrade; keep a host backup for disaster recovery']}
+            'constraints': ['quiet administrator window; no server CAS', 'retain formal Atlas theme and all existing settings', 'uninstall requires stopped helpers and a private checkpoint', 'legacy 0.1 storage stays in place on upgrade; keep a host backup for disaster recovery']}
 
 
 def previous_assets(bundle, before, operation, previous):

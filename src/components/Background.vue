@@ -138,11 +138,11 @@ onUnmounted(() => {
           <div class="default-background__emerald-surface">
             <svg aria-hidden="true" class="default-background__pattern">
               <defs>
-                <pattern id="glassmorphism-emerald-grid" width="72" height="56" patternUnits="userSpaceOnUse" x="-12" y="4">
+                <pattern id="atlas-emerald-grid" width="72" height="56" patternUnits="userSpaceOnUse" x="-12" y="4">
                   <path d="M.5 56V.5H72" fill="none" />
                 </pattern>
               </defs>
-              <rect width="100%" height="100%" stroke-width="0" fill="url(#glassmorphism-emerald-grid)" />
+              <rect width="100%" height="100%" stroke-width="0" fill="url(#atlas-emerald-grid)" />
               <svg x="-12" y="4" class="default-background__pattern-blocks">
                 <rect stroke-width="0" width="73" height="57" x="288" y="168" />
                 <rect stroke-width="0" width="73" height="57" x="144" y="56" />

@@ -5,7 +5,7 @@ import type { PublicInfo } from '@/utils/rpc'
 import { requirePermission } from '@/services/auth.service'
 import { requestManager } from '@/services/request.service'
 import { getSharedApi } from '@/utils/api'
-import { stableValue } from '@/utils/enhancedManagement'
+import { stableValue } from '@/utils/atlasManagement'
 import { manualRouteConfig } from '@/utils/manualRouteSettings'
 import { parseReturnRouteConfig } from '@/utils/returnRoutes'
 import { getSharedRpc } from '@/utils/rpc'
@@ -19,13 +19,13 @@ async function authorize() {
 }
 async function current(): Promise<PublicInfo> {
   const data = await getSharedRpc().getPublicSettings()
-  if (data.theme !== 'Enhanced')
-    throw new Error('当前主题不是 Enhanced；未写入')
+  if (data.theme !== 'Atlas')
+    throw new Error('当前主题不是 Atlas；未写入')
   return data
 }
 export async function loadManagedSettings(): Promise<PublicInfo> {
   await authorize()
-  return requestManager.run('enhanced:settings:read', current, { retryAttempts: 0 })
+  return requestManager.run('atlas:settings:read', current, { retryAttempts: 0 })
 }
 async function write(change: (before: Record<string, unknown>) => Record<string, unknown>): Promise<PublicInfo> {
   if (saving)
@@ -33,14 +33,14 @@ async function write(change: (before: Record<string, unknown>) => Record<string,
   saving = true
   try {
     await authorize()
-    return await requestManager.run('enhanced:settings:write', async (signal) => {
+    return await requestManager.run('atlas:settings:write', async (signal) => {
       const before = await current()
       const next = change(before.theme_settings)
       const checked = await current()
       if (stableValue(checked.theme_settings) !== stableValue(before.theme_settings))
         throw new Error('设置已被其他管理员修改；本次未写入，请重新加载')
       try {
-        await getSharedApi().updateThemeSettings('Enhanced', next, signal)
+        await getSharedApi().updateThemeSettings('Atlas', next, signal)
       }
       catch {
         // A transport error may follow a committed write. Only a readback of

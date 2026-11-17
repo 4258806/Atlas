@@ -1,4 +1,6 @@
-# v1.1.0：迁移到 Enhanced
+# Atlas · 上游 Enhanced v1.1.0 历史迁移说明
+
+> Atlas 当前版本为 0.0.1，安装使用 Atlas 原生主题 ZIP。下文保留直接上游的组件／历史安装与验证说明，出现的 Enhanced 名称、旧版本和旧产物属于来源记录；不代表 Atlas 已发布 Full／Helper，也不授权启用实验采集。当前状态以 [README](../README.md) 和 [Atlas 发布说明](release-notes-atlas-0.0.1.md) 为准。
 
 `Enhanced` 是新的主题身份。它与旧安装 `Glassmorphism` 并存，上传不会自动继承旧主题的服务端配置，也不会替你删除旧主题。ZIP 文件名仍沿用 `komari-theme-Glassmorphism-build-<commit>.zip`，安装身份以包内 manifest 的 `short` 为准。
 

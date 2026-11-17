@@ -957,6 +957,23 @@ export class KomariRpc {
 
   // ==================== Admin 方法（需登录权限） ====================
 
+  async getAtlasThemeConfigurationRows(signal?: AbortSignal): Promise<{ columns: string[], rows: unknown[][], truncated?: boolean }> {
+    return this.client.call('admin:dbQuery', {
+      database: 'main',
+      sql: 'SELECT short, data FROM theme_configurations WHERE short IN (?, ?)',
+      args: ['Atlas', 'Enhanced'],
+      limit: 2,
+    }, signal)
+  }
+
+  async copyLegacyAtlasConfiguration(previous: string | null, legacy: string, signal?: AbortSignal): Promise<void> {
+    const sql = previous === null
+      ? 'INSERT INTO theme_configurations (short, data) SELECT ?, ? WHERE NOT EXISTS (SELECT 1 FROM theme_configurations WHERE short = ?)'
+      : 'UPDATE theme_configurations SET data = ? WHERE short = ? AND data = ?'
+    const args = previous === null ? ['Atlas', legacy, 'Atlas'] : [legacy, 'Atlas', previous]
+    await this.client.call('admin:dbExec', { database: 'main', sql, args }, signal)
+  }
+
   async getAuditLogs(limit?: string, page?: string, msgType?: string, signal?: AbortSignal): Promise<AuditLogsResponse> {
     return this.client.call<AuditLogsResponse>('admin:getLogs', { limit, page, msg_type: msgType }, signal)
   }

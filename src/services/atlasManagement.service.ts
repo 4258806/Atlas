@@ -1,16 +1,16 @@
-import type { ManagementDraft, ProbePolicy } from '@/utils/enhancedManagement'
+import type { ManagementDraft, ProbePolicy } from '@/utils/atlasManagement'
 import type { ProbeSnapshot } from '@/utils/routeProbeSnapshot'
 import type { PublicInfo } from '@/utils/rpc'
 import { requirePermission } from '@/services/auth.service'
 import { requestManager } from '@/services/request.service'
 import { getSharedApi } from '@/utils/api'
-import { managementChanges, parseProbePolicy, PROBE_SHORT, stableValue, THEME_SHORT } from '@/utils/enhancedManagement'
+import { managementChanges, parseProbePolicy, PROBE_SHORT, stableValue, THEME_SHORT } from '@/utils/atlasManagement'
 import { parseProbeSnapshot } from '@/utils/routeProbeSnapshot'
 import { getSharedRpc } from '@/utils/rpc'
 
 interface NativePlugin { short: string, version: string, enabled: boolean, running: boolean }
 interface PluginHealth { schema: number, version: string, storage: string }
-export interface EnhancedManagementState {
+export interface AtlasManagementState {
   public: PublicInfo
   komariVersion: string
   themeVersion: string | null
@@ -37,7 +37,7 @@ async function resource(name: 'health' | 'snapshot', signal?: AbortSignal): Prom
     throw new Error('插件响应超过限制')
   return JSON.parse(text)
 }
-async function fetchState(signal?: AbortSignal): Promise<EnhancedManagementState> {
+async function fetchState(signal?: AbortSignal): Promise<AtlasManagementState> {
   const rpc = getSharedRpc()
   const [publicInfo, version, plugins, themes] = await Promise.all([
     rpc.getPublicSettings(),
@@ -46,7 +46,7 @@ async function fetchState(signal?: AbortSignal): Promise<EnhancedManagementState
     getSharedApi().getThemes(signal),
   ])
   const plugin = (plugins ?? []).find(p => p.short === PROBE_SHORT) ?? null
-  const state: EnhancedManagementState = { public: publicInfo, komariVersion: version.version, themeVersion: (themes ?? []).find(t => t.short === THEME_SHORT)?.version ?? null, plugin, config: null, policy: null, snapshot: { nodes: {} }, health: null, error: null }
+  const state: AtlasManagementState = { public: publicInfo, komariVersion: version.version, themeVersion: (themes ?? []).find(t => t.short === THEME_SHORT)?.version ?? null, plugin, config: null, policy: null, snapshot: { nodes: {} }, health: null, error: null }
   if (!plugin)
     return state
   const config = await rpc.getClient().call<{ data: Record<string, unknown> }>('admin:getPluginConfiguration', { short: PROBE_SHORT }, signal)
@@ -67,18 +67,18 @@ async function fetchState(signal?: AbortSignal): Promise<EnhancedManagementState
   }
   return state
 }
-export async function loadEnhancedManagement(): Promise<EnhancedManagementState> {
+export async function loadAtlasManagement(): Promise<AtlasManagementState> {
   await authorize()
-  return requestManager.run('enhanced:management:load', signal => fetchState(signal), { retryAttempts: 0 })
+  return requestManager.run('atlas:management:load', signal => fetchState(signal), { retryAttempts: 0 })
 }
-export function managementFingerprint(state: EnhancedManagementState): string {
+export function managementFingerprint(state: AtlasManagementState): string {
   return stableValue({ theme: state.public.theme, settings: state.public.theme_settings, version: state.themeVersion, plugin: state.plugin, config: state.config })
 }
 async function putPlugin(data: Record<string, unknown>, signal?: AbortSignal) {
   await getSharedRpc().getClient().call('admin:setPluginConfiguration', { short: PROBE_SHORT, data }, signal)
 }
-async function compensate(before: EnhancedManagementState, next: ReturnType<typeof managementChanges>) {
-  return requestManager.run('enhanced:management:compensate', async (signal) => {
+async function compensate(before: AtlasManagementState, next: ReturnType<typeof managementChanges>) {
+  return requestManager.run('atlas:management:compensate', async (signal) => {
     const current = await fetchState(signal)
     let conflicted = false
     if (stableValue(current.config) === stableValue(next.plugin))
@@ -94,18 +94,18 @@ async function compensate(before: EnhancedManagementState, next: ReturnType<type
       throw new Error('补偿遇到配置冲突或读取校验失败')
   }, { retryAttempts: 0 })
 }
-export async function saveEnhancedManagement(expected: EnhancedManagementState, draft: ManagementDraft): Promise<EnhancedManagementState> {
+export async function saveAtlasManagement(expected: AtlasManagementState, draft: ManagementDraft): Promise<AtlasManagementState> {
   if (saving)
     throw new Error('另一次保存尚未结束，请稍后刷新')
   saving = true
   try {
     await authorize()
-    return await requestManager.run('enhanced:management:write', async (signal) => {
+    return await requestManager.run('atlas:management:write', async (signal) => {
       const before = await fetchState(signal)
       if (managementFingerprint(before) !== managementFingerprint(expected))
         throw new Error('配置已被其他操作修改，请刷新后再确认；本次未写入')
       if (before.public.theme !== THEME_SHORT || before.komariVersion !== '1.6.0' || !before.plugin?.running || !before.config || !before.policy || !before.health || before.health.storage !== 'healthy')
-        throw new Error('需要正在运行的兼容插件及当前 Enhanced 主题；未写入')
+        throw new Error('需要正在运行的兼容插件及当前 Atlas 主题；未写入')
       const next = managementChanges(before.public.theme_settings, before.config, draft)
       try {
         if (stableValue(next.theme) !== stableValue(before.public.theme_settings))
@@ -132,15 +132,15 @@ export async function saveEnhancedManagement(expected: EnhancedManagementState, 
     saving = false
   }
 }
-export async function enableEnhancedPlugin(): Promise<EnhancedManagementState> {
+export async function enableAtlasPlugin(): Promise<AtlasManagementState> {
   await authorize()
-  await requestManager.run('enhanced:management:enable', async (signal) => {
+  await requestManager.run('atlas:management:enable', async (signal) => {
     const state = await fetchState(signal)
     if (!state.plugin || state.komariVersion !== '1.6.0' || state.public.theme !== THEME_SHORT)
-      throw new Error('请先用统一 CLI 安装兼容的 Enhanced 主题与插件')
+      throw new Error('请先用统一 CLI 安装兼容的 Atlas 主题与插件')
     await getSharedRpc().getClient().call('admin:setPluginEnabled', { short: PROBE_SHORT, enabled: true, approved: true }, signal)
   }, { retryAttempts: 0 })
-  const result = await loadEnhancedManagement()
+  const result = await loadAtlasManagement()
   if (!result.plugin?.running || !result.health)
     throw new Error('插件启用后仍未通过健康读取，请检查官方后台')
   return result

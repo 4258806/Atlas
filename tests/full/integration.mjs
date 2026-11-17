@@ -164,7 +164,7 @@ async function main() {
     await ready()
     await check('exact official 1.6.0 fresh isolated installation and private native session', async () => {
       assert.equal((await api('/api/install/status')).required, true)
-      await api('/api/install/complete', { username, password, sitename: 'Enhanced Full isolated test', description: 'Fixture-only local QA', metric_dsn: 'sqlite://./data/metrics.db' })
+      await api('/api/install/complete', { username, password, sitename: 'Atlas Full isolated test', description: 'Fixture-only local QA', metric_dsn: 'sqlite://./data/metrics.db' })
       await ready('/api/version')
       const login = await request('/api/login', { username, password }, false)
       assert.equal(login.payload?.status, 'success')
@@ -181,8 +181,8 @@ async function main() {
         assert.equal(createHash('sha256').update(readFileSync(previousTheme)).digest('hex'), pinned[previousVersion], 'pinned historical native asset checksum')
       }
       await upload('theme', previousTheme)
-      await rpc('admin:editSettings', { theme: 'Enhanced' })
-      await api('/api/admin/theme/settings?theme=Enhanced', { unknownFuture: { keep: true }, transitCarrierPingRules: 'PRESERVE_FORMAL', displayCurrency: 'SGD' })
+      await rpc('admin:editSettings', { theme: 'Atlas' })
+      await api('/api/admin/theme/settings?theme=Atlas', { unknownFuture: { keep: true }, transitCarrierPingRules: 'PRESERVE_FORMAL', displayCurrency: 'SGD' })
       formalSettings = (await rpc('public:getPublicSettings')).theme_settings
     })
     await check('Full inspection verifies native formats, module versions, dependency matrix and all checksums', async () => {
@@ -199,7 +199,7 @@ async function main() {
       assert.equal(JSON.parse(run.stdout).mode, 'dry-run')
       assert.equal((await cli('install', ['--apply', '--backup-dir', join(state, 'must-not-exist')])).code, 1)
       assert.deepEqual(await api('/api/admin/theme/list'), before)
-      assert.equal((await rpc('public:getPublicSettings')).theme, 'Enhanced')
+      assert.equal((await rpc('public:getPublicSettings')).theme, 'Atlas')
       assert.deepEqual(await rpc('admin:listPlugins'), [])
       assert.equal(existsSync(join(state, 'must-not-exist')), false)
     })
@@ -207,9 +207,9 @@ async function main() {
       const result = await cli('install', ['--apply', '--approve-route-plugin', '--activate', '--previous-theme', previousTheme, '--backup-dir', join(state, 'install-backup')])
       assert.equal(result.code, 0, `CLI apply failed: ${result.stderr}`)
       assert.equal(JSON.parse(result.stdout).status, 'completed-and-readback-verified')
-      assert.equal((await rpc('public:getPublicSettings')).theme, 'Enhanced')
+      assert.equal((await rpc('public:getPublicSettings')).theme, 'Atlas')
       const themes = await api('/api/admin/theme/list')
-      assert(themes.some(t => t.short === 'Enhanced' && t.version === manifest.modules.theme.version))
+      assert(themes.some(t => t.short === 'Atlas' && t.version === manifest.modules.theme.version))
       assert.equal((await request(`${endpoint}/health`)).payload.version, manifest.modules.plugin.version)
       assert.equal((await config()).enabled, false)
       const upgraded = (await rpc('public:getPublicSettings')).theme_settings
@@ -303,7 +303,7 @@ async function main() {
       await rpc('admin:setPluginEnabled', { short: policyShort, enabled: false })
       await rpc('admin:deletePlugin', { short: policyShort, purge: false })
       assert(!(await rpc('admin:listPlugins')).some(p => p.short === policyShort))
-      await api('/api/admin/theme/settings?theme=Enhanced', { ...original, hideEarth: true, visitorInfoEnabled: false, disablePageAnimation: true, returnRoutesVisible: true, returnRouteAutoEnabled: false, returnRouteCompanionEnabled: false })
+      await api('/api/admin/theme/settings?theme=Atlas', { ...original, hideEarth: true, visitorInfoEnabled: false, disablePageAnimation: true, returnRoutesVisible: true, returnRouteAutoEnabled: false, returnRouteCompanionEnabled: false })
       let forbidden = 0
       const audit = (r) => {
         if (new URL(r.url()).pathname.startsWith(endpoint))
@@ -316,7 +316,7 @@ async function main() {
       }
       page.on('request', audit)
       await page.goto(origin)
-      await page.getByRole('button', { name: 'Enhanced 管理', exact: true }).click()
+      await page.getByRole('button', { name: 'Atlas 管理', exact: true }).click()
       await page.getByRole('combobox', { name: '手动线路节点', exact: true }).selectOption(other.uuid)
       for (const [carrier, label] of [['联通', '10099→9929'], ['电信', 'CN2GIA'], ['移动', 'CMIN2']])
         await page.getByRole('textbox', { name: `${carrier}手动线路`, exact: true }).fill(label)
@@ -328,9 +328,9 @@ async function main() {
       assert.equal(saved.returnRouteCompanionEnabled, false)
       for (const [width, mode] of [[1440, 'light'], [320, 'dark']]) {
         await page.setViewportSize({ width, height: 1000 })
-        await api('/api/admin/theme/settings?theme=Enhanced', { ...saved, themeMode: mode })
+        await api('/api/admin/theme/settings?theme=Atlas', { ...saved, themeMode: mode })
         await page.reload()
-        await page.getByRole('button', { name: 'Enhanced 管理', exact: true }).click()
+        await page.getByRole('button', { name: 'Atlas 管理', exact: true }).click()
         await page.getByRole('combobox', { name: '手动线路节点', exact: true }).selectOption(other.uuid)
         await expect(page.getByRole('textbox', { name: '电信手动线路', exact: true })).toHaveValue('CN2GIA')
         assert(await page.getByRole('dialog').evaluate(el => el.scrollWidth <= el.clientWidth + 1))
@@ -347,7 +347,7 @@ async function main() {
       assert((await rpc('common:getNodesLatestStatus'))[client.uuid], 'normal Agent monitoring remains independent')
       assert.deepEqual(readFileSync(agentFile), agentBytes)
       page.off('request', audit)
-      await api('/api/admin/theme/settings?theme=Enhanced', original)
+      await api('/api/admin/theme/settings?theme=Atlas', original)
       await upload('plugin', join(full, manifest.modules.plugin.path))
       await rpc('admin:setPluginConfiguration', { short: policyShort, data: policy })
       await rpc('admin:setPluginEnabled', { short: policyShort, enabled: true, approved: true })
@@ -365,12 +365,12 @@ async function main() {
     })
     await check('real installed administrator UI detects matching versions and registered-but-not-polling helper', async () => {
       const current = (await rpc('public:getPublicSettings')).theme_settings
-      await api('/api/admin/theme/settings?theme=Enhanced', { ...current, hideEarth: true, visitorInfoEnabled: false, disablePageAnimation: true, dataUpdateInterval: 60, themeMode: 'light', unknownFuture: { keep: true }, transitCarrierPingRules: 'KEEP_NATIVE_RELAY', displayCurrency: 'SGD' })
+      await api('/api/admin/theme/settings?theme=Atlas', { ...current, hideEarth: true, visitorInfoEnabled: false, disablePageAnimation: true, dataUpdateInterval: 60, themeMode: 'light', unknownFuture: { keep: true }, transitCarrierPingRules: 'KEEP_NATIVE_RELAY', displayCurrency: 'SGD' })
       await page.goto(origin)
-      await page.getByRole('button', { name: 'Enhanced 管理', exact: true }).click()
+      await page.getByRole('button', { name: 'Atlas 管理', exact: true }).click()
       await page.locator('[data-optional-companion] > summary').click()
       await expect(page.getByRole('dialog')).toBeVisible({ timeout: 15000 })
-      await expect(page.locator('[data-enhanced-versions]')).toContainText(manifest.modules.plugin.version)
+      await expect(page.locator('[data-atlas-versions]')).toContainText(manifest.modules.plugin.version)
       await page.getByRole('combobox', { name: '管理节点 UUID', exact: true }).selectOption(client.uuid)
       await expect(page.getByRole('combobox', { name: '管理节点 UUID', exact: true })).toHaveValue(client.uuid)
       await expect(page.locator('[data-helper-status]')).toContainText('已登记，尚未轮询')
@@ -396,7 +396,7 @@ async function main() {
     })
     await check('five-category native administrator UI persists independent UUID billing days and reads real native traffic sums', async () => {
       await page.getByRole('tab', { name: '节点与卡片', exact: true }).click()
-      await expect(page.getByRole('tablist', { name: 'Enhanced 主题设置分类' }).getByRole('tab')).toHaveCount(5)
+      await expect(page.getByRole('tablist', { name: 'Atlas 主题设置分类' }).getByRole('tab')).toHaveCount(5)
       for (const [node, day] of [[client, trafficFixture.nodeAResetDay], [other, trafficFixture.nodeBResetDay]]) {
         const row = page.locator(`[data-traffic-cycle-node="${node.uuid}"]`)
         await expect(row.locator('select')).toHaveValue('')
@@ -442,7 +442,7 @@ async function main() {
       await rpc('admin:editClient', { uuid: other.uuid, name: 'Renamed billing fixture B' })
       await page.getByRole('button', { name: '关闭', exact: true }).click()
       await page.reload()
-      await page.getByRole('button', { name: 'Enhanced 管理', exact: true }).click()
+      await page.getByRole('button', { name: 'Atlas 管理', exact: true }).click()
       await page.locator('[data-optional-companion] > summary').click()
       await page.getByRole('tab', { name: '节点与卡片', exact: true }).click()
       const row = page.locator(`[data-traffic-cycle-node="${other.uuid}"]`)
@@ -476,11 +476,11 @@ async function main() {
       const card = guest.getByRole('button', { name: '查看节点 Full fixture Wendy 详情', exact: true })
       await expect(card.locator('[data-machine-traffic]')).toContainText(GIGABYTE_LABEL)
       await expect(card).not.toContainText(FORBIDDEN_CARD_RESET_INFO)
-      await expect(guest.getByRole('button', { name: 'Enhanced 管理', exact: true })).toHaveCount(0)
+      await expect(guest.getByRole('button', { name: 'Atlas 管理', exact: true })).toHaveCount(0)
       await guestContext.close()
       await page.getByRole('tab', { name: '线路与延迟', exact: true }).click()
       await page.locator('[data-optional-companion] > summary').click()
-      await expect(page.locator('[data-enhanced-versions]')).toBeVisible()
+      await expect(page.locator('[data-atlas-versions]')).toBeVisible()
       await page.getByRole('combobox', { name: '管理节点 UUID', exact: true }).selectOption(client.uuid)
     })
     await check('one central form writes selected UUID policy and manual override, preserving other configuration', async () => {
@@ -512,7 +512,7 @@ async function main() {
       routes.nodes[client.uuid].manual = Object.fromEntries(Object.entries({ unicom: '10099→9929', telecom: 'CN2GIA', mobile: 'CMIN2' }).map(([carrier, label]) => [carrier, { label, updatedAt: new Date().toISOString() }]))
       await page.getByRole('button', { name: '关闭', exact: true }).click()
       for (const [width, mode] of [[1440, 'light'], [1440, 'dark'], [320, 'light'], [320, 'dark']]) {
-        await api('/api/admin/theme/settings?theme=Enhanced', { ...saved, customTagsVisible: true, nodeCardSize: 'compact', themeMode: mode, returnRouteConfig: JSON.stringify(routes) })
+        await api('/api/admin/theme/settings?theme=Atlas', { ...saved, customTagsVisible: true, nodeCardSize: 'compact', themeMode: mode, returnRouteConfig: JSON.stringify(routes) })
         assert.deepEqual(JSON.parse((await rpc('public:getPublicSettings')).theme_settings.returnRouteConfig), routes)
         await page.setViewportSize({ width, height: 1000 })
         await page.goto(origin)
@@ -538,10 +538,10 @@ async function main() {
         await card.screenshot({ path: join(out, `native-card-${width}-${mode}.png`) })
       }
       await rpc('admin:editClient', { uuid: client.uuid, tags: oldClient.tags, price: oldClient.price, currency: oldClient.currency, billing_cycle: oldClient.billing_cycle })
-      await api('/api/admin/theme/settings?theme=Enhanced', saved)
+      await api('/api/admin/theme/settings?theme=Atlas', saved)
       assert.deepEqual((await rpc('public:getPublicSettings')).theme_settings, saved)
       await page.goto(origin)
-      await page.getByRole('button', { name: 'Enhanced 管理', exact: true }).click()
+      await page.getByRole('button', { name: 'Atlas 管理', exact: true }).click()
       await page.locator('[data-optional-companion] > summary').click()
       await page.getByRole('combobox', { name: '管理节点 UUID', exact: true }).selectOption(client.uuid)
     })
@@ -595,7 +595,7 @@ async function main() {
     }
     await check('anonymous and cross-site sessions cannot read snapshot/checkpoint or use the manager', async () => {
       const beforeSettings = (await rpc('public:getPublicSettings')).theme_settings
-      const deniedWrite = await request('/api/admin/theme/settings?theme=Enhanced', beforeSettings, false)
+      const deniedWrite = await request('/api/admin/theme/settings?theme=Atlas', beforeSettings, false)
       assert([401, 403].includes(deniedWrite.response.status), 'native theme settings reject anonymous writes')
       assert.deepEqual((await rpc('public:getPublicSettings')).theme_settings, beforeSettings)
       assert.equal((await request(`${endpoint}/checkpoint`, undefined, false)).response.status, 403)
@@ -607,7 +607,7 @@ async function main() {
           privateRequests++
       })
       await guest.goto(origin)
-      await expect(guest.getByRole('button', { name: 'Enhanced 管理', exact: true })).toHaveCount(0)
+      await expect(guest.getByRole('button', { name: 'Atlas 管理', exact: true })).toHaveCount(0)
       const publicLine = guest.locator(`[data-route-node="${client.uuid}"]`)
       await expect(publicLine.locator('[data-return-carrier="telecom"]')).toHaveText('集中手动 & <保留>')
       await expect(publicLine.locator('[data-return-carrier]')).toHaveCount(1)
@@ -631,7 +631,7 @@ async function main() {
       const result = await cli('uninstall', ['--apply', '--approve-route-plugin', '--helpers-stopped', '--backup-dir', join(state, 'uninstall-backup')])
       assert.equal(result.code, 0, result.stderr)
       assert.deepEqual(await rpc('admin:listPlugins'), [])
-      assert(!(await api('/api/admin/theme/list')).some(t => t.short === 'Enhanced'))
+      assert(!(await api('/api/admin/theme/list')).some(t => t.short === 'Atlas'))
       const publicData = await rpc('public:getPublicSettings')
       assert.equal(publicData.theme, 'default')
       assert.equal(statSync(join(state, 'uninstall-backup/checkpoint.json')).mode & 0o777, 0o600)
@@ -641,7 +641,7 @@ async function main() {
       const args = ['--apply', '--approve-route-plugin', '--backup-dir', join(state, 'uninstall-backup')]
       const run = await cli('rollback', args)
       assert.equal(run.code, 0, run.stderr)
-      assert.equal((await rpc('public:getPublicSettings')).theme, 'Enhanced')
+      assert.equal((await rpc('public:getPublicSettings')).theme, 'Atlas')
       assert.deepEqual((await rpc('public:getPublicSettings')).theme_settings, settingsBeforeUninstall)
       assert.deepEqual((await request(`${endpoint}/checkpoint`)).payload, originalState)
       const again = await cli('rollback', args)

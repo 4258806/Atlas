@@ -19,12 +19,12 @@ async function fixture(page: Page, options: { configured?: boolean, dark?: boole
     failAfterCommit: false,
     loggedIn: !options.guest,
   }
-  await installKomariFixture(page, { themeShort: 'Enhanced', loggedIn: !options.guest, dark: options.dark, hideEarth: true, firstNodeName: 'Wendy', userTags: 'CN2GIA<blue>;10099<red>;长标签用于截断与悬停完整展示abcdefghijklmnopqrstuvwxyz', trafficNow: NOW, trafficLimitType: options.mode, themeSettings: state.settings, noPingTasks: true, largeLifetimeTraffic: options.largeLifetime, ...(options.largeLifetime ? { trafficFirstNode: { traffic_limit: 1024 * GIB }, detailMetricCardKeys: ['totalTraffic', 'trafficQuota'] } : {}) })
-  const pub = () => ({ allow_cors: false, custom_body: '', custom_head: '', description: 'EXPLICIT LOCAL TRAFFIC CYCLE MOCK', disable_password_login: false, oauth_enable: false, oauth_provider: '', private_site: false, record_enabled: true, record_preserve_time: 1080, ping_record_preserve_time: 720, sitename: 'Komari Visual Lab', theme: 'Enhanced', theme_settings: state.settings })
+  await installKomariFixture(page, { themeShort: 'Atlas', loggedIn: !options.guest, dark: options.dark, hideEarth: true, firstNodeName: 'Wendy', userTags: 'CN2GIA<blue>;10099<red>;长标签用于截断与悬停完整展示abcdefghijklmnopqrstuvwxyz', trafficNow: NOW, trafficLimitType: options.mode, themeSettings: state.settings, noPingTasks: true, largeLifetimeTraffic: options.largeLifetime, ...(options.largeLifetime ? { trafficFirstNode: { traffic_limit: 1024 * GIB }, detailMetricCardKeys: ['totalTraffic', 'trafficQuota'] } : {}) })
+  const pub = () => ({ allow_cors: false, custom_body: '', custom_head: '', description: 'EXPLICIT LOCAL TRAFFIC CYCLE MOCK', disable_password_login: false, oauth_enable: false, oauth_provider: '', private_site: false, record_enabled: true, record_preserve_time: 1080, ping_record_preserve_time: 720, sitename: 'Komari Visual Lab', theme: 'Atlas', theme_settings: state.settings })
   await page.route('**/api/me', route => route.fulfill({ json: { logged_in: state.loggedIn, username: state.loggedIn ? 'isolated-admin' : '' } }))
   await page.route('**/api/public', route => route.fulfill({ json: { status: 'success', data: pub() } }))
-  await page.route('**/api/admin/theme/list', route => route.fulfill({ json: { status: 'success', data: [{ short: 'Enhanced', version: '1.2.1' }] } }))
-  await page.route('**/api/admin/theme/settings?theme=Enhanced', async (route) => {
+  await page.route('**/api/admin/theme/list', route => route.fulfill({ json: { status: 'success', data: [{ short: 'Atlas', version: '1.2.1' }] } }))
+  await page.route('**/api/admin/theme/settings?theme=Atlas', async (route) => {
     expect(route.request().method()).toBe('POST')
     const next = route.request().postDataJSON()
     state.writes.push(next)
@@ -70,7 +70,7 @@ async function fixture(page: Page, options: { configured?: boolean, dark?: boole
   return state
 }
 async function openNodes(page: Page) {
-  await page.getByRole('button', { name: 'Enhanced 管理', exact: true }).click()
+  await page.getByRole('button', { name: 'Atlas 管理', exact: true }).click()
   await page.getByRole('tab', { name: '节点与卡片', exact: true }).click()
   await expect(page.locator('[data-traffic-cycle-manager]')).toBeVisible()
 }
@@ -121,7 +121,7 @@ for (const size of ['mini', 'compact', 'comfortable', 'large']) {
         expect(boxes.every(b => b.h === 16 && b.w > 0)).toBeTruthy()
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy()
         const before = await node.boundingBox()
-        await page.getByRole('button', { name: 'Enhanced 管理', exact: true }).click()
+        await page.getByRole('button', { name: 'Atlas 管理', exact: true }).click()
         await page.getByRole('tab', { name: '节点与卡片', exact: true }).click()
         const row = page.locator(`[data-traffic-cycle-node="${A}"]`)
         await row.locator('select').selectOption('25')

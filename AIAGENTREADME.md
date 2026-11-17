@@ -19,7 +19,7 @@
 
 2026-11-17 用户新增硬约束：保持 fork 基线 `0332d5f7c73f7994ba21c01e4b739d04835120b1` 的前端布局、样式、显示属性、默认值、地球与地图。只增加、调整后端参数与功能；必要数据绑定沿用已有位置，不新增前端控件或重做展示。主题的 service/composable 仍是前端，不能称为 Komari 服务端。仅未来另行讨论三网合成时，才考虑沿用完全相同的原有 UI 形式增加显示。此约束覆盖历史 UI 计划，详见 [UI 保持约束](docs/ui-preservation.md)。
 
-当前维护仓库为 **[MagnetOscar/Glassmorphism-Enhanced](https://github.com/MagnetOscar/Glassmorphism-Enhanced)**，由 casiuna/Glassmorphism-Enhanced 公开 Fork，用于个人服务器监控主题的二次开发。固定原始基线为上游 v1.2.1（`0332d5f7c73f7994ba21c01e4b739d04835120b1`），详见 [FORK.md](FORK.md)。使用 Vue 3 + Vite 构建，发布产物是 Komari 可以导入的 ZIP。
+当前维护仓库为 **[MagnetOscar/Atlas](https://github.com/MagnetOscar/Atlas)**，由 casiuna/Glassmorphism-Enhanced 公开 Fork，用于个人服务器监控主题的二次开发。固定原始基线为上游 v1.2.1（`0332d5f7c73f7994ba21c01e4b739d04835120b1`），详见 [FORK.md](FORK.md)。使用 Vue 3 + Vite 构建，发布产物是 Komari 可以导入的 ZIP。
 
 用户选定本 Fork 首次独立正式发行版本为 `0.0.1`，范围为路线第 1–3 步，保留已验收的后台独立时区／日期／时分参数和本币金额／单一币种汇总。前台布局、地图和地球保持原样。正式软件版本采用与继承历史区分的 SemVer、独立 tag、GitHub Release 和原生安装 ZIP，保留旧版本；所有交付改动先同步到本账号仓库并提供 diff。文档变更不制造软件版本。用户自行上传切换，本次发布不授权改生产。详见 [docs/releasing.md](docs/releasing.md)。
 
@@ -30,7 +30,7 @@ Transit Carrier Ping 遵循 Component → Composable → shared Ping source：st
 - 主题清单：[komari-theme.json](komari-theme.json)。这是发布输入，不是可选元数据。
 - 版本唯一来源：[komari-theme.json](komari-theme.json) 的 `version`。
 - 不要在 [package.json](package.json) 重新添加顶层 `version`。
-- 打包产物：`komari-theme-Glassmorphism-build-<short-sha>.zip`。
+- 打包产物：`komari-theme-Atlas-build-<short-sha>.zip`。
 - zip 内固定包含：`komari-theme.json`、`preview.png`、`dist/`。
 - `preview.png` 来自 [docs/preview.png](docs/preview.png)，打包时重命名。
 
@@ -98,7 +98,7 @@ bun run build
 成功后根目录应有：
 
 - `dist/`
-- `komari-theme-Glassmorphism-build-<short-sha>.zip`
+- `komari-theme-Atlas-build-<short-sha>.zip`
 
 zip 固定结构：
 

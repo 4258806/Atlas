@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { helperPresence, managementChanges, nodeBootstrapCommand, parseProbePolicy, stableValue } from '../../src/utils/enhancedManagement'
+import { helperPresence, managementChanges, nodeBootstrapCommand, parseProbePolicy, stableValue } from '../../src/utils/atlasManagement'
 
 const UUID = '00000000-0000-4000-8000-000000000001'
 const OTHER = '00000000-0000-4000-8000-000000000002'

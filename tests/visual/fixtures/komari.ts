@@ -17,6 +17,7 @@ const REGION_FIXTURES = [
 ] as const
 
 export interface VisualFixtureOptions {
+  siteName?: string
   themeShort?: string
   userTags?: string
   firstNodeName?: string
@@ -580,8 +581,8 @@ export async function installKomariFixture(page: Page, options: VisualFixtureOpt
         record_enabled: true,
         record_preserve_time: 720,
         ping_record_preserve_time: 720,
-        sitename: 'Komari Visual Lab',
-        theme: options.themeShort ?? 'Glassmorphism',
+        sitename: options.siteName ?? 'Komari Visual Lab',
+        theme: options.themeShort ?? 'Atlas',
         theme_settings: { ...settings, ...options.themeSettings },
         visitor_audit_enabled: false,
       },
@@ -597,11 +598,21 @@ export async function installKomariFixture(page: Page, options: VisualFixtureOpt
   }))
   await page.route('**/rpc2', (route) => {
     const payload = route.request().postDataJSON()
+    if (payload.method === 'admin:dbQuery') {
+      return route.fulfill({ json: jsonRpcResult(payload.id, {
+        database: 'main',
+        driver: 'fixture',
+        columns: ['short', 'data'],
+        rows: [['Atlas', JSON.stringify({ ...settings, ...options.themeSettings })]],
+        row_count: 1,
+        truncated: false,
+      }) })
+    }
     if (payload.method === 'public:getPublicSettings') {
       return route.fulfill({ json: jsonRpcResult(payload.id, {
-        theme: options.themeShort ?? 'Glassmorphism',
+        theme: options.themeShort ?? 'Atlas',
         theme_settings: { ...settings, ...options.themeSettings },
-        sitename: 'Komari Visual Lab',
+        sitename: options.siteName ?? 'Komari Visual Lab',
         description: '固定虚构节点视觉回归环境',
         private_site: false,
         custom_head: '',

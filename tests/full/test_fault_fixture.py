@@ -9,9 +9,9 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'distribution'))
-from enhanced_full.bundle import Bundle, digest
-from enhanced_full.deploy import module_action, version_key
-from enhanced_full.safety import Refused
+from atlas_full.bundle import Bundle, digest
+from atlas_full.deploy import module_action, version_key
+from atlas_full.safety import Refused
 from extract_bundle import extract
 from fixture_archives import RELOAD_FAULT_MARKER, RELOAD_FAULT_MESSAGE, reload_fault_bundle
 

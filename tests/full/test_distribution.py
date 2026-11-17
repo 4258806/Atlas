@@ -21,11 +21,11 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[2]
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(ROOT / 'distribution'))
-from enhanced_full.api import API, ROOT as API_ROOT, SHORT, THEME
-from enhanced_full.bundle import Bundle, digest, helper_members, native_zip, safe_name
-from enhanced_full.deploy import deploy, load_journal, restore, snapshot
-from enhanced_full.node import enroll, uninstall_node
-from enhanced_full.safety import Refused, origin, private_bytes, private_directory, save_private
+from atlas_full.api import API, ROOT as API_ROOT, SHORT, THEME
+from atlas_full.bundle import Bundle, digest, helper_members, native_zip, safe_name
+from atlas_full.deploy import deploy, load_journal, restore, snapshot
+from atlas_full.node import enroll, uninstall_node
+from atlas_full.safety import Refused, origin, private_bytes, private_directory, save_private
 from extract_bundle import extract
 
 UUID = '00000000-0000-4000-8000-000000000001'
@@ -224,12 +224,12 @@ class DistributionTests(unittest.TestCase):
             self.apply()
         self.assertEqual(self.api.writes, [])
     def test_install_preserves_formal_theme_configuration_and_defaults_off(self):
-        old = copy.deepcopy(self.api.settings['Enhanced'])
+        old = copy.deepcopy(self.api.settings['Atlas'])
         result = self.apply(activate=True)
         self.assertIn('readback-verified', result['status'])
         self.assertEqual(self.api.active, THEME)
         self.assertEqual({k: self.api.settings[THEME][k] for k in old}, old)
-        self.assertEqual(self.api.themes['Enhanced']['version'], self.bundle.manifest['version'])
+        self.assertEqual(self.api.themes['Atlas']['version'], self.bundle.manifest['version'])
         self.assertFalse(self.api.config['enabled'])
     def test_idempotent_install_does_not_upload_rewrite_or_create_a_backup(self):
         self.installed()
@@ -411,7 +411,7 @@ class DistributionTests(unittest.TestCase):
     def test_node_default_dry_run_sends_no_identity_and_creates_no_files(self):
         config = self.directory / 'node-agent.json'
         save_private(config, {'endpoint': self.api.panel, 'token': 'unit-only-private-node-credential'})
-        with patch('enhanced_full.node.API') as transport:
+        with patch('atlas_full.node.API') as transport:
             result = enroll(self.bundle, self.api.panel, UUID, config, self.directory / 'code', self.directory / 'state', allow_loopback=True)
             transport.assert_not_called()
         self.assertEqual(result['mode'], 'dry-run')
@@ -420,12 +420,12 @@ class DistributionTests(unittest.TestCase):
     def test_node_refuses_origin_or_uuid_impersonation_before_local_install(self):
         config = self.directory / 'node-agent.json'
         save_private(config, {'endpoint': 'https://different.example', 'token': 'unit-only-private-node-credential'})
-        with patch('enhanced_full.node.API') as transport, self.assertRaises(Refused):
+        with patch('atlas_full.node.API') as transport, self.assertRaises(Refused):
             enroll(self.bundle, self.api.panel, UUID, config, self.directory / 'code', self.directory / 'state', apply=True, allow_loopback=True)
         transport.assert_not_called()
         self.assertFalse((self.directory / 'state').exists())
         save_private(config, {'endpoint': self.api.panel, 'token': 'unit-only-private-node-credential'})
-        with patch('enhanced_full.node.API') as transport:
+        with patch('atlas_full.node.API') as transport:
             transport.return_value.json.return_value = {'registered': True, 'uuid': OTHER}
             with self.assertRaises(Refused):
                 enroll(self.bundle, self.api.panel, UUID, config, self.directory / 'code', self.directory / 'state', apply=True, allow_loopback=True)
@@ -435,7 +435,7 @@ class DistributionTests(unittest.TestCase):
         save_private(config, {'endpoint': self.api.panel, 'token': 'unit-only-private-node-credential', 'unknownAgentSetting': 'PRESERVE'})
         original = config.read_bytes()
         prefix, state = self.directory / 'code', self.directory / 'state'
-        with patch('enhanced_full.node.API') as transport:
+        with patch('atlas_full.node.API') as transport:
             transport.return_value.json.return_value = {'registered': True, 'uuid': UUID}
             for _ in range(2):
                 enroll(self.bundle, self.api.panel, UUID, config, prefix, state, apply=True, allow_loopback=True, enable_local=True)
@@ -454,13 +454,13 @@ class DistributionTests(unittest.TestCase):
         save_private(agent_config, {'endpoint': self.api.panel, 'token': 'unit-only-private-node-credential', 'unknownAgentSetting': 'KEEP'})
         original = agent_config.read_bytes()
         prefix, state = self.directory / 'code', self.directory / 'state'
-        with patch('enhanced_full.node.API') as transport:
+        with patch('atlas_full.node.API') as transport:
             transport.return_value.json.return_value = {'registered': True, 'uuid': UUID}
             enroll(self.bundle, self.api.panel, UUID, agent_config, prefix, state, apply=True, allow_loopback=True)
         options = {'probeProtocols': ['tcp', 'udp'], 'addressFamily': 4, 'cymruEnabled': True, 'cymruConsent': True, 'prefixHints': True}
         config = json.loads(private_bytes(state / 'helper.json')) | options
         save_private(state / 'helper.json', config)
-        with patch('enhanced_full.node.API') as transport:
+        with patch('atlas_full.node.API') as transport:
             transport.return_value.json.return_value = {'registered': True, 'uuid': UUID}
             enroll(self.bundle, self.api.panel, UUID, agent_config, self.directory / 'new-code', state, apply=True, allow_loopback=True)
         self.assertEqual(json.loads(private_bytes(state / 'helper.json')), config)
@@ -468,7 +468,7 @@ class DistributionTests(unittest.TestCase):
         # Unknown options/commands still refuse before a registration or write.
         save_private(state / 'helper.json', config | {'command': 'never-execute'})
         before = (state / 'helper.json').read_bytes()
-        with patch('enhanced_full.node.API') as transport, self.assertRaises(Refused):
+        with patch('atlas_full.node.API') as transport, self.assertRaises(Refused):
             enroll(self.bundle, self.api.panel, UUID, agent_config, prefix, state, apply=True, allow_loopback=True)
         transport.assert_not_called()
         self.assertEqual((state / 'helper.json').read_bytes(), before)
@@ -495,13 +495,13 @@ class DistributionTests(unittest.TestCase):
         existing = self.directory / 'existing'
         existing.mkdir()
         (existing / 'operator-data.txt').write_text('preserve')
-        with patch('enhanced_full.node.API') as transport, self.assertRaises(Refused):
+        with patch('atlas_full.node.API') as transport, self.assertRaises(Refused):
             enroll(self.bundle, self.api.panel, UUID, config, existing, self.directory / 'state', apply=True, allow_loopback=True)
         transport.assert_not_called()
         self.assertEqual((existing / 'operator-data.txt').read_text(), 'preserve')
         link = self.directory / 'link'
         link.symlink_to(existing, target_is_directory=True)
-        with patch('enhanced_full.node.API') as transport, self.assertRaises(Refused):
+        with patch('atlas_full.node.API') as transport, self.assertRaises(Refused):
             enroll(self.bundle, self.api.panel, UUID, config, link / 'escape', self.directory / 'state', apply=True, allow_loopback=True)
         transport.assert_not_called()
         self.assertFalse((existing / 'escape').exists())
