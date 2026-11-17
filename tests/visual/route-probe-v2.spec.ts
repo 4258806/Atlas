@@ -57,7 +57,7 @@ async function fixture(page: Page, options: { guest?: boolean, single?: boolean,
 }
 const node = (page: Page) => page.locator(`[data-route-node="${UUID}"]`)
 async function details(page: Page) {
-  await page.getByRole('button', { name: 'Enhanced 管理', exact: true }).click()
+  await page.getByRole('button', { name: 'Atlas 管理', exact: true }).click()
   await page.locator('[data-optional-companion] > summary').click()
   return page.getByRole('dialog').locator('[data-protocol-evidence]')
 }
@@ -80,7 +80,7 @@ test('TCP/UDP disagreement is compact and explicit; administrator expands indepe
 })
 test('Enhanced management exposes TCP/UDP source, collection time, hidden hops and path differences without scheduling', async ({ page }) => {
   const state = await fixture(page)
-  await page.getByRole('button', { name: 'Enhanced 管理', exact: true }).click()
+  await page.getByRole('button', { name: 'Atlas 管理', exact: true }).click()
   await page.locator('[data-optional-companion] > summary').click()
   const proof = page.getByRole('dialog').locator('[data-protocol-evidence]')
   await expect(proof).toBeVisible()
@@ -122,7 +122,7 @@ test('guest never fetches or renders private protocol evidence', async ({ page }
   const state = await fixture(page, { guest: true })
   await expect(node(page)).toHaveCount(0)
   await expect(page.locator('[data-protocol-evidence]')).toHaveCount(0)
-  await expect(page.getByRole('button', { name: 'Enhanced 管理', exact: true })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Atlas 管理', exact: true })).toHaveCount(0)
   expect(state.reads).toBe(0)
   expect(state.writes).toEqual([])
   await expect(page.locator('body')).not.toContainText('59.43.2.1')
@@ -130,7 +130,7 @@ test('guest never fetches or renders private protocol evidence', async ({ page }
 test('invalid raw protocol payload is rejected before DOM rendering', async ({ page }) => {
   await fixture(page, { invalid: true })
   await expect(node(page)).toHaveCount(0)
-  await page.getByRole('button', { name: 'Enhanced 管理', exact: true }).click()
+  await page.getByRole('button', { name: 'Atlas 管理', exact: true }).click()
   await page.locator('[data-optional-companion] > summary').click()
   await expect(page.getByRole('dialog').locator('[data-enhanced-management]').getByRole('alert')).toContainText('协议异常')
   await expect(page.locator('[data-protocol-evidence]')).toHaveCount(0)

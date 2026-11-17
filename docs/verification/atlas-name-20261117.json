@@ -1,0 +1,14 @@
+{
+  "kind": "official-Komari-theme-market-name-check",
+  "date": "2026-11-17",
+  "requested_name": "Atlas",
+  "source": "https://github.com/komari-monitor/theme-market/blob/main/v1.json",
+  "catalog_blob_sha": "d3ae2590fae88d84e57a2e62319373b63409a733",
+  "catalog_updated_at": "2026-11-16T00:54:30.100Z",
+  "entries_checked": 67,
+  "method": "case-insensitive Atlas search across localized names, short identifiers and repository URLs",
+  "matches": [],
+  "result": "available in the official catalog at check time",
+  "market_submission_performed": false,
+  "third_party_or_private_catalogs_checked": false
+}

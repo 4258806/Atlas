@@ -129,9 +129,10 @@ let html = readFileSync(indexPath, 'utf8')
 if (!html.includes(charsetMarker))
   throw new Error('komari-web index.html no longer contains the expected charset marker')
 
-const bridge = `<script>;(()=>{let t='';try{t=sessionStorage.getItem('komariOfficialAppRoute')||'';if(t)sessionStorage.removeItem('komariOfficialAppRoute')}catch(e){console.warn('[Glassmorphism] Session storage is unavailable.',e)}if(!t){try{t=new URL(location.href).searchParams.get('__komari_route')||''}catch{}}if(t==='/'||t&&/^\\/(admin|terminal|manage)(\\/|\\?|#|$)/.test(t))history.replaceState(null,'',t)})();</script><link rel="stylesheet" href="/admin-app/glass-admin.css?v=${adminCssVersion}">`
+const bridge = `<script>;(()=>{let t='';try{t=sessionStorage.getItem('komariOfficialAppRoute')||'';if(t)sessionStorage.removeItem('komariOfficialAppRoute')}catch(e){console.warn('[Atlas] Session storage is unavailable.',e)}if(!t){try{t=new URL(location.href).searchParams.get('__komari_route')||''}catch{}}if(t==='/'||t&&/^\\/(admin|terminal|manage)(\\/|\\?|#|$)/.test(t))history.replaceState(null,'',t)})();</script><link rel="stylesheet" href="/admin-app/glass-admin.css?v=${adminCssVersion}">`
 html = html.replace(charsetMarker, `${charsetMarker}${bridge}`)
 html = html.replace('</head>', '<script src="/admin-app/enhanced-settings-bridge.js"></script></head>')
+html = html.replace(/<title>[^<]*<\/title>/, '<title>Atlas · Komari 管理</title>')
 
 // Keep install metadata, but remove the service worker: it only controls /admin-app/
 // and can serve stale admin assets after the bridge restores /admin or /terminal.

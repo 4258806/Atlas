@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 import manifest from '../../komari-theme.json' with { type: 'json' }
 import { manualRouteConfig, manualValues } from '../../src/utils/manualRouteSettings'
 import { parseReturnRouteConfig } from '../../src/utils/returnRoutes'
-import { ENHANCED_SETTINGS_GROUPS, settingGroup, THEME_FIELDS } from '../../src/utils/themeSettings'
+import { ATLAS_SETTINGS_GROUPS, settingGroup, THEME_FIELDS } from '../../src/utils/themeSettings'
 
 const A = '00000000-0000-4000-8000-000000000001'
 const B = '00000000-0000-4000-8000-000000000002'
@@ -10,11 +10,11 @@ const AT = '2026-11-13T08:00:00.000Z'
 const values = { unicom: '9929', telecom: 'CN2', mobile: 'CMI' }
 
 test('native manifest and manager use one ordered category definition', () => {
-  expect(manifest.configuration.data.filter(f => f.type === 'title').map(f => f.name)).toEqual(ENHANCED_SETTINGS_GROUPS.map(g => g.title))
+  expect(manifest.configuration.data.filter(f => f.type === 'title').map(f => f.name)).toEqual(ATLAS_SETTINGS_GROUPS.map(g => g.title))
   let group = 'home'
   for (const f of manifest.configuration.data) {
     if (f.type === 'title')
-      group = ENHANCED_SETTINGS_GROUPS.find(g => g.title === f.name)!.id
+      group = ATLAS_SETTINGS_GROUPS.find(g => g.title === f.name)!.id
     else if ('key' in f && f.key)
       expect(settingGroup(f.key)).toBe(group)
   }

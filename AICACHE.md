@@ -2,6 +2,13 @@
 
 Public development records only. Do not add deployment addresses, identifiers, credentials or private infrastructure details. Inherited upstream logs remain in Git history; their permissions and results do not authorize or validate current work.
 
+## Current: Atlas branding (2026-11-17)
+
+- User requested global Atlas naming after a live official-market collision check, including all visible pages, management entry and footer, project code and the existing 0.0.1 release display. Official `komari-monitor/theme-market/v1.json` has 67 entries and no Atlas name/short/repository match; evidence is retained separately.
+- Work on feat/atlas-branding. Change visible brand, manifest/package metadata, owned source names and ZIP/repository to Atlas. Keep public layout/styles/maps, step-2 schedules and step-3 finance intact. Preserve original MIT/authorship and historical evidence. Internal `short: Enhanced` and companion protocol IDs are retained for settings/optional-component compatibility.
+- Keep the old personal-v0.0.1 tag and ZIP immutable; create Atlas 0.0.1 with a distinct atlas-v0.0.1 tag and accurate source/ZIP verification, and update the earlier release display to identify the retained pre-rename build. User still uploads/switches personally; do not write production.
+- Pending: local checks, protected PR and CI, exact-source native upgrade/rollback/branding acceptance, acceptance-gated Atlas release, actual published ZIP download recheck and final evidence. GitHub CLI lacks workflow scope; use the already authenticated GitHub website for workflow-file updates without creating credentials.
+
 ## Current: stable 0.0.1 release, steps 1–3 (2026-11-17)
 
 - Completed: PR #6 merged as 92e6f827b5cdef105149e096365aebef28fdad74. Main Code Quality 44045445921, Visual Regression 44045445819 and manual Accepted ZIP Release 44045468212 all passed. Release validation passed 412 unit/component and 221 desktop/mobile browser cases.

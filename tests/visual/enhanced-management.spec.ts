@@ -71,7 +71,7 @@ async function fixture(page: Page, options: { installed?: boolean, loggedIn?: bo
 }
 async function open(page: Page) {
   await page.goto('/')
-  await page.getByRole('button', { name: 'Enhanced 管理', exact: true }).click()
+  await page.getByRole('button', { name: 'Atlas 管理', exact: true }).click()
   await page.locator('[data-optional-companion] > summary').click()
   await expect(page.locator('[data-enhanced-versions]')).toBeVisible()
 }
@@ -79,7 +79,7 @@ async function open(page: Page) {
 test('guest has no manager entry and never requests private plugin data', async ({ page }) => {
   const state = await fixture(page, { loggedIn: false })
   await page.goto('/')
-  await expect(page.getByRole('button', { name: 'Enhanced 管理', exact: true })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Atlas 管理', exact: true })).toHaveCount(0)
   expect(state.privateReads).toBe(0)
   expect(state.writes).toEqual([])
 })
@@ -137,7 +137,7 @@ test('central form preserves another UUID, Relay/SGD/unknown fields and requires
   await page.getByRole('button', { name: '关闭', exact: true }).click()
   await page.reload()
   await expect(page.locator(`[data-route-node="${UUID}"] [data-return-carrier="telecom"]`)).toContainText('<真实用户文本> & manual')
-  await page.getByRole('button', { name: 'Enhanced 管理', exact: true }).click()
+  await page.getByRole('button', { name: 'Atlas 管理', exact: true }).click()
   await page.locator('[data-optional-companion] > summary').click()
   await expect(page.getByRole('textbox', { name: '电信手动覆盖', exact: true })).toHaveValue('<真实用户文本> & manual')
 })

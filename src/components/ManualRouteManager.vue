@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { loadManagedSettings, saveManualRoutes } from '@/services/themeSettings.service'
 import { useAppStore } from '@/stores/app'
 import { useNodesStore } from '@/stores/nodes'
-import { stableValue } from '@/utils/enhancedManagement'
+import { stableValue } from '@/utils/atlasManagement'
 import { manualValues } from '@/utils/manualRouteSettings'
 
 const app = useAppStore()
@@ -76,7 +76,7 @@ onMounted(() => void reload())
         手动线路 · 无额外依赖
       </h3>
       <p class="mt-1 text-xs text-muted-foreground">
-        只使用 Enhanced 托管主题配置。无需 Plugin、Helper、SSH 或远程执行；不会安装软件或自动开启采集。公开名称中不要填写 token、密码或私有 IP。
+        只使用 Atlas 托管主题配置。无需 Plugin、Helper、SSH 或远程执行；不会安装软件或自动开启采集。公开名称中不要填写 token、密码或私有 IP。
       </p>
     </div>
     <label class="block space-y-1 text-sm"><span>手动线路节点</span><select v-model="selected" aria-label="手动线路节点" :disabled="busy" class="h-10 w-full rounded-md border border-border bg-background px-2"><option v-for="node in choices" :key="node.uuid" :value="node.uuid">{{ node.name }} · {{ node.uuid }}</option></select></label>

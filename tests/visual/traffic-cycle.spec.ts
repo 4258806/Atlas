@@ -70,7 +70,7 @@ async function fixture(page: Page, options: { configured?: boolean, dark?: boole
   return state
 }
 async function openNodes(page: Page) {
-  await page.getByRole('button', { name: 'Enhanced 管理', exact: true }).click()
+  await page.getByRole('button', { name: 'Atlas 管理', exact: true }).click()
   await page.getByRole('tab', { name: '节点与卡片', exact: true }).click()
   await expect(page.locator('[data-traffic-cycle-manager]')).toBeVisible()
 }
@@ -121,7 +121,7 @@ for (const size of ['mini', 'compact', 'comfortable', 'large']) {
         expect(boxes.every(b => b.h === 16 && b.w > 0)).toBeTruthy()
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy()
         const before = await node.boundingBox()
-        await page.getByRole('button', { name: 'Enhanced 管理', exact: true }).click()
+        await page.getByRole('button', { name: 'Atlas 管理', exact: true }).click()
         await page.getByRole('tab', { name: '节点与卡片', exact: true }).click()
         const row = page.locator(`[data-traffic-cycle-node="${A}"]`)
         await row.locator('select').selectOption('25')

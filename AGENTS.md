@@ -1,9 +1,10 @@
 # AGENTS.md
 
-Root-scope guide for the personal public fork **Glassmorphism Enhanced** (`MagnetOscar/Glassmorphism-Enhanced`).
+Root-scope guide for the personal public fork **Atlas** (`MagnetOscar/Atlas`).
 
 ## Mandatory development and release policy
 
+- Atlas branding authorization (2026-11-17): after checking the official theme market, the user explicitly requests the Atlas project/repository/ZIP name and all visible theme labels, including `Theme by Atlas`. This permits those exact text/metadata/link changes and source-symbol renames, not layout/style/rendering changes. Preserve MIT/upstream notices and historical evidence. Retain the legacy `Enhanced` configuration short and companion protocol IDs so existing settings keep working. Publish a fresh `atlas-v0.0.1` build with provenance; update the earlier release display to Atlas and retain its original tag/assets as history.
 - User constraint (2026-11-17): preserve the fork-time frontend UI from `baseline/v1.2.1` (`0332d5f7c73f7994ba21c01e4b739d04835120b1`). Do not redesign layouts, styles, defaults, visual attributes, globe/map rendering, or add frontend controls. Backend parameters/features are the development scope; necessary data bindings use existing UI positions without changing presentation. Theme services/composables are client code, not the Komari Server backend.
 - Only a future, explicitly discussed three-network synthesis display may extend the UI, using exactly the existing UI form. This is not current authorization. Earlier step 4/5 UI plans and passed UI tests do not override this constraint. See `docs/ui-preservation.md`.
 - Later release authorization (2026-11-17): publish independent stable `0.0.1`, covering steps 1–3 together. Preserve the complete independent-reset logic and its timezone/day/hour/minute administrator fields; include native-node/single-summary-currency finance. Administrative parameter editing and required API credit in the existing rate-source text position are part of this scope; public layout, globe/map and defaults remain fixed. Do not develop steps 4–6 or deploy production; the user will upload the ZIP.
@@ -46,7 +47,7 @@ This repository builds a Komari theme package, not a generic deployed web app.
 
 Release contract:
 
-- `bun run build` must output `dist/` and `komari-theme-Glassmorphism-build-<short-sha>.zip`.
+- `bun run build` must output `dist/` and `komari-theme-Atlas-build-<short-sha>.zip`.
 - Zip layout must stay: `komari-theme.json`, `preview.png`, `dist/`.
 - Packaged `preview.png` comes from [docs/preview.png](docs/preview.png).
 - Do not rename [komari-theme.json](komari-theme.json), [docs/preview.png](docs/preview.png), or the zip pattern.

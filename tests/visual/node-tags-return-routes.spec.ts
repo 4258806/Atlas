@@ -205,7 +205,7 @@ test('invalid route JSON is visible as a configuration error, not a fabricated r
   await installKomariFixture(page, { hideEarth: true, themeShort: 'Enhanced', loggedIn: true, themeSettings: { returnRoutesVisible: true, returnRouteConfig: '{broken' } })
   await page.goto('/')
   await expect(card(page).locator('[data-return-routes]')).toHaveCount(0)
-  await page.getByRole('button', { name: 'Enhanced 管理', exact: true }).click()
+  await page.getByRole('button', { name: 'Atlas 管理', exact: true }).click()
   await expect(page.getByRole('dialog').locator('[data-route-config-error]')).toContainText('回程配置无效')
   await expect(page.getByRole('dialog').locator('[data-route-config-error]')).toHaveAttribute('role', 'alert')
 })

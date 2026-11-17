@@ -5,7 +5,7 @@ import type { PublicInfo } from '@/utils/rpc'
 import { requirePermission } from '@/services/auth.service'
 import { requestManager } from '@/services/request.service'
 import { getSharedApi } from '@/utils/api'
-import { stableValue } from '@/utils/enhancedManagement'
+import { stableValue } from '@/utils/atlasManagement'
 import { manualRouteConfig } from '@/utils/manualRouteSettings'
 import { parseReturnRouteConfig } from '@/utils/returnRoutes'
 import { getSharedRpc } from '@/utils/rpc'
@@ -20,7 +20,7 @@ async function authorize() {
 async function current(): Promise<PublicInfo> {
   const data = await getSharedRpc().getPublicSettings()
   if (data.theme !== 'Enhanced')
-    throw new Error('当前主题不是 Enhanced；未写入')
+    throw new Error('当前主题不是 Atlas；未写入')
   return data
 }
 export async function loadManagedSettings(): Promise<PublicInfo> {

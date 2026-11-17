@@ -1,20 +1,20 @@
 import manifest from '../../komari-theme.json' with { type: 'json' }
 
-export const ENHANCED_SETTINGS_GROUPS = [
+export const ATLAS_SETTINGS_GROUPS = [
   { id: 'home', label: '基础与首页', title: '01 · 基础与首页' },
   { id: 'nodes', label: '节点与卡片', title: '02 · 节点与卡片' },
   { id: 'routes', label: '线路与延迟', title: '03 · 线路与延迟' },
   { id: 'appearance', label: '外观与背景', title: '04 · 外观与背景' },
   { id: 'advanced', label: '高级设置', title: '05 · 高级设置' },
 ] as const
-export type SettingsGroup = typeof ENHANCED_SETTINGS_GROUPS[number]['id']
+export type SettingsGroup = typeof ATLAS_SETTINGS_GROUPS[number]['id']
 export interface ThemeField { key: string, name: string | Record<string, string>, type: string, help?: string | Record<string, string>, default?: unknown, options?: string }
 export const THEME_FIELDS = manifest.configuration.data.filter(f => 'key' in f) as ThemeField[]
 const FIELD_GROUPS = new Map<string, SettingsGroup>()
 let group: SettingsGroup = 'home'
 for (const field of manifest.configuration.data) {
   if (field.type === 'title')
-    group = ENHANCED_SETTINGS_GROUPS.find(g => g.title === field.name)?.id ?? 'home'
+    group = ATLAS_SETTINGS_GROUPS.find(g => g.title === field.name)?.id ?? 'home'
   else if ('key' in field && typeof field.key === 'string')
     FIELD_GROUPS.set(field.key, group)
 }

@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "komari-theme-glassmorphism-enhanced",
+      "name": "komari-theme-atlas",
       "dependencies": {
         "@iconify/vue": "^4.3.0",
         "@js-temporal/polyfill": "0.5.1",

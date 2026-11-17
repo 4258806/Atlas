@@ -5,6 +5,18 @@ import re
 import subprocess
 
 BASELINE = "0332d5f7c73f7994ba21c01e4b739d04835120b1"
+BRANDING_BASELINE = "92e6f827b5cdef105149e096365aebef28fdad74"
+BRANDING_RUNTIME = {
+    "src/components/Header.vue", "src/components/Footer.vue",
+    "src/components/EnhancedManagementDialog.vue", "src/components/AtlasManagementDialog.vue",
+    "src/composables/useEnhancedManagement.ts", "src/composables/useAtlasManagement.ts",
+    "src/services/enhancedManagement.service.ts", "src/services/atlasManagement.service.ts",
+    "src/utils/enhancedManagement.ts", "src/utils/atlasManagement.ts",
+    "src/components/ManualRouteManager.vue", "src/components/ThemeSettingsPanel.vue",
+    "src/components/TrafficCycleRow.vue", "src/composables/useNodeLoadStats.ts",
+    "src/services/themeSettings.service.ts", "src/utils/api.ts",
+    "src/utils/returnRouteClassification.ts", "src/utils/themeSettings.ts",
+}
 FIRST_THREE_RUNTIME = {
     "src/components/FinanceDetailsDialog.vue", "src/components/NodeGeneralCards.vue",
     "src/components/ProviderValuePanel.vue", "src/components/SnapshotExportPanel.vue",
@@ -21,16 +33,28 @@ def git(*args):
     return subprocess.check_output(["git", *args], text=True, encoding="utf-8").strip()
 
 
-def validate_scope_paths(paths):
+def validate_scope_paths(paths, branding=False):
+    allowed = FIRST_THREE_RUNTIME | (BRANDING_RUNTIME if branding else set())
     unexpected = [path for path in paths if
                   ((path.startswith("src/") and not path.endswith(".md")) or
-                   path.startswith("public/images/")) and path not in FIRST_THREE_RUNTIME]
+                   path.startswith("public/images/")) and path not in allowed]
     if unexpected:
         raise ValueError(f"Out-of-scope runtime changes: {unexpected}")
 
 
-def validate_manifest(before, after):
+def validate_manifest(before, after, branding=False):
     before, after = dict(before), dict(after)
+    if branding:
+        expected = {
+            "name": "Atlas", "author": "MagnetOscar",
+            "url": "https://github.com/MagnetOscar/Atlas",
+            "description": "Atlas — Komari theme with independent reset schedules and native-currency node billing",
+        }
+        if any(after.get(key) != value for key, value in expected.items()):
+            raise ValueError("Invalid authorized Atlas metadata")
+        for key in expected:
+            before.pop(key, None)
+            after.pop(key, None)
     before.pop("version", None)
     after.pop("version", None)
     if before != after:
@@ -38,11 +62,23 @@ def validate_manifest(before, after):
 
 
 def audit_scope(source):
-    validate_scope_paths(git("diff", "--name-only", BASELINE, source).splitlines())
     manifest = json.loads(git("show", f"{source}:komari-theme.json"))
+    branding = manifest.get("name") == "Atlas"
+    validate_scope_paths(git("diff", "--name-only", BASELINE, source).splitlines(), branding)
+    if branding:
+        # First preserve the previously accepted three-step release, then audit
+        # only the explicit naming exception against that immutable source.
+        audit_scope(BRANDING_BASELINE)
+        changes = git("diff", "--name-only", BRANDING_BASELINE, source).splitlines()
+        unexpected = [path for path in changes if path.startswith("src/") and not path.endswith(".md") and path not in BRANDING_RUNTIME]
+        if unexpected:
+            raise ValueError(f"Non-branding runtime changes after 0.0.1: {unexpected}")
+        allowed_public = {"public/admin-app/index.html", "public/admin-app/enhanced-settings-bridge.js"}
+        if any(path.startswith("public/") and path not in allowed_public for path in changes):
+            raise ValueError("Branding cannot change public assets or renderers")
     if manifest.get("version") != "0.0.1":
         raise ValueError("Accepted source must contain the authorized 0.0.1 version")
-    validate_manifest(json.loads(git("show", f"{BASELINE}:komari-theme.json")), manifest)
+    validate_manifest(json.loads(git("show", f"{BASELINE}:komari-theme.json")), manifest, branding)
     expected = json.loads(git("show", f"{BASELINE}:package.json"))["dependencies"]
     expected["@js-temporal/polyfill"] = "0.5.1"
     actual = json.loads(git("show", f"{source}:package.json"))["dependencies"]
@@ -79,7 +115,11 @@ def main():
             raise SystemExit(f"Missing verification file: {stage}")
     subprocess.run(["git", "diff", "--exit-code", source, "HEAD", "--", ".",
                     ":(exclude)docs/verification/**", ":(exclude)AICACHE.md"], check=True)
-    print(f"Accepted source {source}; release tag personal-v{version}; checks: {', '.join(stages)}")
+    manifest = json.loads(pathlib.Path("komari-theme.json").read_text(encoding="utf-8"))
+    prefix = "atlas" if manifest.get("name") == "Atlas" else "personal"
+    if prefix == "atlas" and report.get("branding", {}).get("name") != "Atlas":
+        raise SystemExit("Atlas requires explicit branding acceptance")
+    print(f"Accepted source {source}; release tag {prefix}-v{version}; checks: {', '.join(stages)}")
 
 
 if __name__ == "__main__":

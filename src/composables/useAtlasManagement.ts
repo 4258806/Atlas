@@ -1,16 +1,16 @@
 import type { MaybeRefOrGetter } from 'vue'
-import type { EnhancedManagementState } from '@/services/enhancedManagement.service'
-import type { ManagementDraft } from '@/utils/enhancedManagement'
+import type { AtlasManagementState } from '@/services/atlasManagement.service'
+import type { ManagementDraft } from '@/utils/atlasManagement'
 import { computed, onMounted, onScopeDispose, ref, shallowRef, toValue, watch } from 'vue'
-import { enableEnhancedPlugin, loadEnhancedManagement, saveEnhancedManagement } from '@/services/enhancedManagement.service'
+import { enableAtlasPlugin, loadAtlasManagement, saveAtlasManagement } from '@/services/atlasManagement.service'
 import { useAppStore } from '@/stores/app'
 import { useNodesStore } from '@/stores/nodes'
-import { helperPresence, nodeBootstrapCommand } from '@/utils/enhancedManagement'
+import { helperPresence, nodeBootstrapCommand } from '@/utils/atlasManagement'
 
-export function useEnhancedManagement(active: MaybeRefOrGetter<boolean> = true) {
+export function useAtlasManagement(active: MaybeRefOrGetter<boolean> = true) {
   const app = useAppStore()
   const nodes = useNodesStore()
-  const state = shallowRef<EnhancedManagementState | null>(null)
+  const state = shallowRef<AtlasManagementState | null>(null)
   const selected = ref('')
   const draft = ref<ManagementDraft | null>(null)
   const busy = ref(false)
@@ -51,7 +51,7 @@ export function useEnhancedManagement(active: MaybeRefOrGetter<boolean> = true) 
     confirmed.value = false
     hydrating = false
   }
-  function adopt(data: EnhancedManagementState) {
+  function adopt(data: AtlasManagementState) {
     if (disposed)
       return
     state.value = data
@@ -66,7 +66,7 @@ export function useEnhancedManagement(active: MaybeRefOrGetter<boolean> = true) 
     busy.value = true
     error.value = ''
     try {
-      adopt(await loadEnhancedManagement())
+      adopt(await loadAtlasManagement())
     }
     catch {
       state.value = null
@@ -83,7 +83,7 @@ export function useEnhancedManagement(active: MaybeRefOrGetter<boolean> = true) 
     error.value = ''
     notice.value = ''
     try {
-      adopt(await saveEnhancedManagement(state.value, draft.value))
+      adopt(await saveAtlasManagement(state.value, draft.value))
       notice.value = '已保存并读取确认；其他节点策略及原有主题设置保留。'
     }
     catch (cause) {
@@ -99,7 +99,7 @@ export function useEnhancedManagement(active: MaybeRefOrGetter<boolean> = true) 
     busy.value = true
     error.value = ''
     try {
-      adopt(await enableEnhancedPlugin())
+      adopt(await enableAtlasPlugin())
       notice.value = '插件服务已启用；采集仍遵循现有全局/节点开关。'
     }
     catch {

@@ -2,7 +2,7 @@
 
 ## Direct upstream of the personal fork
 
-- Personal fork: <https://github.com/MagnetOscar/Glassmorphism-Enhanced>.
+- Personal fork: <https://github.com/MagnetOscar/Atlas>.
 - Direct upstream: <https://github.com/casiuna/Glassmorphism-Enhanced>, maintained by casiuna.
 - Pinned release: v1.2.1, commit `0332d5f7c73f7994ba21c01e4b739d04835120b1`.
 - Role: complete source baseline for this personal derivative, including the upstream's previous integrations and notices below.

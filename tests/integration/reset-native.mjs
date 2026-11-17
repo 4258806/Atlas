@@ -12,6 +12,7 @@ import { createServer } from 'vite'
 
 const RATE_URL = /er-api|frankfurter/
 const RATE_NETWORK_ERROR = /CORS|Content Security Policy|er-api|frankfurter/
+const ATLAS_TITLE = /Atlas/
 
 async function main() {
   const [binary, python, baseline, candidate] = process.argv.slice(2).map(p => resolve(p))
@@ -153,7 +154,9 @@ async function main() {
     page.on('pageerror', error => errors.push(error.message))
     const open = async () => {
       await page.goto(origin)
-      await page.getByRole('button', { name: 'Enhanced 管理', exact: true }).click()
+      await expect(page.locator('footer').getByRole('link', { name: 'Atlas', exact: true })).toHaveAttribute('href', 'https://github.com/MagnetOscar/Atlas')
+      await expect(page).toHaveTitle(ATLAS_TITLE)
+      await page.getByRole('button', { name: 'Atlas 管理', exact: true }).click()
       await page.getByRole('tab', { name: '节点与卡片', exact: true }).click()
     }
     await check('administrator editor persists independent timezone, day and minute on desktop and mobile', async () => {
@@ -173,7 +176,7 @@ async function main() {
         await row.getByRole('button', { name: '保存 Reset fixture A 流量周期', exact: true }).click()
         await expect(row.getByRole('status')).toContainText('已保存并读回')
         await page.reload()
-        await page.getByRole('button', { name: 'Enhanced 管理', exact: true }).click()
+        await page.getByRole('button', { name: 'Atlas 管理', exact: true }).click()
         await page.getByRole('tab', { name: '节点与卡片', exact: true }).click()
         await expect(row.locator('select')).toHaveValue('8')
         await expect(row.locator('input[type="time"]')).toHaveValue('21:45')

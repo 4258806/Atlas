@@ -63,12 +63,12 @@ function komariThemeZip(mode: string): Plugin {
       this.emitFile({
         type: 'asset',
         fileName: 'BUILD.json',
-        source: `${JSON.stringify({ schema: 1, product: 'Glassmorphism Enhanced', mode, version: getThemeVersion(), commit: execSync('git rev-parse HEAD', { encoding: 'utf-8' }).trim(), dirty: Boolean(execSync('git status --porcelain=v1', { encoding: 'utf-8' }).trim()) }, null, 2)}\n`,
+        source: `${JSON.stringify({ schema: 1, product: 'Atlas', mode, version: getThemeVersion(), commit: execSync('git rev-parse HEAD', { encoding: 'utf-8' }).trim(), dirty: Boolean(execSync('git status --porcelain=v1', { encoding: 'utf-8' }).trim()) }, null, 2)}\n`,
       })
     },
     closeBundle: async () => {
       const commitHash = getCommitHash()
-      const zipFileName = `komari-theme-Glassmorphism-build-${commitHash}.zip`
+      const zipFileName = `komari-theme-Atlas-build-${commitHash}.zip`
       const distDir = resolve(__dirname, 'dist')
       const previewPath = resolve(__dirname, 'docs/preview.png')
       const outputPath = resolve(__dirname, zipFileName)

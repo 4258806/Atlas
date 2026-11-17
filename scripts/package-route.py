@@ -53,7 +53,7 @@ def main():
             info.mtime = 0
             archive.addfile(info, io.BytesIO(content))
     assets = [plugin, helper]
-    theme = ROOT / ('komari-theme-Glassmorphism-build-' + subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD'], cwd=ROOT, text=True).strip() + '.zip')
+    theme = ROOT / ('komari-theme-Atlas-build-' + subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD'], cwd=ROOT, text=True).strip() + '.zip')
     if theme.is_file():
         assets.append(theme)
     records = [{'path': str(path), 'sha256': hashlib.sha256(path.read_bytes()).hexdigest(), 'bytes': path.stat().st_size} for path in assets]

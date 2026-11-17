@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 import { formatScheduleTime, schedulePeriod, validSchedule, validTimeZone } from '../../src/utils/resetSchedule'
 import { compactReturnRoute, premiumManualRoute, returnRouteTime } from '../../src/utils/returnRouteDisplay'
-import { ENHANCED_SETTINGS_GROUPS, settingGroup, THEME_FIELDS } from '../../src/utils/themeSettings'
+import { ATLAS_SETTINGS_GROUPS, settingGroup, THEME_FIELDS } from '../../src/utils/themeSettings'
 import { trafficAccounting } from '../../src/utils/trafficAccounting'
 import { changeTrafficReset, combineTrafficSnapshots, parseTrafficCycleConfig, resolveTrafficMetrics, TRAFFIC_METRICS, trafficByMode, trafficPeriod, trafficQueryRanges } from '../../src/utils/trafficCycle'
 
@@ -257,7 +257,7 @@ test('duplicate samples and unsupported coarse aggregation cannot double count',
   expect(resolveTrafficMetrics(data, A, period, now).status).toBe('insufficient')
 })
 test('five groups preserve every original field and expose the cycle only under nodes', () => {
-  expect(ENHANCED_SETTINGS_GROUPS.map(g => g.label)).toEqual(['基础与首页', '节点与卡片', '线路与延迟', '外观与背景', '高级设置'])
+  expect(ATLAS_SETTINGS_GROUPS.map(g => g.label)).toEqual(['基础与首页', '节点与卡片', '线路与延迟', '外观与背景', '高级设置'])
   expect(settingGroup('trafficCycleConfig')).toBe('nodes')
   expect(new Set(THEME_FIELDS.map(f => f.key)).size).toBe(THEME_FIELDS.length)
   expect(settingGroup('returnRouteConfig')).toBe('routes')

@@ -2,6 +2,8 @@
 
 The user's 2026-11-17 correction and subsequent explicit 0.0.1 release scope take precedence over earlier plans.
 
+Later on 2026-11-17 the user explicitly authorized Atlas naming throughout the project and visible theme pages. Only exact product text, document-title branding, manifest name/author/description/project URL, footer project URL and corresponding source-symbol renames are exceptions to the original-name reference. The existing footer elements/classes and every layout/style/globe/map/default remain protected; original license/copyright/source notices and internal compatibility IDs remain unchanged. No screenshot thresholds or reference images are changed for this rename.
+
 - Reference: original fork baseline `0332d5f7c73f7994ba21c01e4b739d04835120b1` (`baseline/v1.2.1`). Preserve its layout, styles, visual attributes, defaults, globe/map components and assets.
 - Development scope is backend parameters and features. Do not add frontend controls, redesign panels, change sizes/spacing/colors/icons, or modify the original rendering choices. Existing positions may display corrected business data without a new layout or extra currency badges.
 - A future three-network synthesis display may be considered only after explicit discussion, using exactly the existing UI form. It is not authorized now. Earlier drag-order and display-toggle plans are suspended.

@@ -6,10 +6,10 @@ import ThemeSettingsPanel from '@/components/ThemeSettingsPanel.vue'
 import { AppDialog } from '@/components/ui/app-dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { useEnhancedManagement } from '@/composables/useEnhancedManagement'
+import { useAtlasManagement } from '@/composables/useAtlasManagement'
 import { useAppStore } from '@/stores/app'
 import { RETURN_CARRIERS } from '@/utils/returnRouteClassification'
-import { ENHANCED_SETTINGS_GROUPS } from '@/utils/themeSettings'
+import { ATLAS_SETTINGS_GROUPS } from '@/utils/themeSettings'
 import pluginManifest from '../../companion/enhanced-route-probe/komari-plugin.json'
 import helperManifest from '../../companion/helper/helper-version.json'
 
@@ -21,12 +21,12 @@ function moveTab(event: KeyboardEvent, index: number) {
   if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key))
     return
   event.preventDefault()
-  const next = event.key === 'Home' ? 0 : event.key === 'End' ? ENHANCED_SETTINGS_GROUPS.length - 1 : (index + (event.key === 'ArrowRight' ? 1 : -1) + ENHANCED_SETTINGS_GROUPS.length) % ENHANCED_SETTINGS_GROUPS.length
-  activeGroup.value = ENHANCED_SETTINGS_GROUPS[next]!.id
+  const next = event.key === 'Home' ? 0 : event.key === 'End' ? ATLAS_SETTINGS_GROUPS.length - 1 : (index + (event.key === 'ArrowRight' ? 1 : -1) + ATLAS_SETTINGS_GROUPS.length) % ATLAS_SETTINGS_GROUPS.length
+  activeGroup.value = ATLAS_SETTINGS_GROUPS[next]!.id
   const button = event.currentTarget as HTMLButtonElement
   ;(button.parentElement?.querySelectorAll('button')[next] as HTMLButtonElement | undefined)?.focus()
 }
-const manager = useEnhancedManagement(() => props.open && activeGroup.value === 'routes' && advancedOpen.value)
+const manager = useAtlasManagement(() => props.open && activeGroup.value === 'routes' && advancedOpen.value)
 const app = useAppStore()
 const { state, selected, draft, busy, dirty, confirmed, error, notice, choices, selectedProbe, presence, command, lastResult, refresh, save, enable } = manager
 const labels = { telecom: '电信', unicom: '联通', mobile: '移动' }
@@ -35,10 +35,10 @@ const commit = __BUILD_GIT_HASH__
 </script>
 
 <template>
-  <AppDialog :open="props.open" title="Enhanced 集中管理" description="五分类主题设置 · 每节点独立流量周期 · 自动回程详细结果仅管理员读取" @update:open="emit('update:open', $event)">
+  <AppDialog :open="props.open" title="Atlas 集中管理" description="五分类主题设置 · 每节点独立流量周期 · 自动回程详细结果仅管理员读取" @update:open="emit('update:open', $event)">
     <div class="space-y-4">
-      <nav role="tablist" aria-label="Enhanced 主题设置分类" class="grid grid-cols-3 gap-1 rounded-lg bg-slate-500/5 p-1 sm:grid-cols-5">
-        <button v-for="(group, index) in ENHANCED_SETTINGS_GROUPS" :id="`enhanced-tab-${group.id}`" :key="group.id" type="button" role="tab" :aria-label="group.label" :aria-selected="activeGroup === group.id" :aria-controls="`enhanced-panel-${group.id}`" :tabindex="activeGroup === group.id ? 0 : -1" class="min-w-0 rounded-md px-2 py-2 text-xs font-medium transition-colors" :class="activeGroup === group.id ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'" @click="activeGroup = group.id" @keydown="moveTab($event, index)">
+      <nav role="tablist" aria-label="Atlas 主题设置分类" class="grid grid-cols-3 gap-1 rounded-lg bg-slate-500/5 p-1 sm:grid-cols-5">
+        <button v-for="(group, index) in ATLAS_SETTINGS_GROUPS" :id="`enhanced-tab-${group.id}`" :key="group.id" type="button" role="tab" :aria-label="group.label" :aria-selected="activeGroup === group.id" :aria-controls="`enhanced-panel-${group.id}`" :tabindex="activeGroup === group.id ? 0 : -1" class="min-w-0 rounded-md px-2 py-2 text-xs font-medium transition-colors" :class="activeGroup === group.id ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'" @click="activeGroup = group.id" @keydown="moveTab($event, index)">
           {{ group.title }}
         </button>
       </nav>
@@ -74,7 +74,7 @@ const commit = __BUILD_GIT_HASH__
               <dl class="grid grid-cols-1 gap-2 rounded-md border border-border/60 p-3 sm:grid-cols-2" data-enhanced-versions>
                 <div class="min-w-0 break-all">
                   <dt class="text-muted-foreground">
-                    Komari / Enhanced 主题
+                    Komari / Atlas 主题
                   </dt>
                   <dd>{{ state.komariVersion }} / {{ state.themeVersion ?? '未安装' }}</dd>
                 </div>

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build one reproducible Glassmorphism Enhanced stable Full distribution.
+"""Build one reproducible Atlas stable Full distribution.
 
 The outer delivery asset is a deterministic .tar.gz containing one validated
 Full ZIP. It never installs, publishes, contacts a panel, or starts a helper.
@@ -66,7 +66,7 @@ def main():
     helper_manifest = json.loads((ROOT / 'companion/helper/helper-version.json').read_text())
     plugin_base, helper_base = plugin_manifest['version'], helper_manifest['version']
     paths = {
-        'theme': ROOT / f'komari-theme-Glassmorphism-build-{short}.zip',
+        'theme': ROOT / f'komari-theme-Atlas-build-{short}.zip',
         'plugin': ROOT / f'test-results/release/enhanced-route-probe-{plugin_base}.zip',
         'helper': ROOT / f'test-results/release/enhanced-route-helper-{helper_base}.tar.gz',
     }
@@ -117,7 +117,7 @@ def main():
 
     manifest = {
         'schema': 1,
-        'product': 'Glassmorphism Enhanced',
+        'product': 'Atlas',
         'version': THEME_VERSION,
         'channel': RELEASE_CHANNEL,
         'archiveKind': 'full-distribution-inner-zip-not-native-theme-upload',
@@ -152,9 +152,9 @@ def main():
 
     output = ROOT / 'test-results/release'
     output.mkdir(parents=True, exist_ok=True)
-    package_name = f'Glassmorphism-Enhanced-Full-{short}.tar.gz'
+    package_name = f'Atlas-Full-{short}.tar.gz'
     package = output / package_name
-    package.write_bytes(deterministic_outer_tar(f'Glassmorphism-Enhanced-Full-{short}.zip', inner_zip))
+    package.write_bytes(deterministic_outer_tar(f'Atlas-Full-{short}.zip', inner_zip))
     records = [{'kind': 'full-tar-gz', 'path': str(package), 'sha256': digest(package.read_bytes()), 'bytes': package.stat().st_size}]
     records += [{'kind': kind, 'path': str(paths[kind]), 'sha256': module['sha256'], 'bytes': module['bytes']} for kind, module in modules.items()]
     report = {

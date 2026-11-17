@@ -15,9 +15,10 @@ const router = useRouter()
 const appStore = useAppStore()
 const { openAdmin, navigating } = useAdminNavigation()
 const { record: recordVisitorEvent } = useVisitorAudit()
-const EnhancedManagementDialog = defineAsyncComponent(() => import('@/components/EnhancedManagementDialog.vue'))
+const AtlasManagementDialog = defineAsyncComponent(() => import('@/components/AtlasManagementDialog.vue'))
 const managementOpen = ref(false)
-const settingsQuery = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('enhanced_settings') : null
+const settingsParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null
+const settingsQuery = settingsParams?.get('atlas_settings') ?? settingsParams?.get('enhanced_settings') ?? null
 const initialManagementGroup: SettingsGroup = settingsQuery && ['home', 'nodes', 'routes', 'appearance', 'advanced'].includes(settingsQuery) ? settingsQuery as SettingsGroup : 'routes'
 let settingsQueryHandled = false
 watch([() => appStore.privateFeaturesAllowed, () => appStore.publicSettings?.theme], ([allowed, theme]) => {
@@ -55,7 +56,7 @@ const actionButtons = computed(() => {
   const buttons: Array<{ title: string, icon: string, action: string, pressed?: boolean }> = []
 
   if (appStore.privateFeaturesAllowed && appStore.publicSettings?.theme === 'Enhanced') {
-    buttons.push({ title: 'Enhanced 管理', icon: 'tabler:package', action: 'enhancedManagement', pressed: managementOpen.value })
+    buttons.push({ title: 'Atlas 管理', icon: 'tabler:package', action: 'atlasManagement', pressed: managementOpen.value })
   }
 
   if (router.currentRoute.value.name === 'home' && appStore.homeToolsEnabled) {
@@ -85,7 +86,7 @@ const actionButtons = computed(() => {
 
 function handleButtonClick(action: string) {
   switch (action) {
-    case 'enhancedManagement':
+    case 'atlasManagement':
       void appStore.requireLoginPermission('advancedTools', { force: true }).then((allowed) => {
         managementOpen.value = allowed
       })
@@ -113,13 +114,16 @@ function handleButtonClick(action: string) {
   }
 }
 
-const sitename = computed(() => appStore.publicSettings?.sitename || 'Komari Monitor')
+const sitename = computed(() => appStore.publicSettings?.sitename || 'Atlas')
+watch(sitename, (name) => {
+  document.title = name === 'Atlas' ? 'Atlas' : `${name} · Atlas`
+}, { immediate: true })
 </script>
 
 <template>
   <!-- 访客 IP 组件，全局悬浮 -->
   <VisitorInfo v-if="!appStore.loading && appStore.visitorInfoEnabled" />
-  <EnhancedManagementDialog v-if="managementOpen" :open="managementOpen" :initial-group="initialManagementGroup" @update:open="managementOpen = $event" />
+  <AtlasManagementDialog v-if="managementOpen" :open="managementOpen" :initial-group="initialManagementGroup" @update:open="managementOpen = $event" />
 
   <div
     class="site-header transition-all duration-200 top-0 sticky z-10 border-b border-transparent"
