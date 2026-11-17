@@ -1,0 +1,18 @@
+{
+  "name": "Atlas Komari TcpQuality Attachment",
+  "version": "0.4.0",
+  "komari": "1.6.1",
+  "nativePlugin": "enhanced-route-probe",
+  "upstream": "https://github.com/ibsgss/TcpQuality",
+  "upstreamCommit": "db52fc60523320fc4a34b5c369f28be38df21d13",
+  "upstreamLicense": "GPL-3.0-only",
+  "adapterLicense": "MIT",
+  "periodMinutes": 60,
+  "scheduler": "existing-cron",
+  "residentService": false,
+  "listenPorts": [],
+  "tests": ["ipv4", "ipv6", "udp4", "udp6", "large4"],
+  "speedTests": false,
+  "upstreamReportUpload": false,
+  "retainedRuns": 24
+}

@@ -482,8 +482,8 @@ function hasRegion(region: string | null | undefined): boolean {
           <div
             v-if="appStore.connectionCountsVisible"
             data-node-connections
-            class="grid grid-rows-2 gap-0.5 rounded-lg bg-slate-500/5 min-w-0 overflow-hidden"
-            :class="nodeCardMetricBoxClass"
+            class="grid gap-0.5 rounded-lg bg-slate-500/5 min-w-0 overflow-hidden"
+            :class="[nodeCardMetricBoxClass, appStore.returnRouteHomeTileEnabled ? 'grid-rows-[auto_auto] content-center' : 'grid-rows-2']"
           >
             <div v-if="appStore.showTcpConnections" data-node-connection="tcp" class="text-[11px] text-muted-foreground flex items-center justify-between gap-1">
               <span class="shrink-0">TCP</span>

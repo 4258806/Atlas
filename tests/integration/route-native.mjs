@@ -11,6 +11,7 @@ import process from 'node:process'
 
 const { normalizeResult } = createRequire(import.meta.url)('../../companion/enhanced-route-probe/protocol.cjs')
 const PRIVATE_FIELDS = /8\.8\.8\.8|1\.1\.1\.1|helperVersion|lease|token/
+const QUALITY_PRIVATE_FIELDS = /token|job_id|acceptedId|expiresAt|8\.8\.8\.8|1\.1\.1\.1/
 async function main() {
   const binary = resolve(process.argv[2])
   const plugin = resolve(process.argv[3])
@@ -162,6 +163,40 @@ async function main() {
       await rpc('admin:setPluginConfiguration', { short: 'enhanced-route-probe', data: { ...config, publicSummaryEnabled: false } })
       assert.equal((await raw('/summary', undefined, false)).status, 403)
       assert.deepEqual((await raw('/snapshot')).body.nodes[client.uuid].latest, evidence)
+    })
+    const { qualityFixture } = createRequire(import.meta.url)('../fixtures/tcpquality.cjs')
+    let qualityReport
+    await check('native TcpQuality attachment leases, authenticated results and separate legacy evidence', async () => {
+      config = { ...config, publicSummaryEnabled: true, nodes: JSON.stringify({ [client.uuid]: { enabled: true, city: 'shanghai', periodMinutes: 60, collector: 'tcpquality' } }) }
+      await rpc('admin:setPluginConfiguration', { short: 'enhanced-route-probe', data: config })
+      const before = (await raw('/checkpoint')).body
+      const poll = await raw('/poll', { token: client.token, helper_version: '0.4.0' }, false)
+      assert.equal(poll.status, 200)
+      assert.equal(poll.body.job.kind, 'tcpquality-three-carrier')
+      const jobId = poll.body.job.id
+      qualityReport = qualityFixture(client.uuid, new Date().toISOString())
+      assert.equal((await raw('/result', { kind: 'tcpquality', token: client.token, job_id: 'f'.repeat(48), report: qualityReport }, false)).status, 400)
+      const wrong = { ...qualityReport, uuid: '00000000-0000-4000-8000-000000000002' }
+      assert.equal((await raw('/result', { kind: 'tcpquality', token: client.token, job_id: jobId, report: wrong }, false)).status, 400)
+      const result = { kind: 'tcpquality', token: client.token, job_id: jobId, report: qualityReport }
+      assert.equal((await raw('/result', result, false)).body.accepted, true)
+      assert.equal((await raw('/result', result, false)).body.accepted, true)
+      assert.equal((await raw('/poll', { token: client.token, helper_version: '0.4.0' }, false)).body.job, null)
+      assert.deepEqual((await raw('/checkpoint')).body, before)
+      const pub = (await raw('/summary', undefined, false)).body
+      assert.deepEqual(pub.nodes[client.uuid].quality, qualityReport)
+      assert.doesNotMatch(JSON.stringify(pub), QUALITY_PRIVATE_FIELDS)
+    })
+    await check('TcpQuality reports/hourly leases persist on real restart; public opt-out retains both private sources', async () => {
+      await stop()
+      start()
+      await ready()
+      assert.deepEqual((await raw('/snapshot')).body.nodes[client.uuid].quality, qualityReport)
+      assert.deepEqual((await raw('/snapshot')).body.nodes[client.uuid].latest, evidence)
+      assert.equal((await raw('/poll', { token: client.token, helper_version: '0.4.0' }, false)).body.job, null)
+      await rpc('admin:setPluginConfiguration', { short: 'enhanced-route-probe', data: { ...config, publicSummaryEnabled: false } })
+      assert.equal((await raw('/summary', undefined, false)).status, 403)
+      assert.deepEqual((await raw('/snapshot')).body.nodes[client.uuid].quality, qualityReport)
     })
     writeFileSync(join(root, 'test-results/route-native.json'), `${JSON.stringify({ kind: 'official-1.6.1-isolated-native-plugin', routeData: 'synthetic; no network probing', checks }, null, 2)}\n`)
   }

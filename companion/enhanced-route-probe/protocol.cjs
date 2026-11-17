@@ -66,7 +66,8 @@ function policy(raw) {
   for (const uuid of Object.keys(nodes)) {
     assert(UUID.test(uuid), 'UUID required')
     const item = nodes[uuid]
-    keys(item, ['enabled', 'city', 'periodMinutes'])
+    keys(item, ['enabled', 'city', 'periodMinutes', 'collector'])
+    assert(item.collector === undefined || item.collector === 'tcpquality', 'invalid collector')
     assert(typeof item.enabled === 'boolean' && (CITIES.includes(item.city) || Object.hasOwn(cdnTargets, item.city)), 'invalid node policy')
     assert(Number.isInteger(item.periodMinutes) && item.periodMinutes >= 60 && item.periodMinutes <= 10080, 'period must be 60–10080 minutes')
   }

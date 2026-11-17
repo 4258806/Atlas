@@ -6,6 +6,16 @@ const OTHER = '00000000-0000-4000-8000-000000000002'
 const AT = '2026-11-09T12:00:00.000Z'
 const draft = { uuid: UUID, globalEnabled: false, nodeEnabled: false, city: 'beijing', periodMinutes: 360, displayEnabled: false, ttlHours: 24, manual: { telecom: '', unicom: '', mobile: '' } }
 
+test('native public-summary preference and attachment mode survive hourly policy edits', () => {
+  const config = { enabled: true, publicSummaryEnabled: true, cdnTargets: '{}', nodes: JSON.stringify({ [UUID]: { enabled: true, city: 'shanghai', periodMinutes: 120, collector: 'tcpquality' }, [OTHER]: { enabled: false, city: 'beijing', periodMinutes: 360 } }) }
+  const next = managementChanges({}, config, { ...draft, globalEnabled: true, nodeEnabled: true, city: 'shanghai', periodMinutes: 60 })
+  expect(next.plugin.publicSummaryEnabled).toBe(true)
+  expect(parseProbePolicy(next.plugin).nodes[UUID]).toEqual({ enabled: true, city: 'shanghai', periodMinutes: 60, collector: 'tcpquality' })
+  expect(JSON.parse(next.plugin.nodes)[OTHER]).toEqual(JSON.parse(config.nodes)[OTHER])
+  expect(nodeBootstrapCommand('https://panel.example', UUID, 'tcpquality')).toContain('python3 collector.py run')
+  expect(nodeBootstrapCommand('https://panel.example', UUID, 'tcpquality')).not.toContain('manage.py node')
+})
+
 test('central changes preserve unrelated theme fields, other UUID policies and manual/automatic evidence', () => {
   const settings = { transitCarrierPingRules: 'KEEP_RULE', financeCurrency: 'SGD', unknownFuture: { untouched: true }, returnRouteConfig: JSON.stringify({ version: 1, nodes: { [OTHER]: { manual: { mobile: { label: '保留', updatedAt: AT } }, auto: {} } } }) }
   const config = { enabled: false, nodes: JSON.stringify({ [OTHER]: { enabled: false, city: 'shanghai', periodMinutes: 120 } }) }

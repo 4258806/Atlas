@@ -1,10 +1,12 @@
 import type { ReturnCarrier } from '@/utils/returnRouteClassification'
 import type { AutoReturnRoute, ReturnRouteDisplay, ReturnRouteDocument } from '@/utils/returnRoutes'
 import type { ProbeProtocol } from '@/utils/routeProbeEvidence'
+import type { TcpQualityReport } from '@/utils/tcpQuality'
 import { CDN_ID, cdnTraceFromSnapshot } from '@/utils/cdnRouteEvidence'
 import { RETURN_CARRIERS } from '@/utils/returnRouteClassification'
 import { parseReturnRouteConfig, resolveReturnRoutes } from '@/utils/returnRoutes'
 import { evidenceKeys } from '@/utils/routeProbeEvidence'
+import { parseTcpQuality } from '@/utils/tcpQuality'
 
 export type ProtocolPaths = Partial<Record<ReturnCarrier, Partial<Record<ProbeProtocol, AutoReturnRoute>>>>
 export interface ProbeNode {
@@ -15,6 +17,7 @@ export interface ProbeNode {
   helperVersion?: string | null
   auto: Partial<Record<ReturnCarrier, AutoReturnRoute>>
   protocols?: ProtocolPaths
+  quality?: TcpQualityReport
 }
 export interface ProbeSnapshot { nodes: Record<string, ProbeNode> }
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -88,7 +91,7 @@ export function parseProbeSnapshot(raw: unknown): ProbeSnapshot {
           throw new Error('ASN query budget exceeded')
       }
     }
-    nodes[uuid] = { enabled: value.enabled, state: value.state.slice(0, 40), seenAt: typeof value.seenAt === 'number' && Number.isFinite(value.seenAt) ? value.seenAt : null, registeredAt: typeof value.registeredAt === 'number' && Number.isFinite(value.registeredAt) ? value.registeredAt : null, helperVersion: typeof value.helperVersion === 'string' ? value.helperVersion.slice(0, 96) : null, auto, ...(protocols ? { protocols } : {}) }
+    nodes[uuid] = { enabled: value.enabled, state: value.state.slice(0, 40), seenAt: typeof value.seenAt === 'number' && Number.isFinite(value.seenAt) ? value.seenAt : null, registeredAt: typeof value.registeredAt === 'number' && Number.isFinite(value.registeredAt) ? value.registeredAt : null, helperVersion: typeof value.helperVersion === 'string' ? value.helperVersion.slice(0, 96) : null, auto, ...(protocols ? { protocols } : {}), ...(value.quality ? { quality: parseTcpQuality(value.quality, uuid) } : {}) }
   }
   return { nodes }
 }

@@ -7,6 +7,12 @@ import { BASELINE, BRAND_RENAMES, digest, headerLayout, presentation, protectedC
 const root = resolve(import.meta.dirname, '../..')
 const homeConnectionContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-connection-ui.json'), 'utf8')) as { presentation: string }
 const homeRouteContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-route-ui-0.0.3.json'), 'utf8')) as { components: Record<string, string>, protectedFiles: Record<string, string> }
+const qualityContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-route-ui-0.0.4.json'), 'utf8')) as { components: Record<string, string> }
+function withoutQualityAlignment(source: string): string {
+  return source.replace(/<!-- TCP\/UDP connection counts -->[\s\S]*?<!-- \/TCP\/UDP connection counts -->/, block => block
+    .replace('class="grid gap-0.5 rounded-lg', 'class="grid grid-rows-2 gap-0.5 rounded-lg')
+    .replace(':class="[nodeCardMetricBoxClass, appStore.returnRouteHomeTileEnabled ? \'grid-rows-[auto_auto] content-center\' : \'grid-rows-2\']"', ':class="nodeCardMetricBoxClass"'))
+}
 function withoutRouteTile(source: string): string {
   return source.replace(/<!-- Homepage return-route tile -->[\s\S]*?<!-- \/Homepage return-route tile -->/, '').replace('NodeReturnRoutes v-if="!appStore.returnRouteHomeTileEnabled"', 'NodeReturnRoutes')
 }
@@ -75,13 +81,14 @@ test('homepage connection tile is the sole newly authorized presentation subtree
   const source = readFileSync(resolve(root, 'src/components/NodeCard.vue'), 'utf8')
   expect(source.match(/<!-- TCP\/UDP connection counts -->/g)).toHaveLength(1)
   expect(source.match(/<!-- \/TCP\/UDP connection counts -->/g)).toHaveLength(1)
-  expect(presentation(withoutRouteTile(source))).toBe(homeConnectionContract.presentation)
+  expect(presentation(withoutQualityAlignment(withoutRouteTile(source)))).toBe(homeConnectionContract.presentation)
 })
 
-test('0.0.3 only adds the explicitly requested return-route tile and setting', () => {
+test('0.0.3 surrounding UI stays fixed; only the authorized 0.0.4 panel and adjacent connection alignment change', () => {
   expect(Object.keys(homeRouteContract.components).sort()).toEqual(['src/components/NodeCard.vue', 'src/components/NodeReturnRouteTile.vue'])
+  expect(Object.keys(qualityContract.components).sort()).toEqual(['src/components/NodeCard.vue', 'src/components/NodeReturnRouteTile.vue'])
   for (const [path, hash] of Object.entries(homeRouteContract.components))
-    expect(presentation(readFileSync(resolve(root, path), 'utf8'))).toBe(hash)
+    expect(presentation(readFileSync(resolve(root, path), 'utf8'))).toBe(qualityContract.components[path] ?? hash)
   for (const [path, hash] of Object.entries(homeRouteContract.protectedFiles))
     expect(digest(protectedContent(path, readFileSync(resolve(root, path))))).toBe(hash)
 })

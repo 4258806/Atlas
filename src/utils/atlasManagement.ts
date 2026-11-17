@@ -9,7 +9,7 @@ export const PROBE_SHORT = 'enhanced-route-probe'
 export const THEME_SHORT = 'Atlas'
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 export const PROBE_CITIES = ['beijing', 'shanghai', 'guangzhou', 'hubei', CDN_ID] as const
-export interface NodeProbePolicy { enabled: boolean, city: string, periodMinutes: number }
+export interface NodeProbePolicy { enabled: boolean, city: string, periodMinutes: number, collector?: 'tcpquality' }
 export interface ProbePolicy { enabled: boolean, nodes: Record<string, NodeProbePolicy>, cdnTargets?: ReturnType<typeof parseCdnProfiles> }
 export interface ManagementDraft {
   uuid: string
@@ -37,11 +37,11 @@ export function stableValue(value: unknown): string {
 export function parseProbePolicy(raw: Record<string, unknown>): ProbePolicy {
   const nodes = record(typeof raw.nodes === 'string' ? JSON.parse(raw.nodes) : raw.nodes ?? {})
   const cdnTargets = parseCdnProfiles(raw.cdnTargets)
-  if (Object.keys(nodes).length > 200 || Object.keys(raw).some(k => !['enabled', 'nodes', 'cdnTargets'].includes(k)))
+  if (Object.keys(nodes).length > 200 || Object.keys(raw).some(k => !['enabled', 'nodes', 'cdnTargets', 'publicSummaryEnabled'].includes(k)) || (raw.publicSummaryEnabled !== undefined && typeof raw.publicSummaryEnabled !== 'boolean'))
     throw new Error('插件配置不兼容，需在官方后台检查')
   for (const [uuid, value] of Object.entries(nodes)) {
     const node = record(value)
-    if (!UUID.test(uuid) || typeof node.enabled !== 'boolean' || !PROBE_CITIES.includes(node.city as typeof PROBE_CITIES[number]) || !Number.isInteger(node.periodMinutes) || Number(node.periodMinutes) < 60 || Number(node.periodMinutes) > 10080 || Object.keys(node).some(k => !['enabled', 'city', 'periodMinutes'].includes(k)))
+    if (!UUID.test(uuid) || typeof node.enabled !== 'boolean' || !PROBE_CITIES.includes(node.city as typeof PROBE_CITIES[number]) || !Number.isInteger(node.periodMinutes) || Number(node.periodMinutes) < 60 || Number(node.periodMinutes) > 10080 || Object.keys(node).some(k => !['enabled', 'city', 'periodMinutes', 'collector'].includes(k)) || (node.collector !== undefined && node.collector !== 'tcpquality'))
       throw new Error('插件策略需要有效 UUID、固定城市及 60–10080 分钟周期')
     if (node.city === CDN_ID && !cdnTargets[CDN_ID])
       throw new Error('请先在 Plugin 和 Helper 本地双端配置 CDN 白名单')
@@ -68,7 +68,7 @@ export function managementChanges(settings: Record<string, unknown>, config: Rec
   }
   document.nodes[draft.uuid] = node
   const serialized = serializeReturnRoutes(document)
-  const plugin = { ...config, enabled: draft.globalEnabled, nodes: JSON.stringify({ ...policy.nodes, [draft.uuid]: { enabled: draft.nodeEnabled, city: draft.city, periodMinutes: draft.periodMinutes } }) }
+  const plugin = { ...config, enabled: draft.globalEnabled, nodes: JSON.stringify({ ...policy.nodes, [draft.uuid]: { ...policy.nodes[draft.uuid], enabled: draft.nodeEnabled, city: draft.city, periodMinutes: draft.periodMinutes } }) }
   parseProbePolicy(plugin)
   return {
     theme: { ...settings, returnRoutesVisible: draft.displayEnabled, returnRouteAutoEnabled: draft.displayEnabled, returnRouteCompanionEnabled: draft.displayEnabled, returnRouteTtlHours: draft.ttlHours, returnRouteConfig: serialized },
@@ -76,13 +76,15 @@ export function managementChanges(settings: Record<string, unknown>, config: Rec
   }
 }
 export function helperPresence(node: ProbeNode | undefined, now: number): string {
+  if (node?.quality)
+    return 'Komari TcpQuality 附件已接入'
   if (!node?.seenAt)
     return node?.registeredAt ? 'Helper 已登记，尚未轮询' : '未登记 Helper'
   if (node.seenAt > now + 60000 || now - node.seenAt > 90000)
     return 'Helper 离线或心跳已过期'
   return node.helperVersion ? 'Helper 在线' : '旧版 Helper 在线（版本未上报）'
 }
-export function nodeBootstrapCommand(panel: string, uuid: string): string {
+export function nodeBootstrapCommand(panel: string, uuid: string, collector?: 'tcpquality'): string {
   if (!UUID.test(uuid))
     return ''
   const url = new URL(panel)
@@ -92,5 +94,7 @@ export function nodeBootstrapCommand(panel: string, uuid: string): string {
   const local = ['127.0.0.1', '[::1]'].includes(url.hostname)
   if (url.protocol === 'http:' && !local)
     return '此面板未使用 HTTPS，拒绝生成会传递节点凭据的接入命令。'
+  if (collector === 'tcpquality')
+    return `# 在节点的 Komari 附件代码目录执行；沿用该节点 Agent 身份，不创建独立服务。\npython3 prepare.py --data '/var/lib/komari-agent/attachments/tcpquality'\npython3 enroll.py --agent-config '/etc/komari-agent/config.json' --uuid ${quote(uuid)} --data '/var/lib/komari-agent/attachments/tcpquality' --config '/etc/komari-agent/attachments/tcpquality/attachment.json'\npython3 collector.py run --config '/etc/komari-agent/attachments/tcpquality/attachment.json'\n# 验收通过后，重复 enroll 命令并添加 --enable-schedule；后台周期默认 60 分钟。`
   return `python3 manage.py node --panel ${quote(panel)} --uuid ${quote(uuid)}${local && url.protocol === 'http:' ? ' --allow-loopback-http' : ''} \\\n  --agent-config '/absolute/private/node-agent.json' \\\n  --prefix '/absolute/owned/helper-VERSION' --state-dir '/absolute/private/helper-state'`
 }

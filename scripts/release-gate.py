@@ -1,5 +1,6 @@
 """Fail closed against the exact source and the user's authorized release scope."""
 import json
+import hashlib
 import pathlib
 import re
 import subprocess
@@ -8,6 +9,43 @@ BASELINE = "0332d5f7c73f7994ba21c01e4b739d04835120b1"
 BRANDING_BASELINE = "92e6f827b5cdef105149e096365aebef28fdad74"
 ATLAS_001 = "31c69e80cb629a5ccdb0144dabf4164583a54405"
 ATLAS_002 = "aae95c6f96360ccbc1ff07e4ecfc833c70ce4e43"
+ATLAS_003 = "1762647c7762efb22d5dfac3807d572c95d668db"
+QUALITY_RUNTIME = {
+    "src/components/NodeCard.vue", "src/components/NodeReturnRouteTile.vue",
+    "src/composables/useNodeReturnRoutes.ts", "src/utils/routeProbeSnapshot.ts",
+    "src/utils/tcpQuality.ts", "src/utils/atlasManagement.ts", "src/composables/useAtlasManagement.ts",
+}
+
+
+def audit_quality_scope(source):
+    for path in git("diff", "--name-only", ATLAS_003, source).splitlines():
+        if path.startswith("src/") and not path.endswith(".md") and path not in QUALITY_RUNTIME:
+            raise ValueError(f"Out-of-scope 0.0.4 runtime: {path}")
+        if path.startswith("public/"):
+            raise ValueError(f"0.0.4 cannot change public assets: {path}")
+    before = json.loads(git("show", f"{ATLAS_003}:komari-theme.json"))
+    after = json.loads(git("show", f"{source}:komari-theme.json"))
+    if after.get("version") != "0.0.4":
+        raise ValueError("Expected 0.0.4 source")
+    validate_manifest(before, after)
+    for path in ("package.json", "bun.lock"):
+        if git("show", f"{ATLAS_003}:{path}") != git("show", f"{source}:{path}"):
+            raise ValueError("0.0.4 cannot change dependencies")
+    plugin_path = "companion/enhanced-route-probe/komari-plugin.json"
+    old_plugin = json.loads(git("show", f"{ATLAS_003}:{plugin_path}"))
+    plugin = json.loads(git("show", f"{source}:{plugin_path}"))
+    if plugin["permissions"] != old_plugin["permissions"] or plugin["komari"] != "1.6.1":
+        raise ValueError("No extra plugin execution/network permissions")
+    attachment = json.loads(git("show", f"{source}:companion/tcpquality/attachment.json"))
+    if attachment.get("periodMinutes") != 60 or attachment.get("scheduler") != "existing-cron" or attachment.get("residentService") is not False or attachment.get("listenPorts") != [] or attachment.get("speedTests") is not False or attachment.get("upstreamReportUpload") is not False or attachment.get("tests") != ["ipv4", "ipv6", "udp4", "udp6", "large4"]:
+        raise ValueError("Invalid attachment scheduling/test scope")
+    lock = json.loads(git("show", f"{source}:companion/tcpquality/upstream-lock.json"))
+    if lock.get("commit") != "db52fc60523320fc4a34b5c369f28be38df21d13" or lock.get("license") != "GPL-3.0-only" or set(lock.get("files", {})) != {"runTcpQuality.sh", "runTcpQuality-core.sh", "runTcpQuality-rootfs.sh", "LICENSE", "README.md"}:
+        raise ValueError("Pinned separate upstream sources/license required")
+    for path, expected in lock["files"].items():
+        content = subprocess.check_output(["git", "show", f"{source}:companion/tcpquality/vendor/{path}"])
+        if hashlib.sha256(content).hexdigest() != expected:
+            raise ValueError("Upstream source bytes differ from audited lock")
 ROUTE_RUNTIME = {
     "src/components/NodeCard.vue", "src/components/NodeReturnRouteTile.vue",
     "src/stores/app.ts", "src/composables/useNodeReturnRoutes.ts",
@@ -185,6 +223,11 @@ def main():
             raise SystemExit("0.0.3 is limited to homepage connection/return-route and companion integration")
         audit_route_scope(source)
         stages = ("engineering", "reset", "finance", "sorting", "display", "return-route", "integration", "package", "previews", "production-trial")
+    elif version == "0.0.4":
+        if report.get("scope") != "komari-tcpquality-attachment" or report.get("baseline_commit") != ATLAS_003:
+            raise SystemExit("0.0.4 is limited to the Komari attachment and reference return-route panel")
+        audit_quality_scope(source)
+        stages = ("engineering", "reset", "finance", "sorting", "display", "tcpquality", "hourly-schedule", "license", "integration", "package", "previews", "production-trial")
     else:
         stages = ("reset", "finance", "sorting", "display", "return-route", "integration")
     for stage in stages:

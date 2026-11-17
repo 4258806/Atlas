@@ -140,7 +140,7 @@ export function useAtlasManagement(active: MaybeRefOrGetter<boolean> = true) {
   })
   const selectedProbe = computed(() => state.value?.snapshot.nodes[selected.value])
   const presence = computed(() => helperPresence(selectedProbe.value, now.value))
-  const command = computed(() => nodeBootstrapCommand(window.location.origin, selected.value))
-  const lastResult = computed(() => Object.values(selectedProbe.value?.auto ?? {}).map(v => v.collectedAt).sort().at(-1) ?? '尚无回报')
+  const command = computed(() => nodeBootstrapCommand(window.location.origin, selected.value, state.value?.policy?.nodes[selected.value]?.collector))
+  const lastResult = computed(() => selectedProbe.value?.quality?.collectedAt ?? Object.values(selectedProbe.value?.auto ?? {}).map(v => v.collectedAt).sort().at(-1) ?? '尚无回报')
   return { state, selected, draft, busy, dirty, confirmed, error, notice, choices, selectedProbe, presence, command, lastResult, refresh, save, enable }
 }

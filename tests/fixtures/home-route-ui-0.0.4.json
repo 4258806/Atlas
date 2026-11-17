@@ -1,0 +1,7 @@
+{
+  "authorization": "User 2026-11-18: reference-image three-row return-route panel and grouped adjacent TCP/UDP in the same new row; other layout/configuration remains protected.",
+  "components": {
+    "src/components/NodeCard.vue": "aee7bf654f99791547195b3e1a04823709749d8aaacd1f7fddc0fdb9e87bf457",
+    "src/components/NodeReturnRouteTile.vue": "29a2409f1b08c13871ba36df544034ce72f098594041362a88bced6f165c28ab"
+  }
+}

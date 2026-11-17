@@ -1,0 +1,279 @@
+{
+  "version": "0.0.4",
+  "status": "passed",
+  "source_commit": "0c25c2ef9f1ddcfd385fae229eb7d36d0facdabd",
+  "trial": {
+    "status": "passed",
+    "nativeAccepted": true,
+    "measurement": {
+      "seconds": 741.65,
+      "sampledPeakDescendantRSSBytes": 210599936,
+      "childCPUSeconds": 227.101,
+      "exitCode": 0,
+      "newSystemdUnit": false,
+      "scope": "three-carrier-only",
+      "upstreamReportUpload": false,
+      "speedTests": false,
+      "ipv6DefaultRoutePresent": false
+    },
+    "variants": {
+      "ipv4": {
+        "status": "measured",
+        "carriers": {
+          "telecom": {
+            "total": 31,
+            "labels": {
+              "CN2GIA": 31
+            }
+          },
+          "unicom": {
+            "total": 31,
+            "labels": {
+              "CN2GIA": 31
+            }
+          },
+          "mobile": {
+            "total": 31,
+            "labels": {
+              "CN2GIA": 31
+            }
+          }
+        }
+      },
+      "ipv6": {
+        "status": "unavailable",
+        "carriers": {}
+      },
+      "udp4": {
+        "status": "measured",
+        "carriers": {
+          "telecom": {
+            "total": 31,
+            "labels": {
+              "CN2GIA": 31
+            }
+          },
+          "unicom": {
+            "total": 31,
+            "labels": {
+              "CN2GIA": 31
+            }
+          },
+          "mobile": {
+            "total": 31,
+            "labels": {
+              "CN2GIA": 31
+            }
+          }
+        }
+      },
+      "udp6": {
+        "status": "unavailable",
+        "carriers": {}
+      },
+      "large4": {
+        "status": "measured",
+        "carriers": {
+          "telecom": {
+            "total": 31,
+            "labels": {
+              "CN2GIA": 31
+            }
+          },
+          "unicom": {
+            "total": 31,
+            "labels": {
+              "CN2GIA": 31
+            }
+          },
+          "mobile": {
+            "total": 31,
+            "labels": {
+              "CN2GIA": 31
+            }
+          }
+        }
+      }
+    },
+    "rawEvidenceRemainsPrivate": true,
+    "scheduleEnabled": false
+  },
+  "backend": {
+    "status": "passed",
+    "nativePersistedAndPublicProjectionMatches": true,
+    "onlyEnabledProbeNode": "DMIT",
+    "nativePeriodMinutes": 60,
+    "variants": {
+      "ipv4": {
+        "status": "measured",
+        "carriers": {
+          "telecom": {
+            "total": 31,
+            "labels": {
+              "CN2GIA": 31
+            }
+          },
+          "unicom": {
+            "total": 31,
+            "labels": {
+              "CN2GIA": 31
+            }
+          },
+          "mobile": {
+            "total": 31,
+            "labels": {
+              "CN2GIA": 31
+            }
+          }
+        }
+      },
+      "ipv6": {
+        "status": "unavailable",
+        "carriers": {}
+      },
+      "udp4": {
+        "status": "measured",
+        "carriers": {
+          "telecom": {
+            "total": 31,
+            "labels": {
+              "CN2GIA": 31
+            }
+          },
+          "unicom": {
+            "total": 31,
+            "labels": {
+              "CN2GIA": 31
+            }
+          },
+          "mobile": {
+            "total": 31,
+            "labels": {
+              "CN2GIA": 31
+            }
+          }
+        }
+      },
+      "udp6": {
+        "status": "unavailable",
+        "carriers": {}
+      },
+      "large4": {
+        "status": "measured",
+        "carriers": {
+          "telecom": {
+            "total": 31,
+            "labels": {
+              "CN2GIA": 31
+            }
+          },
+          "unicom": {
+            "total": 31,
+            "labels": {
+              "CN2GIA": 31
+            }
+          },
+          "mobile": {
+            "total": 31,
+            "labels": {
+              "CN2GIA": 31
+            }
+          }
+        }
+      }
+    },
+    "collectedAt": "2026-11-17T19:09:33.618Z",
+    "collectorVersion": "0.4.0+git.0c25c2e",
+    "legacyRawEvidenceUnchanged": true,
+    "billingResetThemePingUnchanged": true,
+    "publicContainsNoIPsTokensOrLeases": true,
+    "nodeCount": 11,
+    "onlineNodeCount": 11,
+    "nginxUnchanged": true,
+    "containerHealthy": true,
+    "containerStartedAt": "2026-11-16T00:26:20.648645324Z",
+    "nextDueUTC": "2026-11-17T19:52:00.717000+00:00"
+  },
+  "schedule": {
+    "status": "passed",
+    "periodMinutes": 60,
+    "scheduler": "existing-cron",
+    "cronTickMinutes": 1,
+    "actualProbesControlledByNativeLease": true,
+    "dueCheckStartedNoAdditionalProbe": true,
+    "agentConfigAndModeUnchanged": true,
+    "protectedServicesAndPIDsUnchanged": true,
+    "routesFirewallQdiscUnchanged": true,
+    "oldHelperInactiveRetained": true,
+    "newServiceOrTimerCreated": false,
+    "otherNodesEnrolled": false,
+    "privateRunBytes": 1203423,
+    "rootfsBytes": 408153866
+  },
+  "gateway": {
+    "status": "passed",
+    "agent_gateway_checks": [
+      {
+        "path": "/api/enhanced-route-probe/v1/register",
+        "get_status": 403,
+        "unauthenticated_post_status": 401,
+        "passed": true
+      },
+      {
+        "path": "/api/enhanced-route-probe/v1/poll",
+        "get_status": 403,
+        "unauthenticated_post_status": 401,
+        "passed": true
+      },
+      {
+        "path": "/api/enhanced-route-probe/v1/result",
+        "get_status": 403,
+        "unauthenticated_post_status": 401,
+        "passed": true
+      },
+      {
+        "path": "/",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "path": "/api/admin/client/list",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "path": "/api/enhanced-route-probe/v1/snapshot",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "path": "/api/enhanced-route-probe/v1/checkpoint",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "path": "/api/enhanced-route-probe/v1/summary",
+        "status": 404,
+        "passed": true
+      }
+    ],
+    "main_site_access_redirect_status": 302,
+    "credentials_used": false,
+    "network_probe_executed": false
+  },
+  "onlyTrialNodeEnrolled": true,
+  "otherTenNodesUnchanged": true,
+  "productionThemeDuringTrial": "0.0.3",
+  "productionPluginVersion": "0.4.0+git.d125ed8",
+  "pluginExecutableTreeMatchesAcceptedSource": true,
+  "preProbeCompatibilityFailures": [
+    "private parent directory permissions tightened to 0700",
+    "guest-absolute rootfs links safely rebased under private rootfs",
+    "unmodified upstream README bytes retained across Git packaging",
+    "upstream clear requires TERM=xterm"
+  ],
+  "failedAttemptEvidenceKeptPrivate": true,
+  "originalNativeLeaseResumedWithoutResetOrDuplicateCompletedProbe": true,
+  "bandwidth": "Not isolated; no bandwidth consumption claim",
+  "visual": "Synthetic responsive previews; production authenticated browser not yet observed"
+}

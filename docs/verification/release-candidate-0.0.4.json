@@ -1,0 +1,94 @@
+{
+  "version": "0.0.4",
+  "status": "passed",
+  "source_commit": "0c25c2ef9f1ddcfd385fae229eb7d36d0facdabd",
+  "ci_merge_snapshot": "0f7fc3a53cdf67c07c8730a80ea1d3158c4d96b1",
+  "ci_snapshot_tree_identical": true,
+  "diff": "https://github.com/MagnetOscar/Atlas/pull/17/files",
+  "ci": {
+    "quality": {
+      "conclusion": "success",
+      "headSha": "0c25c2ef9f1ddcfd385fae229eb7d36d0facdabd",
+      "status": "completed",
+      "url": "https://github.com/MagnetOscar/Atlas/actions/runs/44153210934"
+    },
+    "visual": {
+      "conclusion": "success",
+      "headSha": "0c25c2ef9f1ddcfd385fae229eb7d36d0facdabd",
+      "status": "completed",
+      "url": "https://github.com/MagnetOscar/Atlas/actions/runs/44153210726"
+    },
+    "unitComponentPassed": 431,
+    "linuxNodeTestsPassed": 100,
+    "pythonParserAndRootfsCasesPassed": 7,
+    "browserCasesPassed": 261
+  },
+  "package": {
+    "file": "komari-theme-Atlas-build-0f7fc3a.zip",
+    "sha256": "36f2fedd3344054f0cac6373b262d22aced177b2ffa574bb77c09037f2025755",
+    "entries": 785,
+    "dirty": false,
+    "mode": "production",
+    "version": "0.0.4"
+  },
+  "contract": {
+    "uiProtectionAndQualityCasesPassed": 81,
+    "oldSnapshotsUnchanged": true,
+    "onlyAuthorizedCardPanelAndAdjacentCounterAlignmentChanged": true,
+    "originalMapsGlobeFinanceResetAndDependenciesPreserved": true
+  },
+  "parser": {
+    "rawIPsHostsAndCredentialsExcluded": true,
+    "provenanceBound": true,
+    "protocolProvinceGroupsIndependent": true,
+    "noForcedCN2GIA": true,
+    "missingIPv6Explicit": true
+  },
+  "license": {
+    "upstreamCommit": "db52fc60523320fc4a34b5c369f28be38df21d13",
+    "upstreamLicense": "GPL-3.0-only",
+    "separateAttachmentAndUnmodifiedVendoredSource": true,
+    "allFiveSourceSHA256Verified": true,
+    "rootfsSHA256Verified": true,
+    "MITThemeAndNativePluginRetained": true
+  },
+  "previews": {
+    "kind": "synthetic-only",
+    "viewports": [
+      320,
+      390,
+      1440
+    ],
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "files": [
+      {
+        "file": "docs/previews/0.0.4/1440-dark.png",
+        "sha256": "5e1bfaa2f15466432abc4f7984ba17b9462b1df576b36c34947245253757defd"
+      },
+      {
+        "file": "docs/previews/0.0.4/1440-light.png",
+        "sha256": "b6666a265b91984f95412891b25e81ad8e33902ace5d2a725afaada0db00fcdb"
+      },
+      {
+        "file": "docs/previews/0.0.4/320-dark.png",
+        "sha256": "6101d406e177a6a687cc3fd488f7d427e8f5ea9fda7cf62f3f38d4edfebb8e21"
+      },
+      {
+        "file": "docs/previews/0.0.4/320-light.png",
+        "sha256": "521381116f5540e6647c9b41e5a030c8fa78c7156c3f9cc8f24bbdd2d59f6f97"
+      },
+      {
+        "file": "docs/previews/0.0.4/390-dark.png",
+        "sha256": "29cc35952dd419ca07c2061dbff10dcfbaad1221ee3b44cd0edb4896cfcef897"
+      },
+      {
+        "file": "docs/previews/0.0.4/390-light.png",
+        "sha256": "53b05f34e03cf2184581019c809d119ac2091e4ccf97edb838fe38d0e14a614f"
+      }
+    ]
+  },
+  "scopeAudit": "scripts/release-gate.py audit_quality_scope passed"
+}

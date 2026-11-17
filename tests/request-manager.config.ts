@@ -22,6 +22,7 @@ export default defineConfig({
     'return-route-summary.spec.ts',
     'route-probe.spec.ts',
     'route-probe-v2.spec.ts',
+    'tcpquality.spec.ts',
     'cdn-route.spec.ts',
     'atlas-management.spec.ts',
     'settings-organization.spec.ts',

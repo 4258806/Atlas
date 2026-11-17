@@ -1,0 +1,60 @@
+{
+  "version": "0.0.4",
+  "status": "passed",
+  "source_commit": "0c25c2ef9f1ddcfd385fae229eb7d36d0facdabd",
+  "baseline_commit": "1762647c7762efb22d5dfac3807d572c95d668db",
+  "scope": "komari-tcpquality-attachment",
+  "branding": {
+    "name": "Atlas"
+  },
+  "checks": {
+    "engineering": {
+      "status": "passed",
+      "evidence": "docs/verification/release-candidate-0.0.4.json"
+    },
+    "reset": {
+      "status": "passed",
+      "evidence": "docs/verification/release-candidate-0.0.4.json"
+    },
+    "finance": {
+      "status": "passed",
+      "evidence": "docs/verification/release-candidate-0.0.4.json"
+    },
+    "sorting": {
+      "status": "passed",
+      "evidence": "docs/verification/release-candidate-0.0.4.json"
+    },
+    "display": {
+      "status": "passed",
+      "evidence": "docs/verification/release-candidate-0.0.4.json"
+    },
+    "tcpquality": {
+      "status": "passed",
+      "evidence": "docs/verification/production-trial-0.0.4.json"
+    },
+    "hourly-schedule": {
+      "status": "passed",
+      "evidence": "docs/verification/production-trial-0.0.4.json"
+    },
+    "license": {
+      "status": "passed",
+      "evidence": "docs/verification/release-candidate-0.0.4.json"
+    },
+    "integration": {
+      "status": "passed",
+      "evidence": "docs/verification/native-0.0.4.json"
+    },
+    "package": {
+      "status": "passed",
+      "evidence": "docs/verification/release-candidate-0.0.4.json"
+    },
+    "previews": {
+      "status": "passed",
+      "evidence": "docs/verification/release-candidate-0.0.4.json"
+    },
+    "production-trial": {
+      "status": "passed",
+      "evidence": "docs/verification/production-trial-0.0.4.json"
+    }
+  }
+}

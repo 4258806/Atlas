@@ -1,0 +1,7 @@
+{
+  "panel": "https://agent.example.invalid",
+  "uuid": "00000000-0000-4000-8000-000000000001",
+  "tokenFile": "/etc/komari-agent/attachments/tcpquality/node-token",
+  "dataDirectory": "/var/lib/komari-agent/attachments/tcpquality",
+  "enabled": false
+}

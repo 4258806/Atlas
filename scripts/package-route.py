@@ -11,7 +11,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / 'test-results/release'
-PLUGIN = ['komari-plugin.json', 'script.js', 'protocol.cjs', 'storage.cjs', 'request-limits.cjs', 'public-summary.cjs', 'LICENSE']
+PLUGIN = ['komari-plugin.json', 'script.js', 'protocol.cjs', 'storage.cjs', 'request-limits.cjs', 'public-summary.cjs', 'tcpquality.cjs', 'LICENSE']
 HELPER = ['enhanced_route_helper.py', 'enhanced_probe_v2.py', 'install.py', 'helper-version.json', 'enhanced-route-helper.service', 'enhanced-route-helper.openrc', 'helper.example.json', 'README.md', 'LICENSE']
 
 def main():
@@ -64,6 +64,27 @@ def main():
                 info.compress_type = zipfile.ZIP_DEFLATED
                 archive.writestr(info, source.extractfile(member).read())
     assets.append(helper_zip)
+    attachment_dir = ROOT / 'companion/tcpquality'
+    attachment_manifest = json.loads((attachment_dir / 'attachment.json').read_text())
+    attachment_base = attachment_manifest['version']
+    attachment_manifest['version'] += '+git.' + short
+    attachment = OUTPUT / f'atlas-komari-tcpquality-{attachment_base}.zip'
+    attachment_files = ['attachment.json', 'attachment.example.json', 'collector.py', 'prepare.py', 'enroll.py', 'README.md', 'LICENSE', 'upstream-lock.json']
+    attachment_files += ['vendor/' + name for name in ('runTcpQuality.sh', 'runTcpQuality-core.sh', 'runTcpQuality-rootfs.sh', 'LICENSE', 'README.md')]
+    with zipfile.ZipFile(attachment, 'w', zipfile.ZIP_DEFLATED) as archive:
+        for name in attachment_files + ['BUILD.json']:
+            source = attachment_dir / name
+            if name == 'BUILD.json':
+                content = metadata(attachment_manifest['version'])
+            else:
+                if source.is_symlink() or not source.is_file():
+                    raise ValueError('missing or unsafe attachment asset')
+                content = json.dumps(attachment_manifest, indent=2).encode() + b'\n' if name == 'attachment.json' else source.read_bytes()
+            info = zipfile.ZipInfo(name, date_time=(2026, 1, 1, 0, 0, 0))
+            info.external_attr = 0o100644 << 16
+            info.compress_type = zipfile.ZIP_DEFLATED
+            archive.writestr(info, content)
+    assets.append(attachment)
     theme = ROOT / ('komari-theme-Atlas-build-' + subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD'], cwd=ROOT, text=True).strip() + '.zip')
     if theme.is_file():
         assets.append(theme)

@@ -59,6 +59,10 @@ The four theme reference projects above use MIT. The upstream root `LICENSE` is 
 
 - Three unmodified Tabler Icons v3.47.0 (`calendar-dollar`, `calculator`, `currency-yuan`), by Paweł Kuna, are bundled from the existing `@iconify/json` development dependency for reliable finance tabs. MIT notice: `public/licenses/tabler-icons-MIT.txt`, shipped in `dist/licenses/`. No new dependency or full icon collection is bundled.
 
+## Separate Komari TcpQuality attachment (Atlas v0.0.4)
+
+- `ibsgss/TcpQuality`, commit `db52fc60523320fc4a34b5c369f28be38df21d13`, GPL-3.0-only. Its unmodified source, README and license are retained under `companion/tcpquality/vendor/`, with per-file SHA256 in `upstream-lock.json`. The separate attachment package preserves this source and its license. The MIT adapter invokes it as an independent foreground process within the existing Komari deployment; no GPL classifier code is copied into the MIT theme/plugin. Process separation does not install an independent service. Runtime Debian/NextTrace rootfs components retain their own licenses/notices and are downloaded separately with pinned checksums. This replaces the earlier method-reference-only scope for the explicit v0.0.4 attachment.
+
 ## Temporal calendar implementation
 
 - `@js-temporal/polyfill` 0.5.1, <https://github.com/js-temporal/temporal-polyfill>, ISC, Copyright 2017–2020 ECMA International. Used unmodified for IANA/fixed-offset calendar boundaries and DST disambiguation. Full notice: `public/licenses/temporal-polyfill-ISC.txt`.
