@@ -11,6 +11,7 @@ export default defineConfig({
     'node-ping-viewport.spec.ts',
     'globe-capability.spec.ts',
     'finance-compatibility.spec.ts',
+    'fork-ui.spec.ts',
     'visitor-audit-compatibility.spec.ts',
     'geo-compatibility.spec.ts',
     'rpc-settings-ack.spec.ts',

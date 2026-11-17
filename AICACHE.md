@@ -2,7 +2,16 @@
 
 Public development records only. Do not add deployment addresses, identifiers, credentials or private infrastructure details. Inherited upstream logs remain in Git history; their permissions and results do not authorize or validate current work.
 
-## Current: step 3 acceptance, then pause (2026-11-17)
+## Current: restore fork UI under the user's later constraint (2026-11-17)
+
+- User explicitly requires backend parameters/features only and preservation of the fork-time frontend layout, styles, visual attributes, defaults and globe/map. Future three-network synthesis display needs a separate discussion and must reuse exactly the original UI form. This overrides earlier step 4/5 plans; do not start those UI changes.
+- Step 3 PR #4 was merged as eaeb185; final PR and main quality/browser checks passed (335 unit/component, 218 browser). Those historical checks do not validate the UI rollback below.
+- Baseline audit: globe/map components, styles, assets and theme defaults were already unchanged from 0332d5f. Personal changes affected the header wrapper/grid, added rate-attribution row/currency units and timezone/time inputs. Restore these to baseline. Keep corrected native finance values in the existing data positions; do not add presentation controls. Day-only saves must preserve an existing v2 schedule's zone/time.
+- Work on fix/preserve-fork-ui. Update regression tests for the explicitly withdrawn UI and add a baseline presentation guard. Preserve calendar/FX calculations and engineering guards. Client services remain frontend code, not a Komari backend implementation. No backend repository changes, Release or production deployment in this corrective task.
+- Local: 75 UI contract checks plus 114 finance/calendar checks passed (189); lint/type-check/production build passed. Focused browser run passed 33 cases; the single stale caption assertion was corrected to the inherited title and passed on rerun. Full Windows unit collection requires Linux python3/fcntl and was not counted as passed; Linux CI remains required. Clean-source native-package acceptance and PR CI follow this source commit.
+- Clean source ceecf09 and exact candidate ZIP passed all seven official isolated Komari checks after synchronizing the rollback test with the removed time input. Evidence and SHA256 are in docs/verification/ui-preservation-20261117.json. Final docs-only evidence commit has no further runtime/UI changes. Merge only after both final-head required CI checks pass, then stop. Do not deploy or resume stages 4–9.
+
+## Historical: step 3 acceptance, then pause (2026-11-17)
 
 - Continuation audit: PR #4 head 8bdcc7c passed quality but failed one tiled-home screenshot (215 browser tests passed). Attribution occupied a fixed-height metric grid row and displaced the map. Keep attribution outside that grid; add desktop/mobile spacing and overflow assertions. Do not raise screenshot tolerances or skip the failing test.
 - Stage 1 follow-up: BUILD.json records Vite mode; the production ZIP gate rejects visual/unknown modes. Nine archive tests and 114 finance/calendar tests passed locally; Linux quality run 43950765237 passed all 335 unit/component tests plus helpers, lint/type-check/build and clean production ZIP validation. Required check rules remain active with no bypass; baseline/v1.2.1 is unchanged.

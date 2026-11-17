@@ -30,6 +30,7 @@ const props = defineProps<{
   nodes: NodeData[]
   rates: ExchangeRates
   source: ExchangeRateSource | 'loading'
+  rateProvider: string
   ratesUpdatedAt: number | null
   currency: CurrencyCode
   summaryRemaining: string
@@ -482,7 +483,7 @@ function formatTraffic(tib: number): string {
                 汇率
               </h3>
               <p class="text-xs text-muted-foreground">
-                {{ sourceLabels[source] }} · {{ formatRateUpdatedAt() }} · 1 CNY 对应数值
+                {{ sourceLabels[source] }} · {{ rateProvider }} · {{ formatRateUpdatedAt() }} · 1 CNY 对应数值
               </p>
             </div>
             <select

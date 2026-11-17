@@ -155,23 +155,30 @@ async function main() {
       await page.getByRole('button', { name: 'Enhanced 管理', exact: true }).click()
       await page.getByRole('tab', { name: '节点与卡片', exact: true }).click()
     }
-    await check('installed desktop and mobile UI persists independent minute and IANA zone', async () => {
+    await check('fork day-only editor preserves backend-saved timezone and minute on desktop and mobile', async () => {
       for (const width of [1440, 390]) {
+        const before = (await rpc('public:getPublicSettings')).theme_settings
+        const saved = { resetDay: 7, timeZone: width === 1440 ? 'Asia/Shanghai' : 'America/Los_Angeles', hour: 23, minute: 10, futureScheduleField: 'keep' }
+        const configured = { version: 2, nodes: { [a]: saved, [b]: { resetDay: 5, timeZone: 'Asia/Shanghai', hour: 0, minute: 0 } } }
+        await api('/api/admin/theme/settings?theme=Enhanced', { ...before, trafficCycleConfig: JSON.stringify(configured) })
         await page.setViewportSize({ width, height: 1000 })
         await open()
         const row = page.locator(`[data-traffic-cycle-node="${a}"]`)
-        await expect(row.locator('select')).toHaveValue('8')
-        await row.getByRole('textbox', { name: 'Reset fixture A 重置时区', exact: true }).fill(width === 1440 ? 'Asia/Shanghai' : 'America/Los_Angeles')
-        await row.locator('input[type="time"]').fill('23:10')
+        await expect(row.locator('select')).toHaveValue('7')
+        await expect(row.locator('input[type="time"]')).toHaveCount(0)
+        await expect(row.getByRole('textbox', { name: 'Reset fixture A 重置时区', exact: true })).toHaveCount(0)
+        await row.locator('select').selectOption('8')
         await row.getByRole('button', { name: '保存 Reset fixture A 流量周期', exact: true }).click()
         await expect(row.getByRole('status')).toContainText('已保存并读回')
         await page.reload()
         await page.getByRole('button', { name: 'Enhanced 管理', exact: true }).click()
         await page.getByRole('tab', { name: '节点与卡片', exact: true }).click()
-        await expect(row.locator('input[type="time"]')).toHaveValue('23:10')
+        await expect(row.locator('select')).toHaveValue('8')
+        await expect(row.locator('input[type="time"]')).toHaveCount(0)
         const after = (await rpc('public:getPublicSettings')).theme_settings
         const plan = JSON.parse(after.trafficCycleConfig)
         assert.equal(plan.version, 2)
+        assert.deepEqual(plan.nodes[a], { ...saved, resetDay: 8 })
         assert.deepEqual(plan.nodes[b], { resetDay: 5, timeZone: 'Asia/Shanghai', hour: 0, minute: 0 })
         assert.deepEqual(after.unknownFuture, settings.unknownFuture)
         await page.screenshot({ path: join(out, `native-reset-${width}.png`), fullPage: true })
@@ -219,7 +226,8 @@ async function main() {
       assert.equal((await rpc('public:getPublicSettings')).theme_settings.trafficCycleConfig, settings.trafficCycleConfig)
       await page.setViewportSize({ width: 1440, height: 1000 })
       await open()
-      await expect(page.locator(`[data-traffic-cycle-node="${a}"] input[type="time"]`)).toHaveValue('00:00')
+      await expect(page.locator(`[data-traffic-cycle-node="${a}"] select`)).toHaveValue('8')
+      await expect(page.locator(`[data-traffic-cycle-node="${a}"] input[type="time"]`)).toHaveCount(0)
       assert.deepEqual(errors, [])
     })
     if (finance) {
@@ -233,7 +241,8 @@ async function main() {
           await page.setViewportSize({ width, height: 1000 })
           await page.goto(origin)
           const summary = page.locator('[data-general-card-key="remainingValue"]')
-          await expect(summary).toContainText('CNY', { timeout: 15000 })
+          await expect(summary).toContainText('¥', { timeout: 15000 })
+          await expect(page.locator('[data-rate-attribution]')).toHaveCount(0)
           await expect(summary).not.toContainText('汇率不可用', { timeout: 15000 })
           await summary.click()
           const dialog = page.getByRole('dialog', { name: '价值与费用明细' })
@@ -246,7 +255,8 @@ async function main() {
           await expect(cnyRow).toContainText('¥134.10 CNY')
           await page.keyboard.press('Escape')
           await page.reload()
-          await expect(summary).toContainText('EUR')
+          await expect(summary).toContainText('€')
+          await expect(summary).not.toContainText('EUR')
           await expect(page.locator('[data-summary-extra-currency]')).toHaveCount(0)
           await page.screenshot({ path: join(out, `native-finance-${width}.png`), fullPage: true })
           await page.goto(`${origin}/instance/${a}`)

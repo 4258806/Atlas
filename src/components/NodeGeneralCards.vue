@@ -72,7 +72,6 @@ const FinanceDetailsDialog = defineAsyncComponent(() => import('@/components/Fin
 // 未登录且开启「未登录隐藏价格」时，屏蔽金额类信息
 const showPrice = computed(() => appStore.privateFeaturesAllowed || !appStore.hidePriceWhenLoggedOut)
 const financeCurrency = ref<CurrencyCode>('CNY')
-const manualRateOverride = ref(financeHelper.hasExchangeRateOverrides())
 const excludeFreeNodes = ref(true)
 const financeDetailsOpen = ref(false)
 const currentTime = useNow({ interval: 1000 })
@@ -201,7 +200,6 @@ function formatCostCard(amountCNY: number): { value: string, unit?: string } {
   const formatted = financeHelper.formatFinanceAmount(amountCNY * targetRate, financeCurrency.value)
   return {
     value: `${formatted.symbol}${formatted.value}`,
-    unit: financeCurrency.value,
   }
 }
 
@@ -404,7 +402,7 @@ const formattedTotalValue = computed(() => {
 const totalValueTooltip = computed(() => {
   if (!showPrice.value)
     return '总价值\n***'
-  return `总价值\n${formattedTotalValue.value.symbol}${formattedTotalValue.value.value}`
+  return `总价值\n${formattedTotalValue.value.symbol}${formattedTotalValue.value.value}\n${exchangeRateProvider.value}${financeHelper.hasExchangeRateOverrides() ? '（含手动覆盖）' : ''}`
 })
 
 const trafficPeakCard = computed(() => formatTopNodeSpeed(trafficPeak.value))
@@ -464,7 +462,6 @@ function getCardDefinition(key: GeneralCardKey): GeneralMetricCard {
         label: '剩余价值',
         icon: 'tabler:cash',
         value: showPrice.value ? `${formattedRemainingValue.value.symbol}${formattedRemainingValue.value.value}` : '***',
-        unit: showPrice.value ? financeCurrency.value : undefined,
         tooltip: totalValueTooltip.value,
         action: showPrice.value ? 'financeDetails' : undefined,
       }
@@ -730,25 +727,16 @@ const earthClass = computed(() => {
 
   return 'col-span-12 col-start-1 md:col-span-6 md:col-start-7 md:row-start-1'
 })
-const cardRegionClass = computed(() => {
-  if (!showEarth.value)
-    return 'col-span-1'
-
-  if (isTiledEarth.value)
-    return 'col-span-12 row-start-1 z-9'
-
-  return hasExtraCards.value
-    ? 'h-auto -mt-42 md:mt-0 col-span-12 row-start-3 z-9 md:col-span-6 md:row-start-1'
-    : 'h-42 -mt-42 md:mt-0 col-span-12 row-start-3 z-9 md:h-auto md:col-span-6 md:row-start-1'
-})
 const cardGridClass = computed(() => {
   if (!showEarth.value)
-    return 'grid-cols-3 md:grid-cols-6'
+    return 'col-span-1 grid grid-cols-3 md:grid-cols-6 gap-2'
+
   if (isTiledEarth.value)
-    return 'grid-cols-12 auto-rows-[4.75rem] sm:auto-rows-[5rem] md:auto-rows-[5.8rem] sm:gap-3'
+    return 'col-span-12 row-start-1 z-9 grid grid-cols-12 auto-rows-[4.75rem] sm:auto-rows-[5rem] md:auto-rows-[5.8rem] gap-2 sm:gap-3'
+
   return hasExtraCards.value
-    ? 'grid-cols-12 auto-rows-[5rem] md:auto-rows-[7rem]'
-    : 'grid-cols-12 grid-rows-2'
+    ? 'h-auto -mt-42 md:mt-0 col-span-12 row-start-3 z-9 md:h-auto md:col-span-6 md:row-start-1 grid grid-cols-12 auto-rows-[5rem] md:auto-rows-[7rem] gap-2'
+    : 'h-42 -mt-42 md:mt-0 col-span-12 row-start-3 z-9 md:h-auto md:col-span-6 md:row-start-1 grid grid-cols-12 grid-rows-2 gap-2'
 })
 const cardClass = 'group relative z-10 h-full bg-background/50 border-none hover:bg-background backdrop-blur-sm md:backdrop-blur-none transition-all'
 const cardPositionClasses = [
@@ -805,13 +793,11 @@ function updateExcludeFreeNodes(exclude: boolean) {
 
 function updateExchangeRate(currency: CurrencyCode, value: number) {
   financeHelper.setExchangeRateOverride(currency, value)
-  manualRateOverride.value = true
   exchangeRates.value = { ...exchangeRates.value, [currency]: value, CNY: 1 }
 }
 
 function resetExchangeRates() {
   financeHelper.clearExchangeRateOverrides()
-  manualRateOverride.value = false
   exchangeRates.value = { ...dailyExchangeRates.value }
 }
 
@@ -829,61 +815,53 @@ onMounted(() => {
       :class="earthClass"
     />
 
-    <div v-if="visibleCards.length > 0" :class="cardRegionClass" class="flex min-w-0 flex-col gap-2">
-      <div :class="cardGridClass" class="grid min-h-0 flex-1 gap-2">
-        <CardX
-          v-for="(card, index) in visibleCards"
-          :key="card.key"
-          :data-general-card-key="card.key"
+    <div v-if="visibleCards.length > 0" :class="cardGridClass">
+      <CardX
+        v-for="(card, index) in visibleCards"
+        :key="card.key"
+        :data-general-card-key="card.key"
 
-          hoverable
-          :class="[cardClass, getCardPositionClass(index), card.action && 'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring']"
-          content-class="h-full !p-3"
-          :role="card.action ? 'button' : undefined"
-          :tabindex="card.action ? 0 : undefined"
-          :aria-label="card.action ? `查看${card.label}明细` : undefined"
-          @click="activateCard(card)"
-          @keydown="handleCardKeydown($event, card)"
-        >
-          <div class="flex h-full flex-col justify-between gap-1">
-            <div class="flex items-start justify-between gap-2">
-              <span class="text-xs font-medium tracking-wider text-muted-foreground truncate">{{ card.label }}</span>
-              <Icon
-                :icon="card.icon" :width="20" :height="20"
-                class="shrink-0 text-slate-500/20 group-hover:text-slate-500 transition-colors"
-              />
-            </div>
-            <DataTooltip
-              as="span"
-              placement="top"
-              :content="card.tooltip"
-              class="min-w-0"
-              content-class="whitespace-pre px-2 py-1 left-0 -translate-x-0 leading-normal"
-            >
-              <Transition v-bind="metricSwitchTransitionProps">
-                <div
-                  :key="`${card.key}-${summaryTransitionKey}`"
-                  class="flex items-baseline gap-1 min-w-0"
-                  :style="getMetricSwitchStyle(index)"
-                >
-                  <span class="text-md md:text-2xl font-bold leading-none tracking-tight truncate">
-                    {{ card.value }}
-                  </span>
-                  <span v-if="card.unit" :class="unitClass">
-                    {{ card.unit }}
-                  </span>
-                </div>
-              </Transition>
-            </DataTooltip>
+        hoverable
+        :class="[cardClass, getCardPositionClass(index), card.action && 'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring']"
+        content-class="h-full !p-3"
+        :role="card.action ? 'button' : undefined"
+        :tabindex="card.action ? 0 : undefined"
+        :aria-label="card.action ? `查看${card.label}明细` : undefined"
+        @click="activateCard(card)"
+        @keydown="handleCardKeydown($event, card)"
+      >
+        <div class="flex h-full flex-col justify-between gap-1">
+          <div class="flex items-start justify-between gap-2">
+            <span class="text-xs font-medium tracking-wider text-muted-foreground truncate">{{ card.label }}</span>
+            <Icon
+              :icon="card.icon" :width="20" :height="20"
+              class="shrink-0 text-slate-500/20 group-hover:text-slate-500 transition-colors"
+            />
           </div>
-        </CardX>
-      </div>
-      <p v-if="financeEnabled" data-rate-attribution class="shrink-0 text-[10px] text-muted-foreground">
-        顶栏参考换算 · {{ exchangeRateProvider || (manualRateOverride ? '手动汇率' : '汇率不可用') }}{{ manualRateOverride ? '（含手动覆盖）' : '' }} · {{ exchangeRateSource === 'stale-cache' ? '历史缓存' : exchangeRateSource === 'loading' ? '载入中' : '报价时间' }}
-        {{ exchangeRateUpdatedAt ? new Date(exchangeRateUpdatedAt).toLocaleString('zh-CN') : '' }} ·
-        <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener noreferrer" class="underline">Rates By ExchangeRate-API</a> ·
-        <a href="https://frankfurter.dev" target="_blank" rel="noopener noreferrer" class="underline">Frankfurter</a>
-      </p>
+          <DataTooltip
+            as="span"
+            placement="top"
+            :content="card.tooltip"
+            class="min-w-0"
+            content-class="whitespace-pre px-2 py-1 left-0 -translate-x-0 leading-normal"
+          >
+            <Transition v-bind="metricSwitchTransitionProps">
+              <div
+                :key="`${card.key}-${summaryTransitionKey}`"
+                class="flex items-baseline gap-1 min-w-0"
+                :style="getMetricSwitchStyle(index)"
+              >
+                <span class="text-md md:text-2xl font-bold leading-none tracking-tight truncate">
+                  {{ card.value }}
+                </span>
+                <span v-if="card.unit" :class="unitClass">
+                  {{ card.unit }}
+                </span>
+              </div>
+            </Transition>
+          </DataTooltip>
+        </div>
+      </CardX>
     </div>
   </div>
 
@@ -893,10 +871,11 @@ onMounted(() => {
     :nodes="summaryNodes"
     :rates="exchangeRates"
     :source="exchangeRateSource"
+    :rate-provider="exchangeRateProvider"
     :rates-updated-at="exchangeRateUpdatedAt"
     :currency="financeCurrency"
-    :summary-remaining="`${formatCostCard(remainingValueCNY).value} ${financeCurrency}`"
-    :summary-monthly="`${formatCostCard(monthlyCostCNY).value} ${financeCurrency}`"
+    :summary-remaining="`${formatCostCard(remainingValueCNY).value}`"
+    :summary-monthly="`${formatCostCard(monthlyCostCNY).value}`"
     :exclude-free="excludeFreeNodes"
     :now="currentTime"
     @update:currency="updateFinanceCurrency"

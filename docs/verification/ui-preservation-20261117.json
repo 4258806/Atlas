@@ -1,0 +1,89 @@
+{
+  "kind": "fork-ui-preservation-and-official-Komari-compatibility",
+  "productionTouched": false,
+  "history": "explicit synthetic SQL fixture",
+  "backendSHA256": "0c6e73c42ac166d34562e57037007a21692599e9e868ddae18217691e0f5d932",
+  "baselineSHA256": "54ef15efe37707109ce721ed22608745a575b3683038951b02b05d1724d3ff17",
+  "candidateSHA256": "80fea087b12b0c46bab3a0eefa2d57284ed905ba4d362040a914ce86989e24c9",
+  "checks": [
+    {
+      "name": "fresh official backend and verified native administrator session",
+      "status": "passed"
+    },
+    {
+      "name": "install exact baseline, upgrade candidate and preserve settings",
+      "status": "passed"
+    },
+    {
+      "name": "fork day-only editor preserves backend-saved timezone and minute on desktop and mobile",
+      "status": "passed"
+    },
+    {
+      "name": "native per-metric retention and tier configuration read back without disabling metrics",
+      "status": "passed"
+    },
+    {
+      "name": "native persisted minute edge and hourly body sum exactly without history mutation",
+      "status": "passed"
+    },
+    {
+      "name": "rollback restores baseline ZIP plus exact v1 settings and re-upgrade retains configuration",
+      "status": "passed"
+    },
+    {
+      "name": "native node billing stays in its own currency while the header selects one currency",
+      "status": "passed"
+    }
+  ],
+  "rateNetworkDiagnostics": [],
+  "syntheticRows": 10676,
+  "status": "passed",
+  "source_commit": "ceecf09cf27e8891baf2b1c2a972b42ab4df5db4",
+  "baseline_commit": "0332d5f7c73f7994ba21c01e4b739d04835120b1",
+  "package": {
+    "version": "1.2.1",
+    "commit": "ceecf09cf27e8891baf2b1c2a972b42ab4df5db4",
+    "dirty": false,
+    "mode": "production",
+    "sha256": "80fea087b12b0c46bab3a0eefa2d57284ed905ba4d362040a914ce86989e24c9",
+    "file": "komari-theme-Glassmorphism-build-ceecf09.zip",
+    "entries": 784
+  },
+  "presentation": {
+    "component_contracts": 72,
+    "protected_files": 312,
+    "unit_contract_checks_passed": 75,
+    "finance_calendar_checks_passed": 114,
+    "globe_map_styles_assets_defaults": "unchanged from the original fork",
+    "restored": "Inherited header container/grid, no extra attribution row or currency units, original day-only reset editor and tiled-home snapshot.",
+    "retained": "Existing data positions use corrected native amounts and summary currency; day-only edits preserve saved timezone/hour/minute/second/unknown fields.",
+    "business_text_and_bindings": "Not treated as presentation redesign; no extra controls or styled elements.",
+    "thresholds_changed": false,
+    "baseline_regenerated_from_working_tree": false
+  },
+  "local_checks": {
+    "lint": "passed",
+    "type_check": "passed",
+    "build": "passed",
+    "focused_browser": "33 passed; one outdated removed-title expectation corrected and passed on focused rerun",
+    "full_unit_collection_on_windows": "not passed: Linux python3/fcntl is required; final Linux CI is mandatory",
+    "native_runner_initial_correction": "Replaced a stale post-rollback time-input expectation with inherited day-selector plus time-input absence; exact v1 settings assertions retained."
+  },
+  "merge_gate": {
+    "required_checks": [
+      "lint-and-build",
+      "screenshots"
+    ],
+    "both_must_pass_on_final_pr_head": true,
+    "protection_bypassed": false
+  },
+  "scope": {
+    "backend_implemented": false,
+    "client_services_are_backend": false,
+    "release_published": false,
+    "production_modified": false,
+    "future_ui_work": "Suspended; three-network synthesis requires separate discussion and must reuse the original UI form.",
+    "user_constraint": "docs/ui-preservation.md",
+    "data": "Official disposable loopback backend with explicit synthetic node prices and SQL traffic; no production billing/storage-growth claim."
+  }
+}
