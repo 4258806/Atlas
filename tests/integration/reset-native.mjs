@@ -226,7 +226,8 @@ async function main() {
       assert.equal((await rpc('public:getPublicSettings')).theme_settings.trafficCycleConfig, settings.trafficCycleConfig)
       await page.setViewportSize({ width: 1440, height: 1000 })
       await open()
-      await expect(page.locator(`[data-traffic-cycle-node="${a}"] input[type="time"]`)).toHaveValue('00:00')
+      await expect(page.locator(`[data-traffic-cycle-node="${a}"] select`)).toHaveValue('8')
+      await expect(page.locator(`[data-traffic-cycle-node="${a}"] input[type="time"]`)).toHaveCount(0)
       assert.deepEqual(errors, [])
     })
     if (finance) {
