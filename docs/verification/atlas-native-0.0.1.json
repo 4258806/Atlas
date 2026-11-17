@@ -1,0 +1,96 @@
+{
+  "kind": "official-Komari-1.6.1-Atlas-0.0.1-acceptance",
+  "productionTouched": false,
+  "history": "explicit synthetic SQL fixture",
+  "backendSHA256": "0c6e73c42ac166d34562e57037007a21692599e9e868ddae18217691e0f5d932",
+  "baselineSHA256": "54ef15efe37707109ce721ed22608745a575b3683038951b02b05d1724d3ff17",
+  "candidateSHA256": "95fbedf1221e3678beb8ae1a728dfd149d993eb0ffd8f4d98376e38d3fea3f3f",
+  "checks": [
+    {
+      "name": "fresh official backend and verified native administrator session",
+      "status": "passed"
+    },
+    {
+      "name": "install exact baseline, upgrade candidate and preserve settings",
+      "status": "passed"
+    },
+    {
+      "name": "administrator editor persists independent timezone, day and minute on desktop and mobile",
+      "status": "passed"
+    },
+    {
+      "name": "native per-metric retention and tier configuration read back without disabling metrics",
+      "status": "passed"
+    },
+    {
+      "name": "native persisted minute edge and hourly body sum exactly without history mutation",
+      "status": "passed"
+    },
+    {
+      "name": "rollback restores baseline plus exact legacy settings; re-upgrade never overwrites saved Atlas configuration",
+      "status": "passed"
+    },
+    {
+      "name": "native node billing stays in its own currency while the header selects one currency",
+      "status": "passed"
+    }
+  ],
+  "rateNetworkDiagnostics": [],
+  "syntheticRows": 12792,
+  "status": "passed",
+  "source_commit": "c2f99116a6ac3243c2e6461a72acecfa1ac14c85",
+  "version": "0.0.1",
+  "scope": "steps-1-3",
+  "baseline_commit": "0332d5f7c73f7994ba21c01e4b739d04835120b1",
+  "branding": {
+    "name": "Atlas",
+    "short": "Atlas",
+    "repository": "https://github.com/MagnetOscar/Atlas",
+    "footer": "Theme by Atlas",
+    "public_layout_styles_globe_map_defaults": "preserved",
+    "native_configuration_migration": "authenticated conditional copy; populated Atlas and legacy configuration preserved",
+    "name_check": "docs/verification/atlas-name-20261117.json"
+  },
+  "package": {
+    "file": "komari-theme-Atlas-build-c2f9911.zip",
+    "sha256": "95fbedf1221e3678beb8ae1a728dfd149d993eb0ffd8f4d98376e38d3fea3f3f",
+    "version": "0.0.1",
+    "commit": "c2f99116a6ac3243c2e6461a72acecfa1ac14c85",
+    "dirty": false,
+    "mode": "production",
+    "entries": 784
+  },
+  "local_checks": {
+    "lint": "passed",
+    "type_check": "passed",
+    "unit_ui_calendar_finance_migration_passed": 201,
+    "release_scope_negative_passed": 5,
+    "frozen_install": "passed",
+    "production_zip": "passed",
+    "ui_guard": "original layout and styles; exact naming exceptions only",
+    "original_LICENSE_sha256": "4703f29bf392157fc005b92c18ae015c270beec13ef33a4a603d28a1b4e166d8"
+  },
+  "prior_ci": {
+    "source_commit": "d74f8a40d4ba1906c834e5e83f010ca0c9562e86",
+    "quality": "https://github.com/MagnetOscar/Atlas/actions/runs/44058417970",
+    "quality_status": "passed",
+    "unit_component_passed": 422,
+    "visual": "https://github.com/MagnetOscar/Atlas/actions/runs/44058418076",
+    "visual_status": "passed",
+    "browser_passed": 223,
+    "final_head_checks_required": true,
+    "checks": "https://github.com/MagnetOscar/Atlas/pull/8/checks"
+  },
+  "limitations": {
+    "prices_and_history": "explicit synthetic fixtures",
+    "fx": "actual existing public APIs; raw quotes not redistributed",
+    "production_touched": false,
+    "user_uploads_zip_personally": true,
+    "automatic_route_collection": "excluded and not enabled"
+  },
+  "remaining_old_identifiers": {
+    "configuration_source": "Enhanced exists only for migration from the old theme",
+    "optional_companion_protocol": "enhanced-route-probe, X-Enhanced-Route and node installation filenames are external compatibility contracts; no new collector is released",
+    "history_and_licenses": "upstream project names, copyright and exact older artifacts retained as provenance; current README and page branding are Atlas"
+  }
+}
