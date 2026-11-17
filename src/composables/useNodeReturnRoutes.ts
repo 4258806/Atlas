@@ -53,5 +53,6 @@ export function useNodeReturnRoutes(uuid: MaybeRefOrGetter<string>) {
     return paths ? protocolRouteDisplay(toValue(uuid), entry, paths, app.returnRouteTtlHours, app.returnRouteNow) : entry
   }))
   const companionStatus = computed(() => !app.returnRouteCompanionEnabled ? '' : !app.privateFeaturesAllowed ? '自动结果仅管理员可见' : !app.returnRouteAutoEnabled ? '自动结果消费已关闭' : `${probeConnection.value} · ${probeSnapshot.value.nodes[toValue(uuid)]?.state ?? '等待助手'}`)
-  return { entries, rawEvidence, protocolEvidence, companionStatus, visible: computed(() => app.returnRoutesVisible), configError: computed(() => app.returnRouteConfig.error) }
+  const quality = computed(() => connected.value || publicConnected.value ? activeSnapshot.value.nodes[toValue(uuid)]?.quality : undefined)
+  return { entries, rawEvidence, protocolEvidence, quality, companionStatus, visible: computed(() => app.returnRoutesVisible), configError: computed(() => app.returnRouteConfig.error) }
 }

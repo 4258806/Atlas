@@ -11,12 +11,31 @@ const { Coordinator, policy, keys, UUID } = require('./protocol.cjs')
 const { publicSummary } = require('./public-summary.cjs')
 const { ClientRequestLimiter } = require('./request-limits.cjs')
 const { Store } = require('./storage.cjs')
+const { QualityCoordinator } = require('./tcpquality.cjs')
 
 const ROOT = '/api/enhanced-route-probe/v1'
 const coordinator = new Coordinator(() => crypto.randomBytes(24).toString('hex'))
 const limiter = new ClientRequestLimiter()
 const storage = new Store(fs, path, typeof __storageDir__ === 'string' ? __storageDir__ : '', coordinator)
 storage.restore()
+const quality = new QualityCoordinator(() => crypto.randomBytes(24).toString('hex'))
+const qualityStorage = new Store(fs, path, path.join(__storageDir__, 'tcpquality'), quality)
+qualityStorage.restore()
+function mutateQuality(action) {
+  const before = quality.exportState()
+  quality.reports = { ...quality.reports }
+  quality.schedules = { ...quality.schedules }
+  try {
+    const result = action()
+    qualityStorage.save()
+    return result
+  }
+  catch (error) {
+    quality.reports = before.reports
+    quality.schedules = before.schedules
+    throw error
+  }
+}
 
 function json(res, status, data) {
   res.statusCode = status
@@ -61,7 +80,7 @@ function route(method, name, isAdmin, handler) {
       return json(res, 200, value)
     }
     catch (error) {
-      if (!storage.healthy)
+      if (!storage.healthy || !qualityStorage.healthy)
         return json(res, 503, { error: 'storage-unavailable' })
       // Never echo raw request bodies, tokens, paths or exceptions into HTTP/logs.
       return json(res, error instanceof SyntaxError || error instanceof TypeError ? 400 : 409, { error: 'invalid-or-conflicting-request' })
@@ -74,16 +93,16 @@ function load() {
       const config = policy(await server.getConfig())
       if (!config.publicSummaryEnabled)
         return json(res, 403, { error: 'public-summary-disabled' })
-      if (!storage.healthy)
+      if (!storage.healthy || !qualityStorage.healthy)
         return json(res, 503, { error: 'storage-unavailable' })
-      return json(res, 200, publicSummary(coordinator.snapshot(config)))
+      return json(res, 200, quality.project(publicSummary(coordinator.snapshot(config)), config))
     }
     catch {
       return json(res, 503, { error: 'summary-unavailable' })
     }
   })
-  route('GET', 'snapshot', true, (_req, _uuid, config) => coordinator.snapshot(config))
-  route('GET', 'health', true, () => ({ schema: 1, version: manifest.version, storage: storage.healthy ? 'healthy' : 'unavailable', readAccess: 'admin-only' }))
+  route('GET', 'snapshot', true, (_req, _uuid, config) => quality.project(coordinator.snapshot(config), config))
+  route('GET', 'health', true, () => ({ schema: 1, version: manifest.version, storage: storage.healthy && qualityStorage.healthy ? 'healthy' : 'unavailable', readAccess: 'admin-only' }))
   // Private installer checkpoint: contains short-lived leases, never request it
   // from the public theme or log it. Restore is bounded and requires policy OFF.
   route('GET', 'checkpoint', true, () => coordinator.exportState())
@@ -108,9 +127,23 @@ function load() {
   route('POST', 'poll', false, (req, uuid, config) => {
     const data = body(req)
     keys(data, ['token', 'helper_version'])
+    if (config.nodes[uuid]?.collector === 'tcpquality')
+      return mutateQuality(() => quality.poll(uuid, config, data.helper_version))
     return coordinator.poll(uuid, config, data.helper_version)
   })
-  route('POST', 'result', false, (req, uuid, config) => coordinator.submit(uuid, body(req), config))
+  route('POST', 'result', false, (req, uuid, config) => {
+    const data = body(req)
+    if (data.kind !== 'tcpquality')
+      return coordinator.submit(uuid, data, config)
+    keys(data, ['token', 'kind', 'report', 'job_id'])
+    return mutateQuality(() => {
+      quality.accept(uuid, data.report, config, data.job_id)
+      return { accepted: true, collector: 'tcpquality' }
+    })
+  })
 }
 globalThis.load = load
-globalThis.unload = () => storage.save()
+globalThis.unload = () => {
+  storage.save()
+  qualityStorage.save()
+}

@@ -4,6 +4,9 @@ This guide applies to [src/](./). For full project context, read [../AIAGENTREAD
 
 ## Source-tree rule of thumb
 
+- Atlas v0.0.4 explicitly replaces the homepage return-route block with the supplied three-row glass-panel presentation (carrier marker/name, route badge, grade/status and age; expandable protocol/family results). Preserve its existing two-column position, saved carrier order and surrounding UI. Consume bounded, attributed TcpQuality observations without interpreting destination-carrier ASN as the entire transit route, forcing all variants to a desired label or merging IPv4/IPv6/UDP/large-packet results. Keep unknown/unavailable/mixed/expired states explicit and preserve legacy/manual data compatibility.
+- Within that same new row, vertically group the two TCP/UDP counters when the taller three-row route panel is enabled, avoiding stretched empty grid rows. Keep the original connection-only alignment when the route panel is disabled; the first three metric boxes remain unchanged.
+
 - Latest Atlas v0.0.3 scope explicitly adds a two-column return-route tile beside the TCP/UDP tile in the second metric row. It may display an opt-in public ASN-only plugin summary; raw hop IPs/checkpoints remain administrator-only. Reuse existing classifier, saved carrier order and TTL/error handling. Preserve unrelated presentation and data semantics. Versioned release and CA/DMIT single-round installation are now authorized in the root policy.
 
 - Latest homepage-card authorization: add only a fourth mini metric tile on a new second row of the existing three-column grid in NodeCard.vue, showing TCP/UDP live counts under the existing switches. Match the existing individual tile size/style; both switches off hides the tile and row. Do not alter the first three tiles or unrelated UI/data semantics.

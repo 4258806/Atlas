@@ -1,0 +1,11 @@
+{
+  "commit": "db52fc60523320fc4a34b5c369f28be38df21d13",
+  "license": "GPL-3.0-only",
+  "files": {
+    "LICENSE": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+    "README.md": "703b42335c7fd51ef85d89046ea0edd325a5670d3f606ae60ef3bb9aaefa53a5",
+    "runTcpQuality-core.sh": "351491ece557ad4c26143b33a38d8b0b50a1872c7b073839e22ee8845771f928",
+    "runTcpQuality-rootfs.sh": "8e3fec9f0aa4f079761007e537ecb18a066774fd8959a803285c5403a0b0fcf9",
+    "runTcpQuality.sh": "b5fbc67029e6c9371a3fc4cc0c191661c419b5e5c06fe475831ca748f94e675f"
+  }
+}
