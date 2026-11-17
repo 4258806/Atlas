@@ -25,6 +25,8 @@ def source(rows):
 def parse(rows):
     return module.project_csv(source(rows), UUID, '2026-07-25T11:00:00.000Z', False)
 class Contract(unittest.TestCase):
+    def test_vendored_source_matches_pinned_upstream_bytes(self):
+        module.verify_vendor()
     def test_rootfs_guest_absolute_links_remain_inside_private_root(self):
         with tempfile.TemporaryDirectory() as directory:
             link = tarfile.TarInfo('./etc/ssl/certs/root.pem')

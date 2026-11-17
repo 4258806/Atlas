@@ -22,7 +22,6 @@ curl -fsSL https://raw.githubusercontent.com/ibsgss/TcpQuality/main/runTcpQualit
 # bash / zsh
 bash <(curl -fsSL https://tcpquality.ibsgss.uk/run)
 ```
-
 ```bash
 # fish
 curl -fsSL https://tcpquality.ibsgss.uk/run | env TERM=xterm bash

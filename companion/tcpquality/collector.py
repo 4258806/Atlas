@@ -248,6 +248,7 @@ def publish(cfg, path, job_id):
     return {'accepted': True, 'collector': 'TcpQuality'}
 
 def run_due(cfg):
+    verify_vendor()
     response = native(cfg, 'poll', {'helper_version': VERSION})
     job = response.get('job')
     if job is None:
