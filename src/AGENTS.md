@@ -6,6 +6,7 @@ This guide applies to [src/](./). For full project context, read [../AIAGENTREAD
 
 - Preserve the fork-time UI/layout/styles/defaults and globe/map from fixed baseline `0332d5f7c73f7994ba21c01e4b739d04835120b1`. No additional frontend controls or presentation changes. Existing data slots may receive corrected business values. Future three-network display needs explicit discussion and must reuse the original UI form. This user constraint overrides inherited UI development guidance below; see `../docs/ui-preservation.md`.
 - Client services and calculations are not a backend implementation. Do not claim backend-only work when editing client runtime code.
+- The later explicit 0.0.1 scope includes steps 1–3: retain the accepted timezone/day/time fields in the original administrator table (reference 2d658f6), with no public-layout redesign. A source-credit link may replace only the existing rate-information paragraph with the same visual class. Version metadata is independent of UI defaults. Tests encode these narrow exceptions; other UI work stays suspended.
   All new app code should follow:
 
 ```text

@@ -560,7 +560,7 @@ export async function installKomariFixture(page: Page, options: VisualFixtureOpt
 
   // Explicit reference-rate fixture; do not contact real providers from UI tests.
   const quoteTime = Math.floor((options.useNativeClock ? Date.now() : Date.parse(options.trafficNow ?? FIXED_NOW)) / 1000)
-  await page.route('https://open.er-api.com/v6/latest/CNY', route => route.fulfill({ json: { result: 'success', base_code: 'CNY', time_last_update_unix: quoteTime - 60, time_next_update_unix: quoteTime + 86400, rates: DEFAULT_EXCHANGE_RATES } }))
+  await page.route('https://open.er-api.com/v6/latest/CNY', route => route.fulfill({ json: { result: 'success', base_code: 'CNY', time_last_update_unix: quoteTime - 60, time_next_update_unix: quoteTime + 86400, rates: { ...DEFAULT_EXCHANGE_RATES, AUD: 0.2 } } }))
   await page.route('https://api.frankfurter.app/latest?from=CNY', route => route.fulfill({ status: 503, json: { fixture: 'backup unavailable' } }))
 
   await page.route('**/api/public', route => route.fulfill({

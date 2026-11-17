@@ -2,7 +2,17 @@
 
 Public development records only. Do not add deployment addresses, identifiers, credentials or private infrastructure details. Inherited upstream logs remain in Git history; their permissions and results do not authorize or validate current work.
 
-## Current: restore fork UI under the user's later constraint (2026-11-17)
+## Current: stable 0.0.1 release, steps 1–3 (2026-11-17)
+
+- User explicitly authorized a formal GitHub Release 0.0.1 and then clarified that independent reset time must stay: deliver engineering, complete timezone/day/hour/minute administrator configuration, and native-node/single-summary-currency finance together. Steps 4–6 remain excluded. User chose to upload/switch the ZIP personally; do not write CA production.
+- Branch release/0.0.1. Original public UI, globe/map and defaults stay fixed. The two administrator reset-editor components use the previously accepted step-2 reference 2d658f6; required API credit reuses the existing finance source-text position. Manifest version alone is release metadata.
+- Input currencies outside the old selector now remain native instead of silently becoming CNY. Summary conversion accepts API-covered ISO currencies, rejects missing/unconvertible quotes and ignores irrelevant zero-price currency needs. Existing API providers and original summary selector remain.
+- Scope-aware release gate for 0.0.1 requires exact accepted source and evidence for engineering/reset/finance/UI/native integration/package, audits the runtime diff and dependencies against the fixed baseline, and preserves manual CI production packaging/download checks. Do not mark later-roadmap features passed.
+- Local targeted tests/type-check passed: 191 tests including UI preservation, native finance and calendar logic; three release-scope negative tests passed. Final code review, complete browser/CI, exact-source native ZIP acceptance, committed acceptance record, immutable tag/Release and actual downloaded-asset verification remain to complete. Existing prior reports are historical, not 0.0.1 acceptance.
+- Focused desktop/mobile browser suite passed all 37 cases, including independent IANA/minute editing, configuration isolation, input-native currencies and a single converted summary. Source is ready for a clean production candidate and official native integration; do not publish the dirty development ZIP.
+- Source 6f273742e7e5383e6cd7193bcb79c2d5fb08117f passed Code Quality run 44043231828 and all seven official native 1.6.1 checks with the exact clean 0.0.1 ZIP (SHA256 7d145b2e1c8fcebc27d00568fdb5e92d1271de9d0eddbf524b083816e215cb7a). Native evidence and scoped acceptance are committed as docs/verification/native-0.0.1.json and acceptance-0.0.1.json. PR #6: https://github.com/MagnetOscar/Glassmorphism-Enhanced/pull/6. Final required checks, protected merge, manual Accepted ZIP Release workflow, actual release download and native package recheck remain. After publication stop; user will upload to CA.
+
+## Historical: restore fork UI under the user's later constraint (2026-11-17)
 
 - User explicitly requires backend parameters/features only and preservation of the fork-time frontend layout, styles, visual attributes, defaults and globe/map. Future three-network synthesis display needs a separate discussion and must reuse exactly the original UI form. This overrides earlier step 4/5 plans; do not start those UI changes.
 - Step 3 PR #4 was merged as eaeb185; final PR and main quality/browser checks passed (335 unit/component, 218 browser). Those historical checks do not validate the UI rollback below.

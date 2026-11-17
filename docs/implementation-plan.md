@@ -2,7 +2,7 @@
 
 The user authorized these stages in order on 2026-11-17. Runtime changes are M5; engineering and verification are M6. Each stage has a scoped branch/PR and evidence. Unaccepted work is excluded from formal releases.
 
-The later 2026-11-17 UI constraint takes precedence: preserve the fork-time frontend layout, styles, defaults and globe/map. Backend parameters/features only; client services are not the server backend. Existing data positions may display corrected values. No new frontend controls. Three-network synthesis presentation requires a later explicit discussion and must reuse the original UI form. See [UI preservation](ui-preservation.md).
+The 2026-11-17 UI constraint preserves the fork-time public layout, styles, defaults and globe/map. Client services remain client code. The user's subsequent stable **0.0.1** release instruction includes steps **1–3** together, including the already accepted administrator timezone/day/hour/minute parameter fields. Existing data positions display corrected values; required API attribution uses the existing rate-information text position. Three-network synthesis presentation requires a later discussion. See [UI preservation](ui-preservation.md).
 
 1. Engineering: non-mutating lint, Linux unit/helper tests, browser regression, clean-source native ZIP validation and guarded manual release.
 2. Node reset schedules: timezone/day/hour/minute, DST and month-end rules, migration without deleting traffic history.
@@ -19,8 +19,8 @@ The later 2026-11-17 UI constraint takes precedence: preserve the fork-time fron
 - `personal/main` is the protected integration branch. Development uses `build/*`, `feat/*` or `fix/*` branches and PRs. Keep `baseline/v1.2.1` unchanged.
 - Node 24 and Bun 1.3.14; install with the committed lockfile. CI checks code without fixing it.
 - Quality and browser jobs run for PRs and pushes to `personal/main`. Candidate ZIP artifacts are temporary validation outputs, not public Releases.
-- The manifest is the sole version source. First own feature version is planned as `1.3.0`; prereleases use `1.3.0-rc.1` etc. Own tags use `personal-v<version>` to distinguish inherited history.
-- Release is manual on `personal/main`. It requires a committed `docs/verification/acceptance-<version>.json` with `status: passed`, exact accepted `source_commit`, and passed checks/evidence for reset, finance, sorting, display, return-route and integration. Only evidence documents/AICACHE may differ from the accepted source. Release notes must exist as `docs/release-notes-personal-<version>.md`.
+- The manifest is the sole version source. The user selected `0.0.1` as the first independent stable release, superseding the earlier proposed 1.3.0. Tags use `personal-v<version>` to distinguish inherited history.
+- Release is manual on `personal/main`. For 0.0.1, a committed `docs/verification/acceptance-0.0.1.json` must bind passed engineering, reset, finance, UI preservation, native integration and package checks to an exact `source_commit`, with scope `steps-1-3` and the fixed baseline. The release gate rejects unrelated runtime/default/dependency changes. Sorting, display and return-route work is excluded rather than marked passed. Other versions retain their applicable release gate. Only evidence documents/AICACHE may differ from accepted source; release notes must exist as `docs/release-notes-personal-<version>.md`.
 - The workflow rechecks tests, rebuilds production after browser tests, checks ZIP paths/manifest/commit/clean state/license notices, publishes SHA256 and build metadata, then downloads the actual ZIP to verify SHA256.
 - Existing tags/assets are never replaced. Failed publication/download verification needs an explicit repair record; never relabel an unverified release as accepted.
 

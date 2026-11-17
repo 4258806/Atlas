@@ -482,9 +482,9 @@ function formatTraffic(tib: number): string {
               <h3 class="text-sm font-semibold">
                 汇率
               </h3>
-              <p class="text-xs text-muted-foreground">
-                {{ sourceLabels[source] }} · {{ rateProvider }} · {{ formatRateUpdatedAt() }} · 1 CNY 对应数值
-              </p>
+              <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener noreferrer" class="text-xs text-muted-foreground">
+                {{ sourceLabels[source] }} · {{ rateProvider }} · {{ formatRateUpdatedAt() }} · 1 CNY 对应数值 · Rates By Exchange Rate API
+              </a>
             </div>
             <select
               :value="currency"

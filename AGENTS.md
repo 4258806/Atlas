@@ -6,6 +6,7 @@ Root-scope guide for the personal public fork **Glassmorphism Enhanced** (`Magne
 
 - User constraint (2026-11-17): preserve the fork-time frontend UI from `baseline/v1.2.1` (`0332d5f7c73f7994ba21c01e4b739d04835120b1`). Do not redesign layouts, styles, defaults, visual attributes, globe/map rendering, or add frontend controls. Backend parameters/features are the development scope; necessary data bindings use existing UI positions without changing presentation. Theme services/composables are client code, not the Komari Server backend.
 - Only a future, explicitly discussed three-network synthesis display may extend the UI, using exactly the existing UI form. This is not current authorization. Earlier step 4/5 UI plans and passed UI tests do not override this constraint. See `docs/ui-preservation.md`.
+- Later release authorization (2026-11-17): publish independent stable `0.0.1`, covering steps 1–3 together. Preserve the complete independent-reset logic and its timezone/day/hour/minute administrator fields; include native-node/single-summary-currency finance. Administrative parameter editing and required API credit in the existing rate-source text position are part of this scope; public layout, globe/map and defaults remain fixed. Do not develop steps 4–6 or deploy production; the user will upload the ZIP.
 - The user's GitHub fork is the authoritative source. Every delivered change must have a pushed commit and a reviewable GitHub diff; local or production-only patches are not completed updates.
 - Preserve `baseline/v1.2.1` at `0332d5f7c73f7994ba21c01e4b739d04835120b1`. The development branch is `personal/main`; all other upstream repositories are read-only.
 - Read and follow [docs/releasing.md](docs/releasing.md) before development, acceptance, packaging, release or deployment. It is this fork's current policy; inherited upstream logs and old release approvals are historical evidence, not present authorization.
@@ -13,7 +14,7 @@ Root-scope guide for the personal public fork **Glassmorphism Enhanced** (`Magne
 - Validate appropriate functionality, integration, upgrade/rollback and documentation before release. Distinguish fixtures, local checks, real server acceptance and actual downloaded release verification.
 - Preserve authorship, MIT and third-party notices. Publish reusable source and installation guidance, with no credentials or private deployment data.
 - Changes to feature code, release automation and production deployment require the applicable user task scope. This policy alone does not authorize those actions, and existing explicit authorization does not need repeated confirmation.
-- Documentation-only updates do not require a fabricated software version or release. Current manifest `1.2.1` is the unchanged upstream baseline; the fork's first software release version must be distinguished from inherited tags before packaging.
+- Documentation-only updates do not require a fabricated software version or release. The fork's first independent software version is `0.0.1`, tag `personal-v0.0.1`; upstream baseline remains `1.2.1` at the fixed original commit.
 
 For the complete AI/developer manual, read [AIAGENTREADME.md](AIAGENTREADME.md). For persistent task handoff and progress tracking, read and update [AICACHE.md](AICACHE.md).
 

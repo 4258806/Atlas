@@ -119,9 +119,7 @@ function formatPrice(row: SnapshotRow): string {
   if (row.price <= 0)
     return '-'
 
-  const currency = financeHelper.normalizeCurrency(row.currency)
-  const amount = financeHelper.formatFinanceAmount(row.price, currency)
-  return `${amount.symbol}${amount.value} ${amount.currency}`
+  return financeHelper.formatNativeAmount(row.price, row.currency)
 }
 
 function formatMonthlyCost(row: SnapshotRow): string {

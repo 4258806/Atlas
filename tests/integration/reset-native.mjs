@@ -114,7 +114,7 @@ async function main() {
       assert.equal((await request('/api/me')).payload.logged_in, true)
     })
     const clients = []
-    for (const name of ['Reset fixture A', 'Reset fixture B']) {
+    for (const name of ['Reset fixture A', 'Reset fixture B', 'AUD fixture C']) {
       const { payload } = await request('/api/admin/client/add', { name })
       const uuid = payload.uuid ?? payload.data?.uuid
       assert(uuid)
@@ -122,6 +122,7 @@ async function main() {
     }
     const a = clients[0].uuid
     const b = clients[1].uuid
+    const c = clients[2].uuid
     const legacy = { version: 1, timeZone: 'Asia/Shanghai', nodes: { [a]: { resetDay: 8, timeZone: 'UTC' }, [b]: { resetDay: 5 } } }
     const settings = { hideEarth: true, hideGeneralCard: true, visitorInfoEnabled: false, disablePageAnimation: true, rpcTransportMode: 'http', unknownFuture: { keep: true }, trafficCycleConfig: JSON.stringify(legacy) }
     await check('install exact baseline, upgrade candidate and preserve settings', async () => {
@@ -155,7 +156,7 @@ async function main() {
       await page.getByRole('button', { name: 'Enhanced 管理', exact: true }).click()
       await page.getByRole('tab', { name: '节点与卡片', exact: true }).click()
     }
-    await check('fork day-only editor preserves backend-saved timezone and minute on desktop and mobile', async () => {
+    await check('administrator editor persists independent timezone, day and minute on desktop and mobile', async () => {
       for (const width of [1440, 390]) {
         const before = (await rpc('public:getPublicSettings')).theme_settings
         const saved = { resetDay: 7, timeZone: width === 1440 ? 'Asia/Shanghai' : 'America/Los_Angeles', hour: 23, minute: 10, futureScheduleField: 'keep' }
@@ -165,20 +166,22 @@ async function main() {
         await open()
         const row = page.locator(`[data-traffic-cycle-node="${a}"]`)
         await expect(row.locator('select')).toHaveValue('7')
-        await expect(row.locator('input[type="time"]')).toHaveCount(0)
-        await expect(row.getByRole('textbox', { name: 'Reset fixture A 重置时区', exact: true })).toHaveCount(0)
         await row.locator('select').selectOption('8')
+        const selectedZone = width === 1440 ? 'America/Los_Angeles' : 'Asia/Shanghai'
+        await row.getByRole('textbox', { name: 'Reset fixture A 重置时区', exact: true }).fill(selectedZone)
+        await row.locator('input[type="time"]').fill('21:45')
         await row.getByRole('button', { name: '保存 Reset fixture A 流量周期', exact: true }).click()
         await expect(row.getByRole('status')).toContainText('已保存并读回')
         await page.reload()
         await page.getByRole('button', { name: 'Enhanced 管理', exact: true }).click()
         await page.getByRole('tab', { name: '节点与卡片', exact: true }).click()
         await expect(row.locator('select')).toHaveValue('8')
-        await expect(row.locator('input[type="time"]')).toHaveCount(0)
+        await expect(row.locator('input[type="time"]')).toHaveValue('21:45')
+        await expect(row.getByRole('textbox', { name: 'Reset fixture A 重置时区', exact: true })).toHaveValue(selectedZone)
         const after = (await rpc('public:getPublicSettings')).theme_settings
         const plan = JSON.parse(after.trafficCycleConfig)
         assert.equal(plan.version, 2)
-        assert.deepEqual(plan.nodes[a], { ...saved, resetDay: 8 })
+        assert.deepEqual(plan.nodes[a], { ...saved, resetDay: 8, timeZone: selectedZone, hour: 21, minute: 45 })
         assert.deepEqual(plan.nodes[b], { resetDay: 5, timeZone: 'Asia/Shanghai', hour: 0, minute: 0 })
         assert.deepEqual(after.unknownFuture, settings.unknownFuture)
         await page.screenshot({ path: join(out, `native-reset-${width}.png`), fullPage: true })
@@ -227,7 +230,7 @@ async function main() {
       await page.setViewportSize({ width: 1440, height: 1000 })
       await open()
       await expect(page.locator(`[data-traffic-cycle-node="${a}"] select`)).toHaveValue('8')
-      await expect(page.locator(`[data-traffic-cycle-node="${a}"] input[type="time"]`)).toHaveCount(0)
+      await expect(page.locator(`[data-traffic-cycle-node="${a}"] input[type="time"]`)).toHaveValue('00:00')
       assert.deepEqual(errors, [])
     })
     if (finance) {
@@ -235,6 +238,7 @@ async function main() {
         const expiry = new Date(Date.now() + 15 * 86400000).toISOString()
         await rpc('admin:editClient', { uuid: a, price: 9.9, currency: 'USD', billing_cycle: 30, expired_at: expiry })
         await rpc('admin:editClient', { uuid: b, price: 804.6, currency: 'CNY', billing_cycle: 180, expired_at: expiry })
+        await rpc('admin:editClient', { uuid: c, price: 10, currency: 'AUD', billing_cycle: 30, expired_at: expiry })
         const before = (await rpc('public:getPublicSettings')).theme_settings
         await api('/api/admin/theme/settings?theme=Enhanced', { ...before, hideGeneralCard: false, generalCardPreset: '自定义', generalCardKeys: 'remainingValue\nmonthlyCost', detailMetricCardPreset: '自定义', detailMetricCardKeys: 'price\nmonthlyCost\nremainingValue' })
         for (const width of [1440, 390]) {
@@ -248,12 +252,20 @@ async function main() {
           const dialog = page.getByRole('dialog', { name: '价值与费用明细' })
           const usdRow = dialog.getByRole('row').filter({ hasText: 'Reset fixture A' })
           const cnyRow = dialog.getByRole('row').filter({ hasText: 'Reset fixture B' })
+          const audRow = dialog.getByRole('row').filter({ hasText: 'AUD fixture C' })
           await expect(usdRow).toContainText('$9.90 USD')
           await expect(cnyRow).toContainText('¥134.10 CNY')
+          await expect(audRow).toContainText('10.00 AUD')
           await dialog.getByRole('combobox', { name: '显示币种', exact: true }).selectOption('EUR')
           await expect(usdRow).toContainText('$4.95 USD')
           await expect(cnyRow).toContainText('¥134.10 CNY')
+          await expect(audRow).toContainText('5.00 AUD')
+          const expectedMonthlyEUR = await page.evaluate(() => {
+            const { rates } = JSON.parse(localStorage.getItem('komari_finance_exchange_rates_cny_v2'))
+            return new Intl.NumberFormat('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format((9.9 / rates.USD + 134.1 + 10 / rates.AUD) * rates.EUR)
+          })
           await page.keyboard.press('Escape')
+          await expect(page.locator('[data-general-card-key="monthlyCost"]')).toContainText(`€${expectedMonthlyEUR}`)
           await page.reload()
           await expect(summary).toContainText('€')
           await expect(summary).not.toContainText('EUR')

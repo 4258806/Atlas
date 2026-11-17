@@ -77,7 +77,7 @@ const financeDetailsOpen = ref(false)
 const currentTime = useNow({ interval: 1000 })
 const summaryNodes = computed(() => props.nodes ?? nodesStore.visibleNodes)
 const financeEnabled = computed(() => showPrice.value && appStore.generalCardOrder.some(key => ['remainingValue', 'monthlyCost', 'yearlyCost'].includes(key)))
-const requiredCurrencies = computed<CurrencyCode[]>(() => [...new Set([financeCurrency.value, ...summaryNodes.value.filter(node => !excludeFreeNodes.value || !isFreeNode(node)).map(node => financeHelper.normalizeCurrency(node.currency))])])
+const requiredCurrencies = computed<string[]>(() => [...new Set([financeCurrency.value, ...summaryNodes.value.filter(node => Number(node.price) > 0 && (!excludeFreeNodes.value || !isFreeNode(node))).map(node => financeHelper.nativeCurrency(node.currency).toUpperCase())])])
 const { rates: exchangeRates, dailyRates: dailyExchangeRates, source: exchangeRateSource, updatedAt: exchangeRateUpdatedAt, provider: exchangeRateProvider } = useSummaryRates(requiredCurrencies, financeEnabled)
 
 const summaryTransitionKey = computed(() => props.transitionKey ?? nodesStore.visibleNodes.length)

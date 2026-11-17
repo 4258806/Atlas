@@ -1,0 +1,98 @@
+{
+  "kind": "official-Komari-1.6.1-native-0.0.1-steps-1-3-acceptance",
+  "productionTouched": false,
+  "history": "explicit synthetic SQL fixture",
+  "backendSHA256": "0c6e73c42ac166d34562e57037007a21692599e9e868ddae18217691e0f5d932",
+  "baselineSHA256": "54ef15efe37707109ce721ed22608745a575b3683038951b02b05d1724d3ff17",
+  "candidateSHA256": "7d145b2e1c8fcebc27d00568fdb5e92d1271de9d0eddbf524b083816e215cb7a",
+  "checks": [
+    {
+      "name": "fresh official backend and verified native administrator session",
+      "status": "passed"
+    },
+    {
+      "name": "install exact baseline, upgrade candidate and preserve settings",
+      "status": "passed"
+    },
+    {
+      "name": "administrator editor persists independent timezone, day and minute on desktop and mobile",
+      "status": "passed"
+    },
+    {
+      "name": "native per-metric retention and tier configuration read back without disabling metrics",
+      "status": "passed"
+    },
+    {
+      "name": "native persisted minute edge and hourly body sum exactly without history mutation",
+      "status": "passed"
+    },
+    {
+      "name": "rollback restores baseline ZIP plus exact v1 settings and re-upgrade retains configuration",
+      "status": "passed"
+    },
+    {
+      "name": "native node billing stays in its own currency while the header selects one currency",
+      "status": "passed"
+    }
+  ],
+  "rateNetworkDiagnostics": [],
+  "syntheticRows": 12232,
+  "status": "passed",
+  "source_commit": "6f273742e7e5383e6cd7193bcb79c2d5fb08117f",
+  "version": "0.0.1",
+  "scope": "steps-1-3",
+  "baseline_commit": "0332d5f7c73f7994ba21c01e4b739d04835120b1",
+  "package": {
+    "version": "0.0.1",
+    "commit": "6f273742e7e5383e6cd7193bcb79c2d5fb08117f",
+    "dirty": false,
+    "mode": "production",
+    "sha256": "7d145b2e1c8fcebc27d00568fdb5e92d1271de9d0eddbf524b083816e215cb7a",
+    "file": "komari-theme-Glassmorphism-build-6f27374.zip",
+    "entries": 784
+  },
+  "ui": {
+    "component_contracts": 72,
+    "protected_files": 312,
+    "contract_checks_passed": 76,
+    "configuration_reference": "2d658f641ef9401b7426527014ec73bfa9404f5f",
+    "public_layout_styles_globe_map_defaults": "unchanged",
+    "authorized_configuration": "Original administrator table includes timezone, day, hour and minute",
+    "api_credit": "Required link reuses the original rate-information text position and class",
+    "screenshot_thresholds_changed": false
+  },
+  "checks_local": {
+    "unit_ui_finance_calendar_passed": 191,
+    "focused_browser_passed": 37,
+    "scope_negative_tests_passed": 3,
+    "package_negative_tests_passed": 9,
+    "lint": "passed",
+    "type_check": "passed",
+    "production_build": "passed",
+    "scope_audit": "passed against exact committed runtime source"
+  },
+  "engineering_ci": {
+    "quality": "https://github.com/MagnetOscar/Glassmorphism-Enhanced/actions/runs/44043231828",
+    "status": "passed",
+    "source_commit": "6f273742e7e5383e6cd7193bcb79c2d5fb08117f",
+    "pr_checks": "https://github.com/MagnetOscar/Glassmorphism-Enhanced/pull/6/checks",
+    "final_pr_and_manual_release_quality_browser_checks_required": true
+  },
+  "scope_boundaries": {
+    "included": [
+      "engineering",
+      "independent-reset",
+      "native-node-and-single-summary-currency"
+    ],
+    "excluded": [
+      "new-carrier-order",
+      "new-display-switches",
+      "return-route-expansion",
+      "production-deployment"
+    ],
+    "user_uploads_zip_personally": true,
+    "all_prices_history": "explicit synthetic fixtures",
+    "live_fx": "Actual public API in the isolated browser; raw quotes not published",
+    "real_billing_or_fleet_acceptance": false
+  }
+}
