@@ -17,6 +17,8 @@
 
 ## 1. 项目是什么
 
+2026-11-17 用户新增硬约束：保持 fork 基线 `0332d5f7c73f7994ba21c01e4b739d04835120b1` 的前端布局、样式、显示属性、默认值、地球与地图。只增加、调整后端参数与功能；必要数据绑定沿用已有位置，不新增前端控件或重做展示。主题的 service/composable 仍是前端，不能称为 Komari 服务端。仅未来另行讨论三网合成时，才考虑沿用完全相同的原有 UI 形式增加显示。此约束覆盖历史 UI 计划，详见 [UI 保持约束](docs/ui-preservation.md)。
+
 当前维护仓库为 **[MagnetOscar/Glassmorphism-Enhanced](https://github.com/MagnetOscar/Glassmorphism-Enhanced)**，由 casiuna/Glassmorphism-Enhanced 公开 Fork，用于个人服务器监控主题的二次开发。固定原始基线为上游 v1.2.1（`0332d5f7c73f7994ba21c01e4b739d04835120b1`），详见 [FORK.md](FORK.md)。使用 Vue 3 + Vite 构建，发布产物是 Komari 可以导入的 ZIP。
 
 当前清单 `1.2.1` 仍是未修改的上游版本，不是本 Fork 自有新发行。后续正式软件版本采用明确且与继承历史区分的 SemVer、独立 tag、GitHub Release 和安装 ZIP，保留旧版本；所有交付改动先同步到本账号仓库并提供 diff。文档变更不制造软件版本。验收、使用、打包、发布与部署遵循 [docs/releasing.md](docs/releasing.md)，上游旧日志中的发布批准不能作为当前授权。

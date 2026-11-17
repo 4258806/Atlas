@@ -4,6 +4,8 @@ Root-scope guide for the personal public fork **Glassmorphism Enhanced** (`Magne
 
 ## Mandatory development and release policy
 
+- User constraint (2026-11-17): preserve the fork-time frontend UI from `baseline/v1.2.1` (`0332d5f7c73f7994ba21c01e4b739d04835120b1`). Do not redesign layouts, styles, defaults, visual attributes, globe/map rendering, or add frontend controls. Backend parameters/features are the development scope; necessary data bindings use existing UI positions without changing presentation. Theme services/composables are client code, not the Komari Server backend.
+- Only a future, explicitly discussed three-network synthesis display may extend the UI, using exactly the existing UI form. This is not current authorization. Earlier step 4/5 UI plans and passed UI tests do not override this constraint. See `docs/ui-preservation.md`.
 - The user's GitHub fork is the authoritative source. Every delivered change must have a pushed commit and a reviewable GitHub diff; local or production-only patches are not completed updates.
 - Preserve `baseline/v1.2.1` at `0332d5f7c73f7994ba21c01e4b739d04835120b1`. The development branch is `personal/main`; all other upstream repositories are read-only.
 - Read and follow [docs/releasing.md](docs/releasing.md) before development, acceptance, packaging, release or deployment. It is this fork's current policy; inherited upstream logs and old release approvals are historical evidence, not present authorization.

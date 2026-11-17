@@ -226,7 +226,7 @@ test('five tabs save/reload old settings and UUID dates, preserving other nodes 
   await expect.poll(() => state.queries.some(q => q.entity_id === A && q.start === newStart)).toBe(true)
   expect(JSON.parse(String(state.settings.trafficCycleConfig)).nodes[B]).toEqual(oldB)
   await expect(b.locator('[data-cycle-used]')).toContainText('320')
-  for (const name of ['独立重置计划', '当前计费周期起止时间', '下次重置日期', '本周期已使用流量']) await expect(dialog).toContainText(name)
+  for (const name of ['自定义重置日', '当前计费周期起止时间', '下次重置日期', '本周期已使用流量']) await expect(dialog).toContainText(name)
   await dialog.getByRole('tab', { name: '外观与背景', exact: true }).click()
   await dialog.getByRole('combobox', { name: '背景类型', exact: true }).selectOption('video')
   await dialog.getByRole('button', { name: '保存本分类设置' }).click()
@@ -244,29 +244,32 @@ test('five tabs save/reload old settings and UUID dates, preserving other nodes 
 })
 
 for (const width of [390, 1440]) {
-  test(`independent timezone and minute persist after reload at ${width}px`, async ({ page }) => {
+  test(`fork day-only editor preserves stored timezone and minute at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 })
     const state = await fixture(page)
+    const configured = parseTrafficCycleConfig(state.settings.trafficCycleConfig).document
+    const saved = { resetDay: 8, timeZone: 'America/Los_Angeles', hour: 23, minute: 10, second: 5, futureScheduleField: 'keep' }
+    configured.nodes[A] = saved
+    state.settings.trafficCycleConfig = JSON.stringify(configured)
     const oldB = parseTrafficCycleConfig(state.settings.trafficCycleConfig).document.nodes[B]
     await page.goto('/')
     await openNodes(page)
     const a = page.locator(`[data-traffic-cycle-node="${A}"]`)
-    await a.locator('select').selectOption('8')
-    await a.getByRole('textbox', { name: 'Wendy 重置时区', exact: true }).fill('Asia/Shanghai')
-    await a.locator('input[type="time"]').fill('23:10')
+    await expect(a.locator('select')).toHaveValue('8')
+    await expect(a.locator('input[type="time"]')).toHaveCount(0)
+    await expect(a.getByRole('textbox', { name: 'Wendy 重置时区', exact: true })).toHaveCount(0)
+    await a.locator('select').selectOption('9')
     await a.getByRole('button', { name: '保存 Wendy 流量周期', exact: true }).click()
     await expect(a.getByRole('status')).toBeVisible()
-    expect(parseTrafficCycleConfig(state.settings.trafficCycleConfig).document.nodes[A]).toMatchObject({ resetDay: 8, timeZone: 'Asia/Shanghai', hour: 23, minute: 10 })
+    expect(parseTrafficCycleConfig(state.settings.trafficCycleConfig).document.nodes[A]).toEqual({ ...saved, resetDay: 9 })
     expect(parseTrafficCycleConfig(state.settings.trafficCycleConfig).document.nodes[B]).toEqual(oldB)
     expect(state.settings.unknownFuture).toEqual({ untouched: true })
     await page.reload()
     await openNodes(page)
-    await expect(a.locator('select')).toHaveValue('8')
-    await expect(a.locator('input[type="time"]')).toHaveValue('23:10')
-    await expect(a.getByRole('textbox', { name: 'Wendy 重置时区', exact: true })).toHaveValue('Asia/Shanghai')
-    await a.getByRole('textbox', { name: 'Wendy 重置时区', exact: true }).fill('Not/AZone')
+    await expect(a.locator('select')).toHaveValue('9')
+    await expect(a.locator('input[type="time"]')).toHaveCount(0)
     await expect(a.getByRole('button', { name: '保存 Wendy 流量周期', exact: true })).toBeDisabled()
-    await expect(a.getByRole('alert')).toContainText('有效')
+    expect(parseTrafficCycleConfig(state.settings.trafficCycleConfig).document.nodes[A]).toEqual({ ...saved, resetDay: 9 })
   })
 }
 test('native managed settings entry opens the same five-category node editor, not a JSON task', async ({ page }) => {

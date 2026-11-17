@@ -4,7 +4,9 @@ This guide applies to [src/](./). For full project context, read [../AIAGENTREAD
 
 ## Source-tree rule of thumb
 
-All new app code should follow:
+- Preserve the fork-time UI/layout/styles/defaults and globe/map from fixed baseline `0332d5f7c73f7994ba21c01e4b739d04835120b1`. No additional frontend controls or presentation changes. Existing data slots may receive corrected business values. Future three-network display needs explicit discussion and must reuse the original UI form. This user constraint overrides inherited UI development guidance below; see `../docs/ui-preservation.md`.
+- Client services and calculations are not a backend implementation. Do not claim backend-only work when editing client runtime code.
+  All new app code should follow:
 
 ```text
 Component -> Composable -> Service -> RequestManager / CacheService -> API / RPC

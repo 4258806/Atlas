@@ -2,11 +2,13 @@
 
 The user authorized these stages in order on 2026-11-17. Runtime changes are M5; engineering and verification are M6. Each stage has a scoped branch/PR and evidence. Unaccepted work is excluded from formal releases.
 
+The later 2026-11-17 UI constraint takes precedence: preserve the fork-time frontend layout, styles, defaults and globe/map. Backend parameters/features only; client services are not the server backend. Existing data positions may display corrected values. No new frontend controls. Three-network synthesis presentation requires a later explicit discussion and must reuse the original UI form. See [UI preservation](ui-preservation.md).
+
 1. Engineering: non-mutating lint, Linux unit/helper tests, browser regression, clean-source native ZIP validation and guarded manual release.
 2. Node reset schedules: timezone/day/hour/minute, DST and month-end rules, migration without deleting traffic history.
 3. Finance: native node currencies; support multiple currencies but display only one selected currency in the home aggregate; validated, attributed, fresh FX sources. No simultaneous extra-currency UI.
-4. Carrier ordering: persisted drag order with touch and keyboard alternatives.
-5. Display: blocks/sparklines and optional TCP/UDP connections, honest missing data.
+4. Carrier ordering: suspended under the later UI constraint; no drag handles, keyboard/touch UI or new controls are currently authorized.
+5. Display: suspended under the later UI constraint; no blocks/sparklines or TCP/UDP presentation changes are currently authorized.
 6. Return routes: audit existing opt-in helper/plugin; verify targets/ASN and measured DMIT trial before rollout.
 7. Acceptance: desktop/mobile, persisted settings, boundary cases, actual theme install/upgrade/rollback.
 8. Release: independent version/tag, native ZIP, SHA256, source and acceptance links, downloaded asset verification.
