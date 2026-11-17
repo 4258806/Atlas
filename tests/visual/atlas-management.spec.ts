@@ -130,7 +130,7 @@ test('central form preserves another UUID, Relay/SGD/unknown fields and requires
   await page.getByRole('checkbox', { name: '显示并消费回程结果', exact: true }).check()
   await page.getByRole('checkbox', { name: '确认当前管理操作', exact: true }).check()
   await save.click()
-  await expect(page.getByRole('status')).toContainText('已保存并读取确认')
+  await expect(page.getByRole('status').filter({ hasText: '已保存并读取确认' })).toContainText('已保存并读取确认')
   expect(JSON.parse(state.config.nodes)[OTHER]).toEqual(other)
   expect(state.settings).toMatchObject({ transitCarrierPingRules: 'KEEP_RELAY', displayCurrency: 'SGD', unknownFuture: { preserve: true } })
   expect(JSON.parse(state.settings.returnRouteConfig as string).nodes[UUID].manual.telecom.label).toBe('<真实用户文本> & manual')

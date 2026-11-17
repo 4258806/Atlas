@@ -6,6 +6,7 @@ import { useIntersectionObserver } from '@vueuse/core'
 import { computed, ref, useTemplateRef } from 'vue'
 import NodeHeaderTags from '@/components/NodeHeaderTags.vue'
 import NodeReturnRoutes from '@/components/NodeReturnRoutes.vue'
+import PingHistoryLine from '@/components/PingHistoryLine.vue'
 import { CardX } from '@/components/ui/card-x'
 import { DataTooltip } from '@/components/ui/data-tooltip'
 import { ProgressThin } from '@/components/ui/progress-thin'
@@ -502,7 +503,11 @@ function hasRegion(region: string | null | undefined): boolean {
                   </span>
                   <span class="shrink-0 tabular-nums font-medium">{{ carrier.latencyDisplay }}</span>
                 </div>
+                <div v-if="appStore.pingDisplayStyle === 'line'" class="h-1.5 min-w-0">
+                  <PingHistoryLine :values="carrier.latencyHistory" :label="carrier.latencyTooltip" />
+                </div>
                 <div
+                  v-else
                   class="grid h-1.5 min-w-0 items-end gap-[1px] opacity-80 group-hover/panel:opacity-100"
                   :style="{ gridTemplateColumns: `repeat(${carrier.latencyBars.length}, minmax(0, 1fr))` }"
                 >
@@ -548,7 +553,11 @@ function hasRegion(region: string | null | undefined): boolean {
                   </span>
                   <span class="shrink-0 tabular-nums font-medium">{{ carrier.lossDisplay }}</span>
                 </div>
+                <div v-if="appStore.pingDisplayStyle === 'line'" class="h-1.5 min-w-0">
+                  <PingHistoryLine :values="carrier.lossHistory" :label="carrier.lossTooltip" />
+                </div>
                 <div
+                  v-else
                   class="grid h-1.5 min-w-0 items-end gap-[1px] opacity-80 group-hover/panel:opacity-100"
                   :style="{ gridTemplateColumns: `repeat(${carrier.lossBars.length}, minmax(0, 1fr))` }"
                 >

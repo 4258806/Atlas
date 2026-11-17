@@ -1,0 +1,48 @@
+{
+  "version": "0.0.2",
+  "status": "passed",
+  "source_commit": "597df8cb27be935a838dd134c1b36725df7f2ff9",
+  "baseline_commit": "31c69e80cb629a5ccdb0144dabf4164583a54405",
+  "scope": "finance-dialog-sorting-display",
+  "branding": {
+    "name": "Atlas"
+  },
+  "checks": {
+    "engineering": {
+      "status": "passed",
+      "evidence": "docs/verification/release-candidate-0.0.2.json"
+    },
+    "reset": {
+      "status": "passed",
+      "evidence": "docs/verification/release-candidate-0.0.2.json"
+    },
+    "finance": {
+      "status": "passed",
+      "evidence": "docs/verification/release-candidate-0.0.2.json"
+    },
+    "sorting": {
+      "status": "passed",
+      "evidence": "docs/verification/release-candidate-0.0.2.json"
+    },
+    "display": {
+      "status": "passed",
+      "evidence": "docs/verification/release-candidate-0.0.2.json"
+    },
+    "ui-preservation": {
+      "status": "passed",
+      "evidence": "docs/verification/release-candidate-0.0.2.json"
+    },
+    "integration": {
+      "status": "passed",
+      "evidence": "docs/verification/native-0.0.2.json"
+    },
+    "package": {
+      "status": "passed",
+      "evidence": "docs/verification/release-candidate-0.0.2.json"
+    },
+    "previews": {
+      "status": "passed",
+      "evidence": "docs/verification/release-candidate-0.0.2.json"
+    }
+  }
+}

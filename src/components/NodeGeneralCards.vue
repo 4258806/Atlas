@@ -18,7 +18,6 @@ import * as financeHelper from '@/utils/financeHelper'
 import { formatBytesPerSecondSplit, formatBytesSplit } from '@/utils/helper'
 
 import {
-  getConnectionCount,
   getExpiryDays,
   getHighLoadMetrics,
   getRealtimeTotalSpeed,
@@ -251,7 +250,7 @@ const onlineStats = computed<OnlineStats>(() => {
     stats.trafficPeak = updateTopMetric(stats.trafficPeak, node, getRealtimeTotalSpeed(node))
     stats.uploadPeakNode = updateTopMetric(stats.uploadPeakNode, node, node.net_out || 0)
     stats.downloadPeakNode = updateTopMetric(stats.downloadPeakNode, node, node.net_in || 0)
-    stats.connectionPeakNode = updateTopMetric(stats.connectionPeakNode, node, getConnectionCount(node))
+    stats.connectionPeakNode = updateTopMetric(stats.connectionPeakNode, node, (appStore.showTcpConnections ? node.connections || 0 : 0) + (appStore.showUdpConnections ? node.connections_udp || 0 : 0))
     const hasGpu = Boolean(node.gpu_name?.trim()) || (node.gpu || 0) > 0
     if (hasGpu) {
       stats.totalGpu += node.gpu || 0
@@ -425,7 +424,7 @@ const connectionPeakTooltip = computed(() => {
   const metric = connectionPeakNode.value
   if (!metric)
     return '暂无数据'
-  return `${metric.node.name}\nTCP ${formatCount(metric.node.connections || 0)}\nUDP ${formatCount(metric.node.connections_udp || 0)}`
+  return [metric.node.name, appStore.showTcpConnections ? `TCP ${formatCount(metric.node.connections || 0)}` : '', appStore.showUdpConnections ? `UDP ${formatCount(metric.node.connections_udp || 0)}` : ''].filter(Boolean).join('\n')
 })
 const monthlyCostCard = computed(() => formatCostCard(monthlyCostCNY.value))
 const yearlyCostCard = computed(() => formatCostCard(yearlyCostCNY.value))
@@ -543,8 +542,8 @@ function getCardDefinition(key: GeneralCardKey): GeneralMetricCard {
         key: 'connections',
         label: '连接数',
         icon: 'tabler:plug-connected',
-        value: formatCount(totalConnectionsTcp.value + totalConnectionsUdp.value),
-        tooltip: `TCP ${formatCount(totalConnectionsTcp.value)}\nUDP ${formatCount(totalConnectionsUdp.value)}`,
+        value: formatCount((appStore.showTcpConnections ? totalConnectionsTcp.value : 0) + (appStore.showUdpConnections ? totalConnectionsUdp.value : 0)),
+        tooltip: [appStore.showTcpConnections ? `TCP ${formatCount(totalConnectionsTcp.value)}` : '', appStore.showUdpConnections ? `UDP ${formatCount(totalConnectionsUdp.value)}` : ''].filter(Boolean).join('\n'),
       }
     case 'cpuCores':
       return {
@@ -705,7 +704,7 @@ function getCardDefinition(key: GeneralCardKey): GeneralMetricCard {
   }
 }
 
-const visibleCards = computed(() => appStore.generalCardOrder.map(getCardDefinition))
+const visibleCards = computed(() => appStore.generalCardOrder.filter(key => appStore.connectionCountsVisible || !['connections', 'connectionPeakNode'].includes(key)).map(getCardDefinition))
 const showEarth = computed(() => !appStore.hideEarth)
 const isTiledEarth = computed(() => showEarth.value && appStore.earthRenderer === 'tiled')
 const shouldRenderHeader = computed(() => showEarth.value || visibleCards.value.length > 0)

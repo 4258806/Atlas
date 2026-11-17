@@ -1,0 +1,74 @@
+{
+  "version": "0.0.2",
+  "source_commit": "597df8cb27be935a838dd134c1b36725df7f2ff9",
+  "status": "passed",
+  "productionTouched": false,
+  "releasePublished": false,
+  "local": {
+    "lint": "passed",
+    "typeCheck": "passed",
+    "relatedUnits": 204,
+    "displayBrowserCases": 10,
+    "financeBrowserCases": 12,
+    "releaseScopeNegativeCases": 7
+  },
+  "ci": {
+    "unitCases": 426,
+    "browserCases": 237,
+    "requiredChecks": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-11-17T12:31:53Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/MagnetOscar/Atlas/actions/runs/44083836835/job/134040965731",
+        "name": "lint-and-build",
+        "startedAt": "2026-11-17T12:30:53Z",
+        "status": "COMPLETED",
+        "workflowName": "Code Quality"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-11-17T12:38:48Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/MagnetOscar/Atlas/actions/runs/44083836940/job/134040966551",
+        "name": "screenshots",
+        "startedAt": "2026-11-17T12:30:53Z",
+        "status": "COMPLETED",
+        "workflowName": "Visual Regression"
+      }
+    ]
+  },
+  "nativeEvidence": "docs/verification/native-0.0.2.json",
+  "previews": {
+    "synthetic": true,
+    "images": [
+      {
+        "path": "docs/previews/0.0.2/desktop-lines.png",
+        "sha256": "b079bee566953fe83b8d52d964cf2cfcded98276505fa43288754b01c00397d6"
+      },
+      {
+        "path": "docs/previews/0.0.2/finance-dialog.png",
+        "sha256": "adb67871f698d34a83c834f8167c9ef553ba1f02837d6d98abccbbfbda1df93b"
+      },
+      {
+        "path": "docs/previews/0.0.2/mobile-lines.png",
+        "sha256": "a9930d30e5527ca905cdf884ca3a05dd1d33934aa08f3737c74bb1b6957f89a5"
+      },
+      {
+        "path": "docs/previews/0.0.2/mobile-order.png",
+        "sha256": "4e412a647bbb6d709262994c73752e792097d937562a7715dca320478c01f71d"
+      }
+    ]
+  },
+  "package": {
+    "mode": "production",
+    "dirty": false,
+    "file": "komari-theme-Atlas-build-597df8c.zip",
+    "sha256": "a4c882d3b60ef327d85aee04c773f9ab9e03262acc3fb8b4e225f400cdfa62f0"
+  },
+  "limitations": [
+    "Preview data is synthetic, not production traffic/billing.",
+    "No return-route collector changes or production deployment.",
+    "Prepared candidate is not a published GitHub Release."
+  ]
+}

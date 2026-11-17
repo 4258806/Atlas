@@ -4,6 +4,8 @@ This guide applies to [src/](./). For full project context, read [../AIAGENTREAD
 
 ## Source-tree rule of thumb
 
+- Latest 0.0.2 authorization permits only finance-dialog PR #10, saved carrier ordering, blocks/line selection and TCP/UDP count visibility, with desktop/mobile previews. This supersedes the earlier suspension for steps 4–5 only. Reuse native settings, existing data sources/positions; do not change map/globe, collection, reset or FX semantics.
+
 - Later Atlas naming authorization permits the exact theme text, footer project link, document title, metadata and source-symbol renames. Public layout/style/renderers stay fixed. The current short is Atlas. Enhanced appears only as the old configuration migration source. Preserve existing Atlas settings, the old configuration, optional companion protocol IDs and original copyright/source notices.
 - Preserve the fork-time UI/layout/styles/defaults and globe/map from fixed baseline `0332d5f7c73f7994ba21c01e4b739d04835120b1`. No additional frontend controls or presentation changes. Existing data slots may receive corrected business values. Future three-network display needs explicit discussion and must reuse the original UI form. This user constraint overrides inherited UI development guidance below; see `../docs/ui-preservation.md`.
 - Client services and calculations are not a backend implementation. Do not claim backend-only work when editing client runtime code.

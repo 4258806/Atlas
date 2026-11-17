@@ -10,6 +10,20 @@ spec.loader.exec_module(gate)
 
 
 class ScopeTests(unittest.TestCase):
+    def test_display_scope_does_not_authorize_return_routes_or_maps(self):
+        gate.validate_display_paths(["src/components/CarrierOrderEditor.vue", "src/utils/displayPreferences.ts", "src/components/FinanceDetailsDialog.vue"])
+        for path in ["src/components/NodeEarthTiledMap.vue", "src/utils/returnRoutes.ts", "src/styles/main.css", "public/images/logo.svg"]:
+            with self.subTest(path=path), self.assertRaises(ValueError):
+                gate.validate_display_paths([path])
+
+    def test_display_manifest_preserves_all_existing_fields(self):
+        before = {"version": "0.0.1", "configuration": {"data": [{"key": "original", "default": 42}]}}
+        after = {"version": "0.0.2", "configuration": {"data": before["configuration"]["data"] + [{"key": k, "default": v} for k, v in gate.DISPLAY_DEFAULTS.items()]}}
+        gate.validate_display_manifest(before, after)
+        after["configuration"]["data"][0] = {"key": "original", "default": 99}
+        with self.assertRaises(ValueError):
+            gate.validate_display_manifest(before, after)
+
     def test_engineering_reset_and_finance_are_in_scope(self):
         gate.validate_scope_paths(["src/utils/financeHelper.ts", "src/utils/resetSchedule.ts", "src/AGENTS.md", "scripts/verify-theme.py", "docs/finance.md"])
 

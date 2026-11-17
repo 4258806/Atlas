@@ -1,5 +1,9 @@
 # Fork UI preservation
 
+## Latest narrow 0.0.2 exceptions (2026-11-17)
+
+The user explicitly requests PR #10 finance-dialog fixes, saved drag carrier ordering, block/line history choice and TCP/UDP count visibility, followed by previews and release preparation. Those surfaces alone may change. Defaults and all unrelated public layouts, map/globe, sampling/targets, reset schedules and currency calculations remain protected. The separate `tests/fixtures/display-ui-0.0.2.json` pins the exact accepted display changes while retaining the original baseline contract. The three new display components use existing data and native global settings; these are theme features, not new backend collectors. Earlier suspension statements below are historical for the 0.0.1 release.
+
 The user's 2026-11-17 correction and subsequent explicit 0.0.1 release scope take precedence over earlier plans.
 
 Later on 2026-11-17 the user explicitly authorized Atlas naming throughout the project and visible theme pages. Only exact product text, document-title branding, manifest name/short/author/description/project URL, footer project URL and corresponding source-symbol renames are exceptions to the original-name reference. The current identity is Atlas, with authenticated conditional migration from old Enhanced settings. The existing footer elements/classes and every layout/style/globe/map/default remain protected; original license/copyright/source notices and optional companion protocol IDs remain unchanged. No screenshot thresholds or reference images are changed for this rename.

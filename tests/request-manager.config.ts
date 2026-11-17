@@ -3,6 +3,7 @@ import { defineConfig } from '@playwright/test'
 export default defineConfig({
   testDir: './unit',
   testMatch: [
+    'display-preferences.spec.ts',
     'request-manager.spec.ts',
     'ping-cancellation.spec.ts',
     'history-range-fallback.spec.ts',

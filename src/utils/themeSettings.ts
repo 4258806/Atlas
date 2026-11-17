@@ -1,3 +1,4 @@
+import { validCarrierOrder } from '@/utils/displayPreferences'
 import manifest from '../../komari-theme.json' with { type: 'json' }
 
 export const ATLAS_SETTINGS_GROUPS = [
@@ -26,6 +27,8 @@ export function settingText(value: string | Record<string, string> | undefined):
 }
 export function validateThemePatch(patch: Record<string, unknown>): void {
   for (const [key, value] of Object.entries(patch)) {
+    if (key === 'carrierOrder' && !validCarrierOrder(value))
+      throw new Error('三网顺序必须包含三家运营商且不重复；未写入')
     const field = THEME_FIELDS.find(f => f.key === key)
     if (!field || key === 'trafficCycleConfig')
       throw new Error('不支持的设置字段；未写入')

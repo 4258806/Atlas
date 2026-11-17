@@ -1,0 +1,18 @@
+{
+  "authorization": "User 2026-11-17: PR 10 plus steps 4 and 5 only; preserve all other baseline UI.",
+  "components": {
+    "src/components/CarrierOrderEditor.vue": "3295154e9bf340727be034b210060a9919652837661beba0c59eed24c57a73c8",
+    "src/components/LoadChart.vue": "18cda48e578474367992bc3900a1cd837569676aacf350196f590eed0262f40f",
+    "src/components/NodeCard.vue": "36ca104460bfb193e162049912c874890673bc5aea76addda60adf37c589c99c",
+    "src/components/NodeGeneralCards.vue": "e9176a2e5ce123658b564db8846fb5fb1ee25a92ef2e533243e391127aeb711e",
+    "src/components/NodePingListCell.vue": "e3301afd171cd49131523be61d86e1d94093aa376fb60652ef6cbe52977da814",
+    "src/components/PingHistoryLine.vue": "5c6ded87b3d5bb5fea7ec202eb2be21aa8bca29bde984dbd38bc70c10895c20d",
+    "src/components/ThemeSettingsPanel.vue": "d1e78d80d5726ccee14347a915e6b782ff71497b6a19c151c708a87862c2cd4e",
+    "src/views/InstanceDetail.vue": "b959a95bbc8ad9f0f14bf6456d90f102fef5400308e275b1687d5d7d5fef7352"
+  },
+  "protectedFiles": {
+    "komari-theme.json": "f65ca98e924f585afa857b3767c02cc1ed37556cd75a610684e9daf1cb999dd2",
+    "src/stores/app.ts": "934f02dd5df4031c41e7aaea271337d48dd79b9ca2092795145f2448aacd1816"
+  },
+  "headerLayout": "7d7d2d1cafbe568e6e29b60eb1b436c05cd464da71aa14268a999f4bcdd2146d"
+}

@@ -7,6 +7,7 @@ import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
 import { getAuthSession, requirePermission, setAuthSessionFromLogin, verifyLogin } from '@/services/auth.service'
 
+import { carrierOrder as normalizeCarrierOrder } from '@/utils/displayPreferences'
 import { parseReturnRouteConfig } from '@/utils/returnRoutes'
 import { parseTrafficCycleConfig } from '@/utils/trafficCycle'
 import { parseTransitCarrierPingRules } from '@/utils/transitCarrierPing'
@@ -923,6 +924,11 @@ const useAppStore = defineStore('app', () => {
   const returnRouteAutoEnabled = computed(() => readBooleanSetting(themeSettings.value, 'returnRouteAutoEnabled', false))
   const returnRouteCompanionEnabled = computed(() => readBooleanSetting(themeSettings.value, 'returnRouteCompanionEnabled', false))
   const returnRouteTtlHours = computed(() => readNumberSetting(themeSettings.value, 'returnRouteTtlHours', 24, 1, 168))
+  const carrierOrder = computed(() => normalizeCarrierOrder(themeSettings.value.carrierOrder))
+  const pingDisplayStyle = computed(() => themeSettings.value.pingDisplayStyle === '波浪线' ? 'line' : 'blocks')
+  const showTcpConnections = computed(() => readBooleanSetting(themeSettings.value, 'showTcpConnections', true))
+  const showUdpConnections = computed(() => readBooleanSetting(themeSettings.value, 'showUdpConnections', true))
+  const connectionCountsVisible = computed(() => showTcpConnections.value || showUdpConnections.value)
   const transitCarrierPingEnabled = computed(() => readBooleanSetting(themeSettings.value, 'transitCarrierPingEnabled', false))
   const transitCarrierPingRules = computed(() => parseTransitCarrierPingRules(themeSettings.value.transitCarrierPingRules))
   const visitorAuditSupported = computed(() => typeof publicSettings.value?.visitor_audit_enabled === 'boolean')
@@ -1352,6 +1358,11 @@ const useAppStore = defineStore('app', () => {
     colorVisionFriendly,
     visitorAuditSupported,
     visitorAuditEnabled,
+    carrierOrder,
+    pingDisplayStyle,
+    showTcpConnections,
+    showUdpConnections,
+    connectionCountsVisible,
     transitCarrierPingEnabled,
     transitCarrierPingRules,
     homeQuickControlsEnabled,
