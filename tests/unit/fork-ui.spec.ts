@@ -10,6 +10,7 @@ const contract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/fork-ui-c
   components: Record<string, string>
   protectedFiles: Record<string, string>
   headerLayout: string
+  financeDialogPresentation: string
 }
 
 test('fork UI contract is bound to the immutable original source', () => {
@@ -22,7 +23,10 @@ test('fork UI contract is bound to the immutable original source', () => {
 for (const [path, expected] of Object.entries(contract.components)) {
   test(`inherited element layout, visual attributes and styles: ${path}`, () => {
     const currentPath = BRAND_RENAMES[path as keyof typeof BRAND_RENAMES] ?? path
-    expect(presentation(readFileSync(resolve(root, currentPath), 'utf8'))).toBe(expected)
+    // The 2026-11-17 request permits only the finance dialog's closed border
+    // and compact layout. All other inherited presentation remains pinned.
+    const accepted = path === 'src/components/FinanceDetailsDialog.vue' ? contract.financeDialogPresentation : expected
+    expect(presentation(readFileSync(resolve(root, currentPath), 'utf8'))).toBe(accepted)
   })
 }
 

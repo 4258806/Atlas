@@ -389,5 +389,6 @@
     "tests/visual/snapshots/chromium/home-light-desktop.png": "7199017f5612414cbc6528fc2d7eafa71bfce1b1702324ad8da6599547f6620b",
     "tests/visual/snapshots/chromium/home-tiled-desktop.png": "9284b3654fe0bd56efb32464be4492d506bd688cae952a0252804c831aec2948"
   },
-  "headerLayout": "df28cf5d1cd792fdf44dd9cccbfb088b7db9d11af1011f191a46917d34d71475"
+  "headerLayout": "df28cf5d1cd792fdf44dd9cccbfb088b7db9d11af1011f191a46917d34d71475",
+  "financeDialogPresentation": "65c04974900a89de8a728f9892cbbaac0fb5a9474db1af09847b84e7532365bf"
 }

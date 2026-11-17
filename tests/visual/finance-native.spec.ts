@@ -3,6 +3,52 @@ import { expect, test } from '@playwright/test'
 import { installKomariFixture } from './fixtures/komari'
 
 for (const width of [390, 1440]) {
+  for (const colorScheme of ['light', 'dark'] as const) {
+    test(`finance dialog has a closed summary and compact toolbar at ${width}px ${colorScheme}`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1000 })
+      await page.emulateMedia({ colorScheme })
+      await installKomariFixture(page, { themeShort: 'Atlas', loggedIn: true, dark: colorScheme === 'dark', hideEarth: true, generalCardKeys: ['remainingValue', 'monthlyCost'] })
+      await page.goto('/')
+      await page.getByRole('button', { name: '查看剩余价值明细', exact: true }).click()
+      const dialog = page.getByRole('dialog', { name: '价值与费用明细' })
+      await expect(dialog.locator('svg[data-finance-tab-icon]')).toHaveCount(3)
+      for (const tab of await dialog.getByRole('tab').all()) {
+        const button = (await tab.boundingBox())!
+        const icon = (await tab.locator('svg').boundingBox())!
+        const label = (await tab.locator('span').boundingBox())!
+        expect(Math.abs((icon.y + icon.height / 2) - (button.y + button.height / 2))).toBeLessThan(1)
+        expect(Math.abs((label.y + label.height / 2) - (button.y + button.height / 2))).toBeLessThan(1)
+        expect(Math.abs((icon.x + label.x + label.width) / 2 - (button.x + button.width / 2))).toBeLessThan(1)
+      }
+      const summary = dialog.locator('[data-finance-summary]')
+      expect(await summary.evaluate((el) => {
+        const style = getComputedStyle(el)
+        return [style.borderTopWidth, style.borderRightWidth, style.borderBottomWidth, style.borderLeftWidth].every(value => Number.parseFloat(value) > 0) && Number.parseFloat(style.borderTopLeftRadius) > 0
+      })).toBe(true)
+      const toolbar = await dialog.locator('[data-finance-toolbar]').boundingBox()
+      const panel = await dialog.getByRole('tabpanel').boundingBox()
+      expect(toolbar).not.toBeNull()
+      expect(panel).not.toBeNull()
+      expect(panel!.y).toBeGreaterThanOrEqual(toolbar!.y + toolbar!.height)
+      expect(panel!.y - toolbar!.y - toolbar!.height).toBeLessThan(32)
+      expect(Math.abs(panel!.x - toolbar!.x)).toBeLessThan(2)
+      expect(Math.abs(panel!.width - toolbar!.width)).toBeLessThan(2)
+      const tabs = await dialog.getByRole('tablist').boundingBox()
+      const filter = await dialog.getByRole('checkbox', { name: '排除免费节点' }).locator('..').boundingBox()
+      expect(tabs).not.toBeNull()
+      expect(filter).not.toBeNull()
+      expect(filter!.x >= tabs!.x + tabs!.width || filter!.y >= tabs!.y + tabs!.height).toBe(true)
+      expect(await dialog.evaluate(el => el.scrollWidth <= el.clientWidth + 1)).toBe(true)
+      await page.screenshot({ path: `test-results/finance-dialog-${width}-${colorScheme}.png` })
+      await dialog.getByRole('tab', { name: '按量估算', exact: true }).click()
+      await expect(dialog.getByRole('combobox', { name: '估算节点', exact: true })).toBeVisible()
+      await dialog.getByRole('tab', { name: '汇率设置', exact: true }).click()
+      await expect(dialog.getByRole('button', { name: '恢复今日汇率', exact: true })).toBeVisible()
+    })
+  }
+}
+
+for (const width of [390, 1440]) {
   test(`fork tiled header keeps its original grid without extra UI at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 1000 })
     await installKomariFixture(page, { earthRenderer: 'tiled' })

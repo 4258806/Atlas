@@ -13,6 +13,7 @@ import { AppDialog } from '@/components/ui/app-dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { FINANCE_TAB_ICONS } from '@/constants/financeIcons'
 import * as financeHelper from '@/utils/financeHelper'
 import { formatPriceWithCycle, getDaysUntilExpired, getExpireStatus, isFreeNode, isFreePrice } from '@/utils/tagHelper'
 
@@ -224,7 +225,7 @@ function formatTraffic(tib: number): string {
     @update:open="emit('update:open', $event)"
   >
     <div class="space-y-4">
-      <div class="grid grid-cols-3 divide-x divide-border/60 border-y border-border/60 py-3 text-center">
+      <div data-finance-summary class="grid grid-cols-3 divide-x divide-border/60 overflow-hidden rounded-xl border border-border/60 bg-muted/15 py-3 text-center">
         <div class="min-w-0 px-2">
           <div class="text-xs text-muted-foreground">
             剩余价值
@@ -251,17 +252,17 @@ function formatTraffic(tib: number): string {
         </div>
       </div>
 
-      <Tabs v-model="activeTab" class="gap-4">
-        <div class="flex flex-wrap items-center gap-2">
-          <TabsList class="h-9 min-w-0 flex-1 sm:flex-none">
-            <TabsTrigger value="fixed">
-              <Icon icon="tabler:calendar-dollar" />固定账单
+      <Tabs v-model="activeTab" class="min-w-0 flex-col gap-3">
+        <div data-finance-toolbar class="flex flex-wrap items-center justify-between gap-2">
+          <TabsList class="grid h-9 w-full min-w-0 shrink-0 grid-cols-3 items-stretch sm:w-auto">
+            <TabsTrigger value="fixed" class="h-full gap-1.5 text-xs">
+              <Icon :icon="FINANCE_TAB_ICONS.fixed" data-finance-tab-icon width="14" height="14" aria-hidden="true" /><span>固定账单</span>
             </TabsTrigger>
-            <TabsTrigger value="metered">
-              <Icon icon="tabler:calculator" />按量估算
+            <TabsTrigger value="metered" class="h-full gap-1.5 text-xs">
+              <Icon :icon="FINANCE_TAB_ICONS.metered" data-finance-tab-icon width="14" height="14" aria-hidden="true" /><span>按量估算</span>
             </TabsTrigger>
-            <TabsTrigger value="rates">
-              <Icon icon="tabler:currency-yuan" />汇率设置
+            <TabsTrigger value="rates" class="h-full gap-1.5 text-xs">
+              <Icon :icon="FINANCE_TAB_ICONS.rates" data-finance-tab-icon width="14" height="14" aria-hidden="true" /><span>汇率设置</span>
             </TabsTrigger>
           </TabsList>
           <label class="ml-auto flex items-center gap-2 text-xs text-muted-foreground">
