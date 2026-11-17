@@ -9,7 +9,7 @@ from .safety import UUID, Refused, origin, private_bytes
 
 ROOT = '/api/enhanced-route-probe/v1'
 SHORT = 'enhanced-route-probe'
-THEME = 'Enhanced'
+THEME = 'Atlas'
 
 class NoRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
@@ -84,7 +84,7 @@ class API:
         if not isinstance(upload_id, str) or not UUID.fullmatch(upload_id) or not isinstance(size, int) or not 1 <= size <= 8388608:
             raise Refused('invalid-upload-session')
         for index, offset in enumerate(range(0, len(content), size)):
-            boundary = 'Enhanced' + secrets.token_hex(16)
+            boundary = 'Atlas' + secrets.token_hex(16)
             fields = b''
             for key, value in [('upload_id', upload_id), ('chunk_index', str(index))]:
                 fields += f'--{boundary}\r\nContent-Disposition: form-data; name="{key}"\r\n\r\n{value}\r\n'.encode()

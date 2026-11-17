@@ -16,6 +16,8 @@ BRANDING_RUNTIME = {
     "src/components/TrafficCycleRow.vue", "src/composables/useNodeLoadStats.ts",
     "src/services/themeSettings.service.ts", "src/utils/api.ts",
     "src/utils/returnRouteClassification.ts", "src/utils/themeSettings.ts",
+    "src/utils/atlasIdentity.ts", "src/services/atlasIdentity.service.ts",
+    "src/utils/init.ts", "src/utils/rpc.ts",
 }
 FIRST_THREE_RUNTIME = {
     "src/components/FinanceDetailsDialog.vue", "src/components/NodeGeneralCards.vue",
@@ -46,7 +48,7 @@ def validate_manifest(before, after, branding=False):
     before, after = dict(before), dict(after)
     if branding:
         expected = {
-            "name": "Atlas", "author": "MagnetOscar",
+            "name": "Atlas", "short": "Atlas", "author": "MagnetOscar",
             "url": "https://github.com/MagnetOscar/Atlas",
             "description": "Atlas — Komari theme with independent reset schedules and native-currency node billing",
         }
@@ -73,7 +75,7 @@ def audit_scope(source):
         unexpected = [path for path in changes if path.startswith("src/") and not path.endswith(".md") and path not in BRANDING_RUNTIME]
         if unexpected:
             raise ValueError(f"Non-branding runtime changes after 0.0.1: {unexpected}")
-        allowed_public = {"public/admin-app/index.html", "public/admin-app/enhanced-settings-bridge.js"}
+        allowed_public = {"public/admin-app/index.html", "public/admin-app/enhanced-settings-bridge.js", "public/admin-app/atlas-settings-bridge.js"}
         if any(path.startswith("public/") and path not in allowed_public for path in changes):
             raise ValueError("Branding cannot change public assets or renderers")
     if manifest.get("version") != "0.0.1":

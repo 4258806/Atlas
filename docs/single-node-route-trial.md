@@ -127,7 +127,7 @@ python3 "$NEW_CODE_PREFIX/enhanced_route_helper.py" \
 
 ## 8. 实测验收记录（仅管理员）
 
-在 Enhanced 管理后台查看各运营商各协议，私有留档而不发到公开页面/聊天：
+在 Atlas 管理后台查看各运营商各协议，私有留档而不发到公开页面/聊天：
 
 - 精确 UUID、同源组件完整版本、城市/固定 target、`family:4`、协议、方向 `node-to-cn`。
 - 本次真实 UTC `collectedAt`、整体 `source:helper`（不是 fixture）、原生 job/租约提交状态；使用真实操作前后时间界定，不能复用示例时间。

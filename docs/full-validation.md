@@ -1,4 +1,4 @@
-# Enhanced Full v1.2.0 · 验证范围与复现
+# Atlas Full v1.2.0 · 验证范围与复现
 
 > **历史与当前候选分开**：本页下方保留已发布 v1.2.0 的真实验收记录，不将旧测试数量冒充 v1.2.1 结果。v1.2.1 最新完整验收在 `test-results/v121/release-final/`；早期预检在 `release-preflight/`，TcpQuality 专项在 `tcpquality/`。当前源码未提交，dirty 验收包不是正式 Release；提交获准后仍须 clean-source 重建和原有正式发行校验。本轮不会改旧 v1.2.0 Tag/Release。v1.2.1 的生产自动探测闭环与可靠商业线路分类仍未验收，不列为本版已支持功能；历史六条 CDN 实测和隔离回放不能代替它。
 

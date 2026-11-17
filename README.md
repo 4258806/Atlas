@@ -2,6 +2,8 @@
 
 Atlas 是面向 Komari 的监控主题，由 MagnetOscar 基于 [Glassmorphism Enhanced v1.2.1](https://github.com/casiuna/Glassmorphism-Enhanced) 维护。保留原有毛玻璃布局、地图及地球；来源、原作者及第三方许可证见 [FORK.md](FORK.md)、[LICENSE](LICENSE) 和 [THIRD_PARTY.md](THIRD_PARTY.md)。
 
+![Atlas 预览（合成演示数据）](docs/preview.png)
+
 ## 0.0.1
 
 - 工程流程：受保护 PR、质量与浏览器检查、原生安装 ZIP、源码及 SHA256 记录。
@@ -14,7 +16,7 @@ Atlas 是面向 Komari 的监控主题，由 MagnetOscar 基于 [Glassmorphism E
 
 从 [Atlas Releases](https://github.com/MagnetOscar/Atlas/releases) 下载 `komari-theme-Atlas-build-<sha>.zip`，核对同版 SHA256，在 Komari 后台主题管理上传并启用。不要使用 Source code ZIP。实际验证目标为官方 Komari Server 1.6.1。
 
-上传前保留现有主题 ZIP、主题配置及数据备份。为兼容已安装版本，内部主题配置标识 `short: Enhanced` 保留；它不是显示名称。此前设置、节点独立重置时间和币种选择应继续保留。现有 Plugin/Helper 的接口标识也不改名、不自动安装或启用。
+上传前保留现有主题 ZIP、主题配置及数据备份。新主题标识为 `short: Atlas`。首次启用后保持管理员登录；Atlas 通过官方受管理员保护的数据库接口，将旧 Enhanced 配置复制到尚未配置的 Atlas 身份。已有 Atlas 设置不会被覆盖，旧 Enhanced 配置也不删除。迁移核对包含节点独立重置时间、币种设置和未知配置字段。现有 Plugin/Helper 的接口标识也不改名、不自动安装或启用。
 
 Atlas 首版仍为 **0.0.1**；`atlas-v0.0.1` 绑定品牌统一后的准确源码。先前 `personal-v0.0.1` 和其 ZIP 保留为改名前的历史记录，不覆盖已发布的文件。
 

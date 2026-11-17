@@ -11,8 +11,8 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[2]
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(ROOT / 'distribution'))
-from enhanced_full.api import API
-from enhanced_full.safety import Refused, save_private
+from atlas_full.api import API
+from atlas_full.safety import Refused, save_private
 
 class TransportTests(unittest.TestCase):
     def setUp(self):

@@ -18,7 +18,7 @@ from pathlib import Path
 sys.dont_write_bytecode = True
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'distribution'))
-from enhanced_full.bundle import Bundle, digest, helper_members, native_zip
+from atlas_full.bundle import Bundle, digest, helper_members, native_zip
 
 
 RELEASE_CHANNEL = 'stable'
@@ -81,13 +81,13 @@ def main():
         if kind != 'helper':
             modules[kind]['short'] = info['short']
     expected_theme = json.loads((ROOT / 'komari-theme.json').read_text())['version']
-    if expected_theme != THEME_VERSION or modules['theme']['version'] != THEME_VERSION or modules['theme']['short'] != 'Enhanced':
+    if expected_theme != THEME_VERSION or modules['theme']['version'] != THEME_VERSION or modules['theme']['short'] != 'Atlas':
         raise SystemExit('native stable theme package is stale or has the wrong identity')
 
     installer_files = [
-        'manage.py', 'enhanced_full/__init__.py', 'enhanced_full/api.py',
-        'enhanced_full/bundle.py', 'enhanced_full/cli.py', 'enhanced_full/deploy.py',
-        'enhanced_full/node.py', 'enhanced_full/safety.py',
+        'manage.py', 'atlas_full/__init__.py', 'atlas_full/api.py',
+        'atlas_full/bundle.py', 'atlas_full/cli.py', 'atlas_full/deploy.py',
+        'atlas_full/node.py', 'atlas_full/safety.py',
     ]
     for name in installer_files:
         path = ROOT / 'distribution' / name

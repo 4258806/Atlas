@@ -16,10 +16,11 @@ export function protectedContent(path, value) {
     const manifest = JSON.parse(value.toString('utf8'))
     delete manifest.version // Independent release metadata, not a UI default.
     // Exact user-authorized brand metadata only; configuration/defaults remain protected.
-    if (manifest.name === 'Atlas' && manifest.author === 'MagnetOscar'
+    if (manifest.name === 'Atlas' && manifest.short === 'Atlas' && manifest.author === 'MagnetOscar'
       && manifest.url === 'https://github.com/MagnetOscar/Atlas'
       && manifest.description === 'Atlas — Komari theme with independent reset schedules and native-currency node billing') {
       manifest.name = 'Glassmorphism Enhanced'
+      manifest.short = 'Enhanced'
       manifest.author = 'casiuna'
       manifest.url = 'https://github.com/casiuna/Glassmorphism-Enhanced'
       manifest.description = 'Glassmorphism Enhanced with three-network latency/loss panels and automatic globe arcs'

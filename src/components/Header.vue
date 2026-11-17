@@ -22,7 +22,7 @@ const settingsQuery = settingsParams?.get('atlas_settings') ?? settingsParams?.g
 const initialManagementGroup: SettingsGroup = settingsQuery && ['home', 'nodes', 'routes', 'appearance', 'advanced'].includes(settingsQuery) ? settingsQuery as SettingsGroup : 'routes'
 let settingsQueryHandled = false
 watch([() => appStore.privateFeaturesAllowed, () => appStore.publicSettings?.theme], ([allowed, theme]) => {
-  if (allowed && theme === 'Enhanced' && settingsQuery && !settingsQueryHandled) {
+  if (allowed && theme === 'Atlas' && settingsQuery && !settingsQueryHandled) {
     settingsQueryHandled = true
     void appStore.requireLoginPermission('advancedTools', { force: true }).then((granted) => {
       managementOpen.value = granted
@@ -55,7 +55,7 @@ const actionButtons = computed(() => {
 
   const buttons: Array<{ title: string, icon: string, action: string, pressed?: boolean }> = []
 
-  if (appStore.privateFeaturesAllowed && appStore.publicSettings?.theme === 'Enhanced') {
+  if (appStore.privateFeaturesAllowed && appStore.publicSettings?.theme === 'Atlas') {
     buttons.push({ title: 'Atlas 管理', icon: 'tabler:package', action: 'atlasManagement', pressed: managementOpen.value })
   }
 

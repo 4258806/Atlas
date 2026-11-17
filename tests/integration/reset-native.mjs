@@ -126,15 +126,6 @@ async function main() {
     const c = clients[2].uuid
     const legacy = { version: 1, timeZone: 'Asia/Shanghai', nodes: { [a]: { resetDay: 8, timeZone: 'UTC' }, [b]: { resetDay: 5 } } }
     const settings = { hideEarth: true, hideGeneralCard: true, visitorInfoEnabled: false, disablePageAnimation: true, rpcTransportMode: 'http', unknownFuture: { keep: true }, trafficCycleConfig: JSON.stringify(legacy) }
-    await check('install exact baseline, upgrade candidate and preserve settings', async () => {
-      await upload(baseline)
-      await rpc('admin:editSettings', { theme: 'Enhanced' })
-      await api('/api/admin/theme/settings?theme=Enhanced', settings)
-      await upload(candidate)
-      const after = (await rpc('public:getPublicSettings')).theme_settings
-      assert.equal(after.trafficCycleConfig, settings.trafficCycleConfig)
-      assert.deepEqual(after.unknownFuture, settings.unknownFuture)
-    })
     browser = await chromium.launch({ headless: true })
     const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } })
     const [cookieName, cookieValue] = cookie.split('=')
@@ -152,6 +143,21 @@ async function main() {
     })
     report.rateNetworkDiagnostics = rateFailures
     page.on('pageerror', error => errors.push(error.message))
+    await check('install exact baseline, upgrade candidate and preserve settings', async () => {
+      await upload(baseline)
+      await rpc('admin:editSettings', { theme: 'Enhanced' })
+      await api('/api/admin/theme/settings?theme=Enhanced', settings)
+      await upload(candidate)
+      await rpc('admin:editSettings', { theme: 'Atlas' })
+      await page.goto(origin)
+      await expect.poll(async () => (await rpc('public:getPublicSettings')).theme_settings.trafficCycleConfig).toBe(settings.trafficCycleConfig)
+      const after = (await rpc('public:getPublicSettings')).theme_settings
+      assert.deepEqual(after.unknownFuture, settings.unknownFuture)
+      const oldConfig = await rpc('admin:dbQuery', { sql: 'SELECT data FROM theme_configurations WHERE short = ?', args: ['Enhanced'], limit: 1 })
+      assert.deepEqual(JSON.parse(oldConfig.rows[0][0]), settings)
+      const themes = await api('/api/admin/theme/list')
+      assert.equal(themes.find(theme => theme.short === 'Atlas').name, 'Atlas')
+    })
     const open = async () => {
       await page.goto(origin)
       await expect(page.locator('footer').getByRole('link', { name: 'Atlas', exact: true })).toHaveAttribute('href', 'https://github.com/MagnetOscar/Atlas')
@@ -164,7 +170,7 @@ async function main() {
         const before = (await rpc('public:getPublicSettings')).theme_settings
         const saved = { resetDay: 7, timeZone: width === 1440 ? 'Asia/Shanghai' : 'America/Los_Angeles', hour: 23, minute: 10, futureScheduleField: 'keep' }
         const configured = { version: 2, nodes: { [a]: saved, [b]: { resetDay: 5, timeZone: 'Asia/Shanghai', hour: 0, minute: 0 } } }
-        await api('/api/admin/theme/settings?theme=Enhanced', { ...before, trafficCycleConfig: JSON.stringify(configured) })
+        await api('/api/admin/theme/settings?theme=Atlas', { ...before, trafficCycleConfig: JSON.stringify(configured) })
         await page.setViewportSize({ width, height: 1000 })
         await open()
         const row = page.locator(`[data-traffic-cycle-node="${a}"]`)
@@ -224,16 +230,21 @@ async function main() {
       const verify = JSON.parse(execFileSync(python, [join(root, 'tests/integration/seed-reset-history.py'), join(state, 'data/metrics.db'), join(state, 'fixture-plan.json'), '--verify'], { encoding: 'utf8' }))
       assert.equal(verify.sha256, seeded.sha256)
     })
-    await check('rollback restores baseline ZIP plus exact v1 settings and re-upgrade retains configuration', async () => {
+    await check('rollback restores baseline plus exact legacy settings; re-upgrade never overwrites saved Atlas configuration', async () => {
+      const savedAtlas = (await rpc('public:getPublicSettings')).theme_settings
       await upload(baseline)
+      await rpc('admin:editSettings', { theme: 'Enhanced' })
       await api('/api/admin/theme/settings?theme=Enhanced', settings)
       assert.equal((await rpc('public:getPublicSettings')).theme_settings.trafficCycleConfig, settings.trafficCycleConfig)
       await upload(candidate)
-      assert.equal((await rpc('public:getPublicSettings')).theme_settings.trafficCycleConfig, settings.trafficCycleConfig)
+      await rpc('admin:editSettings', { theme: 'Atlas' })
       await page.setViewportSize({ width: 1440, height: 1000 })
       await open()
+      assert.deepEqual((await rpc('public:getPublicSettings')).theme_settings, savedAtlas)
+      const retainedLegacy = await rpc('admin:dbQuery', { sql: 'SELECT data FROM theme_configurations WHERE short = ?', args: ['Enhanced'], limit: 1 })
+      assert.deepEqual(JSON.parse(retainedLegacy.rows[0][0]), settings)
       await expect(page.locator(`[data-traffic-cycle-node="${a}"] select`)).toHaveValue('8')
-      await expect(page.locator(`[data-traffic-cycle-node="${a}"] input[type="time"]`)).toHaveValue('00:00')
+      await expect(page.locator(`[data-traffic-cycle-node="${a}"] input[type="time"]`)).toHaveValue('21:45')
       assert.deepEqual(errors, [])
     })
     if (finance) {
@@ -243,7 +254,7 @@ async function main() {
         await rpc('admin:editClient', { uuid: b, price: 804.6, currency: 'CNY', billing_cycle: 180, expired_at: expiry })
         await rpc('admin:editClient', { uuid: c, price: 10, currency: 'AUD', billing_cycle: 30, expired_at: expiry })
         const before = (await rpc('public:getPublicSettings')).theme_settings
-        await api('/api/admin/theme/settings?theme=Enhanced', { ...before, hideGeneralCard: false, generalCardPreset: '自定义', generalCardKeys: 'remainingValue\nmonthlyCost', detailMetricCardPreset: '自定义', detailMetricCardKeys: 'price\nmonthlyCost\nremainingValue' })
+        await api('/api/admin/theme/settings?theme=Atlas', { ...before, hideGeneralCard: false, generalCardPreset: '自定义', generalCardKeys: 'remainingValue\nmonthlyCost', detailMetricCardPreset: '自定义', detailMetricCardKeys: 'price\nmonthlyCost\nremainingValue' })
         for (const width of [1440, 390]) {
           await page.setViewportSize({ width, height: 1000 })
           await page.goto(origin)

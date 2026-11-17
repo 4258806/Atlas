@@ -7,8 +7,8 @@ const B = '00000000-0000-4000-8000-000000000002'
 const OPTIONAL_OR_EXEC_METHOD = /^(?:admin|agent)[:.].*(?:[Pp]lugin|[Tt]ask|[Ee]xec)/
 async function fixture(page: Page, guest = false) {
   const state = { settings: { hideEarth: true, visitorInfoEnabled: false, themeMode: 'light', disablePageAnimation: true, rpcTransportMode: 'http', returnRoutesVisible: true, returnRouteAutoEnabled: false, returnRouteCompanionEnabled: false, returnRouteConfig: '{"version":1,"nodes":{}}', unknownFuture: 'KEEP', transitCarrierPingRules: 'KEEP_RELAY' } as Record<string, unknown>, writes: 0, pluginCalls: 0 }
-  await installKomariFixture(page, { themeShort: 'Enhanced', loggedIn: !guest, hideEarth: true, themeSettings: state.settings })
-  const pub = () => ({ theme: 'Enhanced', theme_settings: state.settings, sitename: 'EXPLICIT SETTINGS MOCK', description: '', private_site: false, custom_head: '', custom_body: '' })
+  await installKomariFixture(page, { themeShort: 'Atlas', loggedIn: !guest, hideEarth: true, themeSettings: state.settings })
+  const pub = () => ({ theme: 'Atlas', theme_settings: state.settings, sitename: 'EXPLICIT SETTINGS MOCK', description: '', private_site: false, custom_head: '', custom_body: '' })
   await page.route('**/api/public', r => r.fulfill({ json: { status: 'success', data: pub() } }))
   await page.route('**/api/rpc2', async (r) => {
     const d = r.request().postDataJSON()
@@ -24,7 +24,7 @@ async function fixture(page: Page, guest = false) {
     state.pluginCalls++
     await r.fulfill({ status: 404, json: {} })
   })
-  await page.route('**/api/admin/theme/settings?theme=Enhanced', async (r) => {
+  await page.route('**/api/admin/theme/settings?theme=Atlas', async (r) => {
     state.writes++
     state.settings = r.request().postDataJSON()
     await r.fulfill({ json: { status: 'success', message: '' } })

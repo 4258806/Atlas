@@ -14,7 +14,7 @@
     if (checking || !SETTINGS_ROUTE.test(window.location.pathname))
       return
     const requested = new URL(window.location.href).searchParams.get('theme')
-    if (requested && requested !== 'Enhanced')
+    if (requested && requested !== 'Atlas')
       return
     checking = true
     try {
@@ -22,7 +22,7 @@
       if (!response.ok)
         return
       const payload = await response.json()
-      if (payload.status === 'success' && payload.data?.theme === 'Enhanced')
+      if (payload.status === 'success' && payload.data?.theme === 'Atlas')
         window.location.replace('/?atlas_settings=nodes')
     }
     catch {

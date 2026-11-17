@@ -20,9 +20,9 @@ from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'distribution'))
-bundle = importlib.import_module('enhanced_full.bundle')
+bundle = importlib.import_module('atlas_full.bundle')
 HELPER_FILES, helper_members = bundle.HELPER_FILES, bundle.helper_members
-Refused = importlib.import_module('enhanced_full.safety').Refused
+Refused = importlib.import_module('atlas_full.safety').Refused
 
 EXPECTED = frozenset({'enhanced_route_helper.py', 'enhanced_probe_v2.py', 'install.py', 'helper-version.json', 'enhanced-route-helper.service', 'enhanced-route-helper.openrc', 'helper.example.json', 'README.md', 'LICENSE', 'BUILD.json'})
 

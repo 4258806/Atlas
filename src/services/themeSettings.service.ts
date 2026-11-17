@@ -19,7 +19,7 @@ async function authorize() {
 }
 async function current(): Promise<PublicInfo> {
   const data = await getSharedRpc().getPublicSettings()
-  if (data.theme !== 'Enhanced')
+  if (data.theme !== 'Atlas')
     throw new Error('当前主题不是 Atlas；未写入')
   return data
 }
@@ -40,7 +40,7 @@ async function write(change: (before: Record<string, unknown>) => Record<string,
       if (stableValue(checked.theme_settings) !== stableValue(before.theme_settings))
         throw new Error('设置已被其他管理员修改；本次未写入，请重新加载')
       try {
-        await getSharedApi().updateThemeSettings('Enhanced', next, signal)
+        await getSharedApi().updateThemeSettings('Atlas', next, signal)
       }
       catch {
         // A transport error may follow a committed write. Only a readback of

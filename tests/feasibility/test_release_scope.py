@@ -23,11 +23,11 @@ class ScopeTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "defaults"):
             gate.validate_manifest({"version": "1.2.1", "default": "original"}, {"version": "0.0.1", "default": "modified"})
 
-    def test_atlas_branding_preserves_the_configuration_identity_and_defaults(self):
+    def test_atlas_branding_preserves_configuration_defaults(self):
         before = {"name": "Glassmorphism Enhanced", "author": "casiuna", "url": "upstream", "description": "upstream", "short": "Enhanced", "configuration": {"default": "original"}, "version": "1.2.1"}
-        after = {**before, "name": "Atlas", "author": "MagnetOscar", "url": "https://github.com/MagnetOscar/Atlas", "description": "Atlas — Komari theme with independent reset schedules and native-currency node billing", "version": "0.0.1"}
+        after = {**before, "name": "Atlas", "short": "Atlas", "author": "MagnetOscar", "url": "https://github.com/MagnetOscar/Atlas", "description": "Atlas — Komari theme with independent reset schedules and native-currency node billing", "version": "0.0.1"}
         gate.validate_manifest(before, after, branding=True)
-        for changed in ({**after, "short": "Atlas"}, {**after, "configuration": {"default": "modified"}}):
+        for changed in ({**after, "short": "Other"}, {**after, "configuration": {"default": "modified"}}):
             with self.subTest(changed=changed), self.assertRaises(ValueError):
                 gate.validate_manifest(before, changed, branding=True)
 

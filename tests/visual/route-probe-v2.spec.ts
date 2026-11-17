@@ -29,8 +29,8 @@ async function fixture(page: Page, options: { guest?: boolean, single?: boolean,
     latest.carriers.telecom.tcp.hops[0].ips = ['<img src=x onerror=window.__v2Pwned=1>']
   const state = { reads: 0, writes: [] as string[] }
   const settings = { returnRoutesVisible: true, returnRouteAutoEnabled: true, returnRouteCompanionEnabled: true, returnRouteTtlHours: 24, returnRouteConfig: options.manual ? JSON.stringify({ version: 1, nodes: { [UUID]: { manual: { telecom: { label: '我的 手动线路', updatedAt: AT } } } } }) : '{"version":1,"nodes":{}}' }
-  await installKomariFixture(page, { themeShort: 'Enhanced', hideEarth: true, loggedIn: !options.guest, dark: options.narrow, nodeCardSize: options.narrow ? 'mini' : 'compact', themeSettings: settings })
-  await page.route('**/api/admin/theme/list', route => route.fulfill({ json: { status: 'success', data: [{ short: 'Enhanced', version: themeManifest.version }] } }))
+  await installKomariFixture(page, { themeShort: 'Atlas', hideEarth: true, loggedIn: !options.guest, dark: options.narrow, nodeCardSize: options.narrow ? 'mini' : 'compact', themeSettings: settings })
+  await page.route('**/api/admin/theme/list', route => route.fulfill({ json: { status: 'success', data: [{ short: 'Atlas', version: themeManifest.version }] } }))
   await page.route('**/api/enhanced-route-probe/v1/*', (route) => {
     state.reads++
     if (route.request().url().endsWith('/health'))
@@ -41,7 +41,7 @@ async function fixture(page: Page, options: { guest?: boolean, single?: boolean,
     const body = route.request().postDataJSON()
     const result = (value: unknown) => route.fulfill({ json: { jsonrpc: '2.0', id: body.id, result: value } })
     if (body.method === 'public:getPublicSettings')
-      return result({ allow_cors: false, custom_body: '', custom_head: '', description: 'EXPLICIT LOCAL UI MOCK', disable_password_login: false, oauth_enable: false, oauth_provider: '', private_site: false, record_enabled: true, record_preserve_time: 720, ping_record_preserve_time: 720, sitename: 'Komari Visual Lab', theme: 'Enhanced', theme_settings: { hideEarth: true, visitorInfoEnabled: false, rpcTransportMode: 'http', disablePageAnimation: true, ...settings } })
+      return result({ allow_cors: false, custom_body: '', custom_head: '', description: 'EXPLICIT LOCAL UI MOCK', disable_password_login: false, oauth_enable: false, oauth_provider: '', private_site: false, record_enabled: true, record_preserve_time: 720, ping_record_preserve_time: 720, sitename: 'Komari Visual Lab', theme: 'Atlas', theme_settings: { hideEarth: true, visitorInfoEnabled: false, rpcTransportMode: 'http', disablePageAnimation: true, ...settings } })
     if (body.method === 'public:getVersion')
       return result({ version: '1.6.0', hash: 'LOCAL-UI-MOCK' })
     if (body.method === 'admin:listPlugins')

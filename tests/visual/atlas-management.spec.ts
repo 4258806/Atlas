@@ -20,11 +20,11 @@ async function fixture(page: Page, options: { installed?: boolean, loggedIn?: bo
     installed: options.installed ?? true,
     running: true,
   }
-  await installKomariFixture(page, { hideEarth: true, themeShort: 'Enhanced', loggedIn: options.loggedIn ?? true, dark: options.dark, themeSettings: state.settings })
-  const pub = () => ({ allow_cors: false, custom_body: '', custom_head: '', description: 'EXPLICIT LOCAL MOCK', disable_password_login: false, oauth_enable: false, oauth_provider: '', private_site: false, record_enabled: true, record_preserve_time: 720, ping_record_preserve_time: 720, sitename: 'Komari Visual Lab', theme: 'Enhanced', theme_settings: state.settings })
+  await installKomariFixture(page, { hideEarth: true, themeShort: 'Atlas', loggedIn: options.loggedIn ?? true, dark: options.dark, themeSettings: state.settings })
+  const pub = () => ({ allow_cors: false, custom_body: '', custom_head: '', description: 'EXPLICIT LOCAL MOCK', disable_password_login: false, oauth_enable: false, oauth_provider: '', private_site: false, record_enabled: true, record_preserve_time: 720, ping_record_preserve_time: 720, sitename: 'Komari Visual Lab', theme: 'Atlas', theme_settings: state.settings })
   await page.route('**/api/public', route => route.fulfill({ json: { status: 'success', data: pub() } }))
-  await page.route('**/api/admin/theme/list', route => route.fulfill({ json: { status: 'success', data: [{ short: 'Enhanced', version: `1.2.0` }] } }))
-  await page.route('**/api/admin/theme/settings?theme=Enhanced', async (route) => {
+  await page.route('**/api/admin/theme/list', route => route.fulfill({ json: { status: 'success', data: [{ short: 'Atlas', version: `1.2.0` }] } }))
+  await page.route('**/api/admin/theme/settings?theme=Atlas', async (route) => {
     state.writes.push('theme-settings')
     state.settings = route.request().postDataJSON()
     await route.fulfill({ json: { status: 'success', message: '' } })

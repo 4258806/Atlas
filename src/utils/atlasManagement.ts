@@ -5,8 +5,8 @@ import { RETURN_CARRIERS } from '@/utils/returnRouteClassification'
 import { parseReturnRouteConfig, serializeReturnRoutes } from '@/utils/returnRoutes'
 
 export const PROBE_SHORT = 'enhanced-route-probe'
-// Existing server-side configuration identity; the visible product is Atlas.
-export const THEME_SHORT = 'Enhanced'
+// Atlas owns its configuration identity; legacy settings are migrated separately.
+export const THEME_SHORT = 'Atlas'
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 export const PROBE_CITIES = ['beijing', 'shanghai', 'guangzhou', 'hubei', CDN_ID] as const
 export interface NodeProbePolicy { enabled: boolean, city: string, periodMinutes: number }

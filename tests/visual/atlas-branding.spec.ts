@@ -4,7 +4,7 @@ import { installKomariFixture } from './fixtures/komari'
 for (const width of [390, 1440]) {
   test(`Atlas identifies home, detail and settings without losing the site name at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 })
-    await installKomariFixture(page, { themeShort: 'Enhanced', loggedIn: true, hideEarth: true })
+    await installKomariFixture(page, { themeShort: 'Atlas', loggedIn: true, hideEarth: true })
     for (const path of ['/', '/instance/00000000-0000-4000-8000-000000000001']) {
       await page.goto(path)
       await expect(page.getByRole('heading', { name: 'Komari Visual Lab', exact: true })).toBeVisible()

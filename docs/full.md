@@ -1,4 +1,4 @@
-# Glassmorphism Enhanced Full · v1.2.0 稳定单包
+# Glassmorphism Atlas Full · v1.2.0 稳定单包
 
 > **v1.2.1 本地候选说明（尚未提交或发布）**：当前开发树的主题 manifest 为 `Enhanced` / `1.2.1`，Plugin / Helper 为 `0.3.0` 开发组件，新增独立流量周期和 TCP/UDP 证据。dirty 构建仅用于本地预检，必须标记 `DEVELOPMENT_ONLY`；不能把旧 HEAD 对应的本地产物当作正式 Release。获准提交后须重新构建并执行原有 clean-source 发行门禁。新功能与限制见包内 `docs/traffic-cycles.md`、`docs/tcpquality-adaptation.md`；本轮机器结果见 `test-results/v121/release-preflight/`。以下 v1.2.0 / 0.2 系列说明保留为已发布稳定版的历史安装/回滚参考，当前实际版本以包内 matrix 为准。
 
@@ -42,7 +42,7 @@ python3 manage.py install --panel https://TEST-PANEL --username ADMIN \
 
 ## 集中管理与节点接入
 
-管理员登录主题后，页头「Enhanced 管理」打开集中入口。它检测插件存在/运行/版本、存储健康、UUID Helper 登记/心跳/版本、最后结果、状态/错误、手动覆盖优先。未登记显示接入指引；心跳只表示进程最近轮询，**不表示真实线路已经验证**。
+管理员登录主题后，页头「Atlas 管理」打开集中入口。它检测插件存在/运行/版本、存储健康、UUID Helper 登记/心跳/版本、最后结果、状态/错误、手动覆盖优先。未登记显示接入指引；心跳只表示进程最近轮询，**不表示真实线路已经验证**。
 
 在每个明确授权的测试节点解压**同一个 Full 包**；以专用无特权用户运行，操作者先将该节点 Agent 私有配置的读取权限授予该用户（或提供该节点专用的 0600 私有配置副本），不能放宽成 world/group 可读。原 Agent 文件/进程不改。接入默认也只 dry-run：
 

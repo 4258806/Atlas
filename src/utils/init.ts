@@ -5,6 +5,7 @@
 
 import type { Client, KomariRpc, NodeStatus } from '@/utils/rpc'
 import { REALTIME_CONFIG } from '@/constants/realtime'
+import { migrateAtlasConfiguration } from '@/services/atlasIdentity.service'
 import { useAppStore } from '@/stores/app'
 import { useNodesStore } from '@/stores/nodes'
 import { getSharedApi } from '@/utils/api'
@@ -113,6 +114,17 @@ class InitManager {
 
     if (this.destroyed || this.redirectingToAdmin)
       return false
+
+    if (this.appStore.privateFeaturesAllowed && this.appStore.publicSettings?.theme === 'Atlas') {
+      try {
+        const migrated = await migrateAtlasConfiguration()
+        if (migrated)
+          this.appStore.publicSettings = migrated
+      }
+      catch {
+        window.$message?.warning('Atlas 旧配置迁移未确认，请保留旧主题并核对配置后再继续。')
+      }
+    }
 
     const nodesAvailable = nodesResult.status === 'fulfilled'
     this.appStore.connectionError = !nodesAvailable
