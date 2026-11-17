@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 import platform
+import posixpath
 import tarfile
 import urllib.request
 from pathlib import Path
@@ -13,6 +14,17 @@ ASSETS = {
     'x86_64': ('amd64', '0014d3b6f352ad74f5b0dfa93bc2137aaefc6dd1ec06e381cea7f1b6e5d29046'),
     'aarch64': ('arm64', '9d2a0de52fbb36e0294360dd19ed45684e7f28b7d32801b6d7869a4b8337e994'),
 }
+
+def safe_rootfs_member(member, destination):
+    """Rebase guest-absolute links while retaining tarfile's path checks."""
+    if member.isdev() or member.isfifo():
+        return None
+    if member.issym() and member.linkname.startswith('/'):
+        member = member.replace(linkname=posixpath.relpath(
+            member.linkname.lstrip('/'), posixpath.dirname(member.name) or '.'), deep=False)
+    elif member.islnk() and member.linkname.startswith('/'):
+        member = member.replace(linkname=member.linkname.lstrip('/'), deep=False)
+    return tarfile.data_filter(member, destination)
 
 def prepare(data):
     if not data.is_absolute() or data.is_symlink():
@@ -38,12 +50,8 @@ def prepare(data):
     if hashlib.sha256(archive.read_bytes()).hexdigest() != digest:
         raise ValueError('upstream rootfs checksum mismatch; retained without execution')
     target.mkdir(mode=0o700)
-    def safe_member(member, destination):
-        if member.isdev() or member.isfifo():
-            return None
-        return tarfile.data_filter(member, destination)
     with tarfile.open(archive, 'r:xz') as package:
-        package.extractall(target, filter=safe_member)
+        package.extractall(target, filter=safe_rootfs_member)
     marker = data / 'rootfs-prepared.json'
     fd = os.open(marker, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
     with os.fdopen(fd, 'w') as stream:

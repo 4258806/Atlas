@@ -1,6 +1,8 @@
 import csv
 import importlib.util
 import io
+import tarfile
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -8,6 +10,9 @@ ROOT = Path(__file__).resolve().parents[2]
 spec = importlib.util.spec_from_file_location('attachment', ROOT / 'companion/tcpquality/collector.py')
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
+prep_spec = importlib.util.spec_from_file_location('prepare', ROOT / 'companion/tcpquality/prepare.py')
+prepare = importlib.util.module_from_spec(prep_spec)
+prep_spec.loader.exec_module(prepare)
 UUID = '00000000-0000-4000-8000-000000000001'
 HEADERS = ['网络','IP版本','省份','运营商','域名','IP','状态','发送','收到','丢包率(%)','平均延迟ms','线路']
 ROW = ['三网','IPv4','上海','电信','test.example','192.0.2.1','OK','30','30','0','150','CN2GIA']
@@ -20,6 +25,18 @@ def source(rows):
 def parse(rows):
     return module.project_csv(source(rows), UUID, '2026-07-25T11:00:00.000Z', False)
 class Contract(unittest.TestCase):
+    def test_rootfs_guest_absolute_links_remain_inside_private_root(self):
+        with tempfile.TemporaryDirectory() as directory:
+            link = tarfile.TarInfo('./etc/ssl/certs/root.pem')
+            link.type, link.linkname = tarfile.SYMTYPE, '/usr/share/ca-certificates/root.crt'
+            filtered = prepare.safe_rootfs_member(link, directory)
+            target = (Path(directory) / filtered.name).parent / filtered.linkname
+            self.assertEqual(target.resolve(), (Path(directory) / 'usr/share/ca-certificates/root.crt').resolve())
+            link.linkname = '../../../../../../outside'
+            with self.assertRaises(tarfile.LinkOutsideDestinationError):
+                prepare.safe_rootfs_member(link, directory)
+            device = tarfile.TarInfo('./dev/null'); device.type = tarfile.CHRTYPE
+            self.assertIsNone(prepare.safe_rootfs_member(device, directory))
     def test_preserves_independent_labels_and_unavailable_ipv6_without_raw_ips(self):
         udp = ['UDP线路','IPv4','上海','电信','test.example','','OK','','','','','CN2GIA']
         large = [*ROW]
