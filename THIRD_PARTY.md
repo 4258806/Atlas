@@ -57,6 +57,8 @@ Emerald's current region-to-visitor hub-and-spoke behavior was studied as a visu
 
 The four theme reference projects above use MIT. The upstream root `LICENSE` is unchanged. Bundled dependencies retain their own licenses and notices, including the following additions.
 
+- Three unmodified Tabler Icons v3.47.0 (`calendar-dollar`, `calculator`, `currency-yuan`), by Paweł Kuna, are bundled from the existing `@iconify/json` development dependency for reliable finance tabs. MIT notice: `public/licenses/tabler-icons-MIT.txt`, shipped in `dist/licenses/`. No new dependency or full icon collection is bundled.
+
 ## Temporal calendar implementation
 
 - `@js-temporal/polyfill` 0.5.1, <https://github.com/js-temporal/temporal-polyfill>, ISC, Copyright 2017–2020 ECMA International. Used unmodified for IANA/fixed-offset calendar boundaries and DST disambiguation. Full notice: `public/licenses/temporal-polyfill-ISC.txt`.
