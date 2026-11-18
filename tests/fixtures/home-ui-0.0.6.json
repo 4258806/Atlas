@@ -1,0 +1,11 @@
+{
+  "authorization": "User 2026-11-18: review Antigravity PR #22 and publish Atlas v0.0.6 with only its two globe fixes.",
+  "components": {
+    "src/components/NodeEarthCobeGlobe.vue": "39e3e9311c09164532004ab4425ed98dd6b7dcc347bf1f3f3906c8261bf39fdc",
+    "src/components/NodeEarthRealisticGlobe.vue": "3af76a348021ee5773fdd72040fa94d9ee6b67dcd277d641785ceff1e584e2ec"
+  },
+  "protectedFiles": {
+    "src/components/NodeEarthCobeGlobe.vue": "63d1041779e4f090a189c0be8a0151eaa3a1d0abd3374cbb9746aa469d26bfd5",
+    "src/components/NodeEarthRealisticGlobe.vue": "76a34e8c8e05eb703431b4f3a0a65c4073642d14755dc7e1f73aa8c23ed114b7"
+  }
+}

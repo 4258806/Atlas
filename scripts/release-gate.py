@@ -11,6 +11,29 @@ ATLAS_001 = "31c69e80cb629a5ccdb0144dabf4164583a54405"
 ATLAS_002 = "aae95c6f96360ccbc1ff07e4ecfc833c70ce4e43"
 ATLAS_003 = "1762647c7762efb22d5dfac3807d572c95d668db"
 ATLAS_004 = "192e4245dfbfe9656eb1e73c443e07e1b67d3f5c"
+ATLAS_005 = "579b70b1d6b4f445ba6fa44299734a84c88b2d47"
+UI_006 = {"src/components/NodeEarthRealisticGlobe.vue", "src/components/NodeEarthCobeGlobe.vue"}
+
+
+def audit_globe_scope(source):
+    for path in git("diff", "--name-only", ATLAS_005, source).splitlines():
+        if path.startswith("src/") and not path.endswith(".md") and path not in UI_006:
+            raise ValueError(f"Out-of-scope 0.0.6 runtime: {path}")
+        if path.startswith(("public/", "companion/")) or path in {"package.json", "bun.lock"}:
+            raise ValueError(f"0.0.6 cannot change assets, collectors or dependencies: {path}")
+    before = json.loads(git("show", f"{ATLAS_005}:komari-theme.json"))
+    after = json.loads(git("show", f"{source}:komari-theme.json"))
+    if after.get("version") != "0.0.6":
+        raise ValueError("Expected 0.0.6 source")
+    validate_manifest(before, after)
+    historic = "tests/fixtures/home-ui-0.0.5.json"
+    if git("show", f"{ATLAS_005}:{historic}") != git("show", f"{source}:{historic}"):
+        raise ValueError("Preserve the published 0.0.5 UI contract")
+    contract = json.loads(git("show", f"{source}:tests/fixtures/home-ui-0.0.6.json"))
+    if set(contract["components"]) != UI_006 or set(contract["protectedFiles"]) != UI_006:
+        raise ValueError("0.0.6 UI contract is limited to the two PR22 globe fixes")
+
+
 UI_005 = {
     "src/App.vue", "src/components/Footer.vue", "src/components/Header.vue",
     "src/components/NodeCard.vue", "src/components/NodeHeaderTags.vue",
@@ -255,6 +278,11 @@ def main():
         if report.get("scope") != "antigravity-ui-pr20" or report.get("baseline_commit") != ATLAS_004:
             raise SystemExit("0.0.5 is limited to the reviewed Antigravity UI change")
         audit_ui_scope(source)
+        stages = ("engineering", "reset", "finance", "sorting", "display", "return-route", "ui-review", "integration", "package")
+    elif version == "0.0.6":
+        if report.get("scope") != "globe-arcs-pr22" or report.get("baseline_commit") != ATLAS_005:
+            raise SystemExit("0.0.6 is limited to the reviewed PR22 globe fixes")
+        audit_globe_scope(source)
         stages = ("engineering", "reset", "finance", "sorting", "display", "return-route", "ui-review", "integration", "package")
     else:
         stages = ("reset", "finance", "sorting", "display", "return-route", "integration")

@@ -4,6 +4,8 @@ This guide applies to [src/](./). For full project context, read [../AIAGENTREAD
 
 ## Source-tree rule of thumb
 
+- Atlas v0.0.6 authorization is limited to PR #22's realistic globe arc altitude/fading-flag avoidance and Cobe arc height fixes. No other source behavior or presentation changes are authorized.
+
 - Atlas v0.0.5 user review/publication request authorizes the UI changes from Antigravity PR #20: wider shell/grid, single-line header tags, dual network/route panels and globe/map flag avoidance. Preserve its accepted presentation and all existing data semantics, preferences, finance/reset and companion transport. Earlier UI freezes remain applicable outside those exact surfaces.
 - Atlas v0.0.4 explicitly replaces the homepage return-route block with the supplied three-row glass-panel presentation (carrier marker/name, route badge, grade/status and age; expandable protocol/family results). Preserve its existing two-column position, saved carrier order and surrounding UI. Consume bounded, attributed TcpQuality observations without interpreting destination-carrier ASN as the entire transit route, forcing all variants to a desired label or merging IPv4/IPv6/UDP/large-packet results. Keep unknown/unavailable/mixed/expired states explicit and preserve legacy/manual data compatibility.
 - Within that same new row, vertically group the two TCP/UDP counters when the taller three-row route panel is enabled, avoiding stretched empty grid rows. Keep the original connection-only alignment when the route panel is disabled; the first three metric boxes remain unchanged.

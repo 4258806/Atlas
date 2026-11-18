@@ -4,6 +4,10 @@ Atlas 是面向 Komari 的监控主题，由 MagnetOscar 基于 [Glassmorphism E
 
 ![Atlas 预览（合成演示数据）](docs/preview.png)
 
+## Atlas v0.0.6 · 地球连线修复
+
+合入 Antigravity [PR #22](https://github.com/MagnetOscar/Atlas/pull/22)：修复真实地球远距离连线被球面遮挡、国旗淡出期间的连线避让，以及点阵地球顶部连线裁切。保留 0.0.5 的布局、配置和采集逻辑。详见 [0.0.6 版本说明](docs/release-notes-atlas-0.0.6.md)。
+
 ## Atlas v0.0.5 · 卡片与地球展示
 
 合入 Antigravity PR #20 的响应式卡片、单行标签、网络／回程双栏与国旗避让，保留金额、重置时间和采集逻辑。主题管理仅上传原生主题 ZIP；独立插件和 TQ 继续使用 0.0.4 安装材料。详见 [0.0.5 版本说明](docs/release-notes-atlas-0.0.5.md)。

@@ -8,7 +8,18 @@ const root = resolve(import.meta.dirname, '../..')
 const homeConnectionContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-connection-ui.json'), 'utf8')) as { presentation: string }
 const homeRouteContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-route-ui-0.0.3.json'), 'utf8')) as { components: Record<string, string>, protectedFiles: Record<string, string> }
 const qualityContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-route-ui-0.0.4.json'), 'utf8')) as { components: Record<string, string> }
-const homeUiContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-ui-0.0.5.json'), 'utf8')) as { components: Record<string, string>, protectedFiles: Record<string, string> }
+const homeUi005Contract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-ui-0.0.5.json'), 'utf8')) as { components: Record<string, string>, protectedFiles: Record<string, string> }
+const globeContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-ui-0.0.6.json'), 'utf8')) as { components: Record<string, string>, protectedFiles: Record<string, string> }
+const homeUiContract = {
+  components: { ...homeUi005Contract.components, ...globeContract.components },
+  protectedFiles: { ...homeUi005Contract.protectedFiles, ...globeContract.protectedFiles },
+}
+
+test('0.0.6 UI exception covers only the two reviewed PR22 globe renderers', () => {
+  const paths = ['src/components/NodeEarthCobeGlobe.vue', 'src/components/NodeEarthRealisticGlobe.vue']
+  expect(Object.keys(globeContract.components).sort()).toEqual(paths)
+  expect(Object.keys(globeContract.protectedFiles).sort()).toEqual(paths)
+})
 function withoutRouteTile(source: string): string {
   return source.replace(/<!-- Homepage return-route tile -->[\s\S]*?<!-- \/Homepage return-route tile -->/, '').replace('NodeReturnRoutes v-if="!appStore.returnRouteHomeTileEnabled"', 'NodeReturnRoutes')
 }
