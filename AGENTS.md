@@ -52,6 +52,7 @@ For the complete AI/developer manual, read [AIAGENTREADME.md](AIAGENTREADME.md).
    - M6 docs/tests/DX
 5. For multi-file or interruptible work, record plan/progress/results in [AICACHE.md](AICACHE.md).
 6. Validate with `bun run lint` and `bun run build` unless the change is docs-only or you explicitly record why validation was skipped.
+7. Before pushing any authorized UI or globe/map change in a PR, follow [docs/ui-contract-sop.md](docs/ui-contract-sop.md) to add an additive versioned UI contract fixture and pass `tests/unit/fork-ui.spec.ts` so `Code Quality` does not fail on stale baseline hashes.
 
 ## What this repo builds
 

@@ -495,7 +495,7 @@ function hasRegion(region: string | null | undefined): boolean {
                 </template>
               </div>
 
-              <!-- TCP/UDP connection counts -->
+              <!-- Dual-panel connection counts -->
               <div
                 v-if="appStore.connectionCountsVisible"
                 data-node-connections

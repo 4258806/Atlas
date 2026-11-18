@@ -136,4 +136,4 @@ bun run build
 
 Playwright tests exist. Run the applicable unit/component and browser tests documented in the root guide; helper tests require Linux. Do not claim Windows fixture collection failures as passed tests.
 
-Update [../AICACHE.md](../AICACHE.md) with validation results or explain why validation was skipped.
+Update [../AICACHE.md](../AICACHE.md) with validation results or explain why validation was skipped. Any authorized UI, tag, route-panel, or globe/map edit must also follow [../docs/ui-contract-sop.md](../docs/ui-contract-sop.md) before opening or updating a PR.

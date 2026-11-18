@@ -8,11 +8,7 @@ const root = resolve(import.meta.dirname, '../..')
 const homeConnectionContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-connection-ui.json'), 'utf8')) as { presentation: string }
 const homeRouteContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-route-ui-0.0.3.json'), 'utf8')) as { components: Record<string, string>, protectedFiles: Record<string, string> }
 const qualityContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-route-ui-0.0.4.json'), 'utf8')) as { components: Record<string, string> }
-function withoutQualityAlignment(source: string): string {
-  return source.replace(/<!-- TCP\/UDP connection counts -->[\s\S]*?<!-- \/TCP\/UDP connection counts -->/, block => block
-    .replace('class="grid gap-0.5 rounded-lg', 'class="grid grid-rows-2 gap-0.5 rounded-lg')
-    .replace(':class="[nodeCardMetricBoxClass, appStore.returnRouteHomeTileEnabled ? \'grid-rows-[auto_auto] content-center\' : \'grid-rows-2\']"', ':class="nodeCardMetricBoxClass"'))
-}
+const homeUiContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-ui-0.0.5.json'), 'utf8')) as { components: Record<string, string>, protectedFiles: Record<string, string> }
 function withoutRouteTile(source: string): string {
   return source.replace(/<!-- Homepage return-route tile -->[\s\S]*?<!-- \/Homepage return-route tile -->/, '').replace('NodeReturnRoutes v-if="!appStore.returnRouteHomeTileEnabled"', 'NodeReturnRoutes')
 }
@@ -44,10 +40,15 @@ test('fork UI contract is bound to the immutable original source', () => {
 for (const [path, expected] of Object.entries(contract.components)) {
   test(`inherited element layout, visual attributes and styles: ${path}`, () => {
     const currentPath = BRAND_RENAMES[path as keyof typeof BRAND_RENAMES] ?? path
-    // The 2026-11-17 request permits only the finance dialog's closed border
-    // and compact layout. All other inherited presentation remains pinned.
-    const accepted = displayContract.components[currentPath] ?? (path === 'src/components/FinanceDetailsDialog.vue' ? contract.financeDialogPresentation : expected)
-    expect(inheritedPresentation(currentPath)).toBe(accepted)
+    // The 2026-11-18 PR #20 UI revision covers the listed components in
+    // home-ui-0.0.5.json; all other inherited presentation remains pinned.
+    const accepted = homeUiContract.components[currentPath]
+      ?? displayContract.components[currentPath]
+      ?? (path === 'src/components/FinanceDetailsDialog.vue' ? contract.financeDialogPresentation : expected)
+    const actual = homeUiContract.components[currentPath]
+      ? presentation(readFileSync(resolve(root, currentPath), 'utf8'))
+      : inheritedPresentation(currentPath)
+    expect(actual).toBe(accepted)
   })
 }
 
@@ -66,29 +67,33 @@ test('fork globe/map sources, image assets, styles, defaults and screenshot refe
     }
     if (path === 'src/stores/app.ts')
       value = Buffer.from(value.toString().replace(/^.*const returnRouteHomeTileEnabled = .*\r?\n/m, '').replace(/^ {4}returnRouteHomeTileEnabled,\r?\n/m, ''))
-    expect(digest(protectedContent(path, value)), path).toBe(displayContract.protectedFiles[path] ?? expected)
+    expect(digest(protectedContent(path, value)), path).toBe(homeUiContract.protectedFiles[path] ?? displayContract.protectedFiles[path] ?? expected)
   }
 })
 
 test('0.0.2 UI exceptions are limited to the requested display surfaces', () => {
   expect(Object.keys(displayContract.components).sort()).toEqual(['src/components/CarrierOrderEditor.vue', 'src/components/LoadChart.vue', 'src/components/NodeCard.vue', 'src/components/NodeGeneralCards.vue', 'src/components/NodePingListCell.vue', 'src/components/PingHistoryLine.vue', 'src/components/ThemeSettingsPanel.vue', 'src/views/InstanceDetail.vue'].sort())
   expect(Object.keys(displayContract.protectedFiles).sort()).toEqual(['komari-theme.json', 'src/stores/app.ts'])
-  for (const [path, expected] of Object.entries(displayContract.components))
-    expect(inheritedPresentation(path), path).toBe(expected)
+  for (const [path, expected] of Object.entries(displayContract.components)) {
+    const actual = homeUiContract.components[path]
+      ? presentation(readFileSync(resolve(root, path), 'utf8'))
+      : inheritedPresentation(path)
+    expect(actual, path).toBe(homeUiContract.components[path] ?? expected)
+  }
 })
 
 test('homepage connection tile is the sole newly authorized presentation subtree', () => {
   const source = readFileSync(resolve(root, 'src/components/NodeCard.vue'), 'utf8')
   expect(source.match(/<!-- TCP\/UDP connection counts -->/g)).toHaveLength(1)
   expect(source.match(/<!-- \/TCP\/UDP connection counts -->/g)).toHaveLength(1)
-  expect(presentation(withoutQualityAlignment(withoutRouteTile(source)))).toBe(homeConnectionContract.presentation)
+  expect(presentation(source)).toBe(homeUiContract.components['src/components/NodeCard.vue'] ?? homeConnectionContract.presentation)
 })
 
-test('0.0.3 surrounding UI stays fixed; only the authorized 0.0.4 panel and adjacent connection alignment change', () => {
+test('0.0.3 surrounding UI stays fixed; only the authorized 0.0.4/0.0.5 panel and globe avoidance change', () => {
   expect(Object.keys(homeRouteContract.components).sort()).toEqual(['src/components/NodeCard.vue', 'src/components/NodeReturnRouteTile.vue'])
   expect(Object.keys(qualityContract.components).sort()).toEqual(['src/components/NodeCard.vue', 'src/components/NodeReturnRouteTile.vue'])
   for (const [path, hash] of Object.entries(homeRouteContract.components))
-    expect(presentation(readFileSync(resolve(root, path), 'utf8'))).toBe(qualityContract.components[path] ?? hash)
+    expect(presentation(readFileSync(resolve(root, path), 'utf8'))).toBe(homeUiContract.components[path] ?? qualityContract.components[path] ?? hash)
   for (const [path, hash] of Object.entries(homeRouteContract.protectedFiles))
     expect(digest(protectedContent(path, readFileSync(resolve(root, path))))).toBe(hash)
 })
