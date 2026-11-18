@@ -7,7 +7,7 @@
 - Pinned release: v1.2.1, commit `0332d5f7c73f7994ba21c01e4b739d04835120b1`.
 - Role: complete source baseline for this personal derivative, including the upstream's previous integrations and notices below.
 - License: MIT; the root `LICENSE`, existing copyright notices, and upstream Git history are retained unchanged.
-- Initial personal-fork changes are documentation only. See [FORK.md](FORK.md) for provenance and the exact modification scope. Earlier development and test statements below describe inherited upstream work, not new verification performed by this fork.
+- Atlas improvements are documented in [CHANGELOG.md](CHANGELOG.md). Atlas additions: Copyright (c) 2026 MagnetOscar, MIT; existing authorship remains unchanged. Version-specific inherited statements below describe historical provenance, not current installation instructions.
 
 Glassmorphism Enhanced is an enhanced fork, not a clean-room or wholly original implementation. The upstream Git history and root `LICENSE` are retained.
 
@@ -43,7 +43,7 @@ Relevant ideas and portions were selectively adapted into new utilities/composab
 
 Emerald's current region-to-visitor hub-and-spoke behavior was studied as a visual reference. Glassmorphism Enhanced implements its own deterministic node-cluster arc generation and reuses the Glassmorphism realistic, Cobe, and tiled renderers; the Emerald globe component was not copied wholesale.
 
-## Transit return-route reference (unreleased local development)
+## Transit return-route reference (historical integration provenance)
 
 - Source: <https://github.com/yyy622hhh/komari-theme-transit>, pinned commit `ee9f31c5ff104e033ded858171ce0b63c672e878`.
 - MIT; Copyright (c) 2026 yyy622hhh and Copyright (c) 2025 Tony Liu (tonyliuzj, tony-liu.com).
