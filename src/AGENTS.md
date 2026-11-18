@@ -1,32 +1,8 @@
-# Source AGENTS.md
+# Atlas source guide
 
-This guide applies to [src/](./). For full project context, read [../AIAGENTREADME.md](../AIAGENTREADME.md). For current work handoff, read/update [../AICACHE.md](../AICACHE.md).
+Follow [../AGENTS.md](../AGENTS.md), [development](../docs/development.md) and [handoff](../AICACHE.md). Preserve accepted UI, settings/defaults, finance/reset semantics, reactive behavior and compatibility IDs. New UI changes require explicit scope plus the [UI contract SOP](../docs/ui-contract-sop.md); historical scope is not fresh authorization.
 
-## Source-tree rule of thumb
-
-- Atlas v0.0.6 authorization is limited to PR #22's realistic globe arc altitude/fading-flag avoidance and Cobe arc height fixes. No other source behavior or presentation changes are authorized.
-
-- Atlas v0.0.5 user review/publication request authorizes the UI changes from Antigravity PR #20: wider shell/grid, single-line header tags, dual network/route panels and globe/map flag avoidance. Preserve its accepted presentation and all existing data semantics, preferences, finance/reset and companion transport. Earlier UI freezes remain applicable outside those exact surfaces.
-- Atlas v0.0.4 explicitly replaces the homepage return-route block with the supplied three-row glass-panel presentation (carrier marker/name, route badge, grade/status and age; expandable protocol/family results). Preserve its existing two-column position, saved carrier order and surrounding UI. Consume bounded, attributed TcpQuality observations without interpreting destination-carrier ASN as the entire transit route, forcing all variants to a desired label or merging IPv4/IPv6/UDP/large-packet results. Keep unknown/unavailable/mixed/expired states explicit and preserve legacy/manual data compatibility.
-- Within that same new row, vertically group the two TCP/UDP counters when the taller three-row route panel is enabled, avoiding stretched empty grid rows. Keep the original connection-only alignment when the route panel is disabled; the first three metric boxes remain unchanged.
-
-- Latest Atlas v0.0.3 scope explicitly adds a two-column return-route tile beside the TCP/UDP tile in the second metric row. It may display an opt-in public ASN-only plugin summary; raw hop IPs/checkpoints remain administrator-only. Reuse existing classifier, saved carrier order and TTL/error handling. Preserve unrelated presentation and data semantics. Versioned release and CA/DMIT single-round installation are now authorized in the root policy.
-
-- Latest homepage-card authorization: add only a fourth mini metric tile on a new second row of the existing three-column grid in NodeCard.vue, showing TCP/UDP live counts under the existing switches. Match the existing individual tile size/style; both switches off hides the tile and row. Do not alter the first three tiles or unrelated UI/data semantics.
-
-- Latest 0.0.2 authorization permits only finance-dialog PR #10, saved carrier ordering, blocks/line selection and TCP/UDP count visibility, with desktop/mobile previews. This supersedes the earlier suspension for steps 4–5 only. Reuse native settings, existing data sources/positions; do not change map/globe, collection, reset or FX semantics.
-
-- Later Atlas naming authorization permits the exact theme text, footer project link, document title, metadata and source-symbol renames. Public layout/style/renderers stay fixed. The current short is Atlas. Enhanced appears only as the old configuration migration source. Preserve existing Atlas settings, the old configuration, optional companion protocol IDs and original copyright/source notices.
-- Preserve the fork-time UI/layout/styles/defaults and globe/map from fixed baseline `0332d5f7c73f7994ba21c01e4b739d04835120b1`. No additional frontend controls or presentation changes. Existing data slots may receive corrected business values. Future three-network display needs explicit discussion and must reuse the original UI form. This user constraint overrides inherited UI development guidance below; see `../docs/ui-preservation.md`.
-- Client services and calculations are not a backend implementation. Do not claim backend-only work when editing client runtime code.
-- The later explicit 0.0.1 scope includes steps 1–3: retain the accepted timezone/day/time fields in the original administrator table (reference 2d658f6), with no public-layout redesign. A source-credit link may replace only the existing rate-information paragraph with the same visual class. Version metadata is independent of UI defaults. Tests encode these narrow exceptions; other UI work stays suspended.
-  All new app code should follow:
-
-```text
-Component -> Composable -> Service -> RequestManager / CacheService -> API / RPC
-```
-
-Do not bypass this chain unless you are editing bootstrap/transport glue that already lives at a lower layer.
+New app code follows Component -> Composable -> Service -> RequestManager / CacheService -> API / RPC.
 
 ## Where code belongs
 
@@ -133,7 +109,7 @@ Do not rename/move these files without updating helper mappings and checking all
 For source changes, run from repo root:
 
 ```bash
-bun run lint
+bun run lint:check
 bun run build
 ```
 
