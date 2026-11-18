@@ -4,13 +4,17 @@ Atlas 是面向 Komari 的监控主题，由 MagnetOscar 基于 [Glassmorphism E
 
 ![Atlas 预览（合成演示数据）](docs/preview.png)
 
+## Atlas v0.0.5 · 卡片与地球展示
+
+合入 Antigravity PR #20 的响应式卡片、单行标签、网络／回程双栏与国旗避让，保留金额、重置时间和采集逻辑。主题管理仅上传原生主题 ZIP；独立插件和 TQ 继续使用 0.0.4 安装材料。详见 [0.0.5 版本说明](docs/release-notes-atlas-0.0.5.md)。
+
 ## Atlas v0.0.4 · Komari TcpQuality 附件
 
 三网回程采用参考图的三行玻璃面板：运营商、线路徽标、等级／混合状态和更新时间。展开保留 IPv4、IPv6、UDP 两地址族及 IPv4 大包的省份分组，各分项不互相覆盖；缺失、混合、过期如实显示。三网顺序、独立重置、节点本币／单币种汇总、TCP/UDP、地球和地图保留。
 
 TcpQuality 固定版本作为 Komari 附件，纳入现有服务代码／数据目录，不新增常驻服务或端口。节点本机采集，通过原生节点身份上报 CA 的 Komari 插件。既有 cron 只做到期检查，原生租约控制实际每小时一次；本轮仅 DMIT，IPv6 无连接时标为不可用。关闭测速、排名、报告上传及国际／教育网测试。上游 GPL 源码与许可保存在独立附件中，MIT 主题不复制其分类函数。
 
-安装与边界见[附件说明](companion/tcpquality/README.md)、[与旧方法的差异](docs/tcpquality-0.0.4.md)及[版本说明](docs/release-notes-atlas-0.0.4.md)。主题、原生插件、Komari 附件使用各自 ZIP，不能混装。精确发布状态、源码与校验以 [Releases](https://github.com/MagnetOscar/Atlas/releases) 为准。
+安装与边界见[附件说明](companion/tcpquality/README.md)、[与旧方法的差异](docs/tcpquality-0.0.4.md)及[版本说明](docs/release-notes-atlas-0.0.4.md)。主题 ZIP、原生插件 ZIP、Komari 附件 tar.gz 和安装适配文档独立提供，不能混装。精确发布状态、源码与校验以 [Releases](https://github.com/MagnetOscar/Atlas/releases) 为准。
 
 ## Atlas v0.0.3（历史版本）
 

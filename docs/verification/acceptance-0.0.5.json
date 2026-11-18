@@ -1,0 +1,48 @@
+{
+  "version": "0.0.5",
+  "status": "passed",
+  "source_commit": "02ffb199a4b2f95567115f09efa1ecff88b12a88",
+  "baseline_commit": "192e4245dfbfe9656eb1e73c443e07e1b67d3f5c",
+  "scope": "antigravity-ui-pr20",
+  "branding": {
+    "name": "Atlas"
+  },
+  "checks": {
+    "engineering": {
+      "status": "passed",
+      "evidence": "docs/verification/review-0.0.5.json"
+    },
+    "reset": {
+      "status": "passed",
+      "evidence": "docs/verification/review-0.0.5.json"
+    },
+    "finance": {
+      "status": "passed",
+      "evidence": "docs/verification/review-0.0.5.json"
+    },
+    "sorting": {
+      "status": "passed",
+      "evidence": "docs/verification/review-0.0.5.json"
+    },
+    "display": {
+      "status": "passed",
+      "evidence": "docs/verification/review-0.0.5.json"
+    },
+    "return-route": {
+      "status": "passed",
+      "evidence": "docs/verification/review-0.0.5.json"
+    },
+    "ui-review": {
+      "status": "passed",
+      "evidence": "docs/verification/review-0.0.5.json"
+    },
+    "integration": {
+      "status": "passed",
+      "evidence": "docs/verification/review-0.0.5.json"
+    },
+    "package": {
+      "status": "passed",
+      "evidence": "docs/verification/review-0.0.5.json"
+    }
+  }
+}
