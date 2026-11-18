@@ -406,10 +406,10 @@ const activeToolTitle = computed(() => {
 
 const nodeCardGridClass = computed(() => {
   const sizeClass: Record<typeof appStore.nodeCardSize, string> = {
-    mini: 'gap-3 sm:grid-cols-[repeat(auto-fill,minmax(270px,1fr))]',
-    compact: 'gap-3 sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))]',
-    comfortable: 'gap-4 sm:grid-cols-[repeat(auto-fill,minmax(360px,1fr))]',
-    large: 'gap-5 sm:grid-cols-[repeat(auto-fill,minmax(420px,1fr))]',
+    mini: 'gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5',
+    compact: 'gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4',
+    comfortable: 'gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4',
+    large: 'gap-5 md:grid-cols-2 xl:grid-cols-3',
   }
   return ['grid grid-cols-1', sizeClass[appStore.nodeCardSize]]
 })
@@ -558,6 +558,7 @@ const nodeCardGridClass = computed(() => {
                   :enabled="deferNodeCards"
                   :idle-delay="800 + index * 70"
                   :min-height="deferredNodeCardHeight"
+                  class="h-full"
                 >
                   <NodeCard
                     :node="node"

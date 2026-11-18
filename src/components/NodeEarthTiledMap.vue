@@ -130,6 +130,19 @@ const arcPaths = computed<MapArcPath[]>(() => earthArcs.value.map((arc) => {
               <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#ffffff" flood-opacity="0.14" />
               <feDropShadow dx="0" dy="-5" stdDeviation="9" flood-color="#082f49" flood-opacity="0.16" />
             </filter>
+            <mask id="earth-arc-flag-mask" maskUnits="userSpaceOnUse" x="0" y="0" :width="MAP_WIDTH" :height="MAP_HEIGHT">
+              <rect x="0" y="0" :width="MAP_WIDTH" :height="MAP_HEIGHT" fill="white" />
+              <rect
+                v-for="marker in clusterMarkers"
+                :key="`mask-${marker.id}`"
+                :x="marker.x - 17"
+                :y="marker.y - 38"
+                width="34"
+                height="34"
+                rx="6"
+                fill="black"
+              />
+            </mask>
           </defs>
 
           <image :href="EARTH_DAY_TEXTURE" x="0" :y="-TEXTURE_SOURCE_Y" :width="MAP_WIDTH" :height="TEXTURE_FULL_HEIGHT" preserveAspectRatio="none" class="earth-image earth-image-base" />
@@ -137,7 +150,7 @@ const arcPaths = computed<MapArcPath[]>(() => earthArcs.value.map((arc) => {
           <image :href="EARTH_SPECULAR_MAP" x="0" :y="-TEXTURE_SOURCE_Y" :width="MAP_WIDTH" :height="TEXTURE_FULL_HEIGHT" preserveAspectRatio="none" class="earth-image earth-image-water" />
           <rect :width="MAP_WIDTH" :height="MAP_HEIGHT" class="earth-overlay" />
 
-          <g class="earth-arcs" :class="{ 'is-static': appStore.disablePageAnimation, 'is-persistent': persistentEarthArcs }">
+          <g class="earth-arcs" mask="url(#earth-arc-flag-mask)" :class="{ 'is-static': appStore.disablePageAnimation, 'is-persistent': persistentEarthArcs }">
             <path
               v-for="arc in arcPaths"
               :key="arc.id"

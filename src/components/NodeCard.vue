@@ -65,9 +65,10 @@ const NODE_METRIC_ICONS = {
 } as const
 
 const isMiniNodeCard = computed(() => appStore.nodeCardSize === 'mini')
+const showReturnRouteSplit = computed(() => appStore.returnRouteHomeTileEnabled && appStore.returnRoutesVisible)
 const nodeCardXSize = computed(() => appStore.nodeCardSize === 'large' ? 'large' : 'medium')
 const nodeCardContentClass = computed(() => appStore.nodeCardSize === 'large' ? 'gap-4' : isMiniNodeCard.value ? 'gap-2' : 'gap-3')
-const nodeCardContentPaddingClass = computed(() => isMiniNodeCard.value ? 'pb-2' : '')
+const nodeCardContentPaddingClass = computed(() => isMiniNodeCard.value ? 'pb-2 flex-1 flex flex-col @max-[380px]/card:px-3' : 'flex-1 flex flex-col @max-[380px]/card:px-3')
 const nodeCardMetricGridClass = 'grid-cols-3'
 const nodeCardMetricBoxClass = computed(() => isMiniNodeCard.value
   ? 'px-1 py-1'
@@ -225,8 +226,9 @@ function hasRegion(region: string | null | undefined): boolean {
     ref="pingRoot"
     hoverable
     :size="nodeCardXSize"
+    header-class="@max-[380px]/card:px-3"
     :content-class="nodeCardContentPaddingClass"
-    class="node-card w-full cursor-pointer border-none shadow-[0_0_0_3px] shadow-transparent transition-all duration-200 rounded-xl"
+    class="node-card @container/card w-full h-full cursor-pointer border-none shadow-[0_0_0_3px] shadow-transparent transition-all duration-200 rounded-xl"
     :class="[!props.node.online && '!shadow-destructive/30']"
     role="button"
     tabindex="0"
@@ -287,16 +289,16 @@ function hasRegion(region: string | null | undefined): boolean {
     </template>
 
     <template #default>
-      <div class="flex flex-col relative" :class="nodeCardContentClass">
-        <!-- 在线天数固定展示，价格独立展示，避免不同主机卡片高度不一致 -->
-        <div data-node-header-meta class="relative z-20 -mt-1 flex min-w-0 items-start justify-between gap-2">
-          <div class="flex min-w-0 max-w-[60%] flex-wrap items-center gap-1.5">
-            <span class="shrink-0 text-[11px] px-2 py-0.5 rounded-full bg-slate-500/10 text-muted-foreground leading-tight">
+      <div class="flex flex-1 flex-col relative" :class="nodeCardContentClass">
+        <!-- 在线天数固定展示，价格独立展示，单行标签保持并列卡片高度一致 -->
+        <div data-node-header-meta class="relative z-20 -mt-1 flex min-w-0 items-center justify-between gap-2 @max-[380px]/card:gap-1">
+          <div class="flex min-w-0 items-center gap-1.5 @max-[380px]/card:gap-1 whitespace-nowrap">
+            <span class="inline-flex h-5 shrink-0 items-center text-[11px] @max-[380px]/card:text-[10px] px-2 @max-[380px]/card:px-1.5 rounded-full bg-slate-500/10 text-muted-foreground leading-none">
               {{ uptimeDaysText }}
             </span>
             <span
               v-if="priceText"
-              class="min-w-0 truncate text-[11px] px-2 py-0.5 rounded-full bg-slate-500/10 text-muted-foreground leading-tight"
+              class="inline-flex h-5 min-w-0 items-center truncate text-[11px] @max-[380px]/card:text-[10px] px-2 @max-[380px]/card:px-1.5 rounded-full bg-slate-500/10 text-muted-foreground leading-none"
             >
               {{ priceText }}
             </span>
@@ -425,15 +427,106 @@ function hasRegion(region: string | null | undefined): boolean {
           </div>
         </div>
 
-        <!-- 三列：网速 / 总流量 / 剩余天数+价格或负载；下一行显示连接数 -->
-        <div class="grid gap-1.5" :class="nodeCardMetricGridClass">
+        <!-- 中间 5 信息块：开启三网回程双栏时，左侧 2x2 网络概览 + 右侧三网回程 -->
+        <div
+          v-if="showReturnRouteSplit"
+          class="grid grid-cols-2 gap-1.5 items-stretch @max-[315px]/card:grid-cols-1"
+        >
+          <div class="flex min-w-0 flex-col overflow-hidden rounded-xl border border-slate-400/20 dark:border-white/10 bg-slate-500/5 text-[11px] shadow-inner backdrop-blur-sm">
+            <div class="flex items-center justify-between gap-1 border-b border-slate-400/20 dark:border-white/10 px-2.5 @max-[380px]/card:px-2 py-1.5">
+              <span class="font-medium text-foreground/90">网络概览</span>
+              <span class="text-[10px] text-muted-foreground/70">{{ appStore.connectionCountsVisible ? '实时' : '状态' }}</span>
+            </div>
+            <div class="grid flex-1 grid-cols-2">
+              <!-- 实时网速 -->
+              <div class="flex min-w-0 flex-col justify-center gap-0.5 overflow-hidden border-b border-r border-slate-400/15 dark:border-white/8 px-2 @max-[380px]/card:px-1.5 py-1.5">
+                <span class="text-[10px] leading-none text-muted-foreground/70">网速</span>
+                <div class="text-[11px] @max-[380px]/card:text-[10px] leading-tight text-success flex items-center gap-1 min-w-0">
+                  <Icon icon="tabler:chevron-up" width="11" height="11" class="shrink-0" />
+                  <span class="truncate min-w-0 tabular-nums">{{ formatBytesPerSecond(props.node.net_out ?? 0) }}</span>
+                </div>
+                <div class="text-[11px] @max-[380px]/card:text-[10px] leading-tight text-blue-600 dark:text-sky-400 flex items-center gap-1 min-w-0">
+                  <Icon icon="tabler:chevron-down" width="11" height="11" class="shrink-0" />
+                  <span class="truncate min-w-0 tabular-nums">{{ formatBytesPerSecond(props.node.net_in ?? 0) }}</span>
+                </div>
+              </div>
+
+              <!-- 总流量 -->
+              <div class="flex min-w-0 flex-col justify-center gap-0.5 overflow-hidden border-b border-slate-400/15 dark:border-white/8 px-2 @max-[380px]/card:px-1.5 py-1.5">
+                <span class="text-[10px] leading-none text-muted-foreground/70">总流量</span>
+                <div class="text-[11px] @max-[380px]/card:text-[10px] leading-tight text-muted-foreground flex items-center gap-1 min-w-0" data-machine-direction="up">
+                  <Icon icon="tabler:upload" width="11" height="11" class="shrink-0" />
+                  <span class="truncate min-w-0 tabular-nums">{{ trafficUp === null ? '—' : formatBytes(trafficUp ?? 0) }}</span>
+                </div>
+                <div class="text-[11px] @max-[380px]/card:text-[10px] leading-tight text-muted-foreground flex items-center gap-1 min-w-0" data-machine-direction="down">
+                  <Icon icon="tabler:download" width="11" height="11" class="shrink-0" />
+                  <span class="truncate min-w-0 tabular-nums">{{ trafficDown === null ? '—' : formatBytes(trafficDown ?? 0) }}</span>
+                </div>
+              </div>
+
+              <!-- 剩余天数+价格 或 负载 -->
+              <div
+                class="flex min-w-0 flex-col justify-center gap-0.5 overflow-hidden px-2 @max-[380px]/card:px-1.5 py-1.5"
+                :class="appStore.connectionCountsVisible ? 'border-r border-slate-400/15 dark:border-white/8' : 'col-span-2'"
+              >
+                <span class="text-[10px] leading-none text-muted-foreground/70">{{ remainingInfoTags.length ? '到期' : '负载' }}</span>
+                <template v-if="remainingInfoTags.length">
+                  <div
+                    v-for="(item, i) in remainingInfoTags" :key="i"
+                    class="text-[11px] @max-[380px]/card:text-[10px] leading-tight flex items-center gap-0.5 min-w-0 overflow-hidden"
+                    :class="item.className ?? 'text-muted-foreground'"
+                  >
+                    <Icon :icon="item.icon" width="11" height="11" class="shrink-0" />
+                    <span v-if="item.text" class="truncate min-w-0">{{ item.text }}</span>
+                    <span v-else class="truncate min-w-0">
+                      <span v-if="item.prefix">{{ item.prefix }}</span>
+                      <span v-if="item.value" class="tabular-nums">{{ item.value }}</span>
+                      <span v-if="item.unit">{{ item.unit }}</span>
+                    </span>
+                  </div>
+                </template>
+                <template v-else>
+                  <div class="text-[11px] @max-[380px]/card:text-[10px] leading-tight text-muted-foreground truncate tabular-nums">
+                    {{ (props.node.load ?? 0).toFixed(2) }}
+                  </div>
+                  <div class="text-[11px] @max-[380px]/card:text-[10px] leading-tight text-muted-foreground truncate tabular-nums">
+                    {{ (props.node.load5 ?? 0).toFixed(2) }} / {{ (props.node.load15 ?? 0).toFixed(2) }}
+                  </div>
+                </template>
+              </div>
+
+              <!-- Dual-panel connection counts -->
+              <div
+                v-if="appStore.connectionCountsVisible"
+                data-node-connections
+                class="flex min-w-0 flex-col justify-center gap-0.5 overflow-hidden px-2 @max-[380px]/card:px-1.5 py-1.5"
+              >
+                <span class="text-[10px] leading-none text-muted-foreground/70">连接</span>
+                <div v-if="appStore.showTcpConnections" data-node-connection="tcp" class="text-[11px] @max-[380px]/card:text-[10px] leading-tight text-muted-foreground flex items-center justify-between gap-1 min-w-0">
+                  <span class="shrink-0">TCP</span>
+                  <span class="truncate min-w-0 tabular-nums" :title="formatConnectionCount(props.node.connections)">{{ formatConnectionCount(props.node.connections) }}</span>
+                </div>
+                <div v-if="appStore.showUdpConnections" data-node-connection="udp" class="text-[11px] @max-[380px]/card:text-[10px] leading-tight text-muted-foreground flex items-center justify-between gap-1 min-w-0">
+                  <span class="shrink-0">UDP</span>
+                  <span class="truncate min-w-0 tabular-nums" :title="formatConnectionCount(props.node.connections_udp)">{{ formatConnectionCount(props.node.connections_udp) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Homepage return-route tile -->
+          <NodeReturnRouteTile :uuid="props.node.uuid" class="h-full" />
+        </div>
+
+        <!-- 三列：网速 / 总流量 / 剩余天数+价格或负载；下一行显示连接数（未开启首页回程双栏时） -->
+        <div v-else class="grid gap-1.5" :class="nodeCardMetricGridClass">
           <!-- 实时网速 -->
           <div class="flex flex-col gap-0.5 rounded-lg bg-slate-500/5 min-w-0 overflow-hidden" :class="nodeCardMetricBoxClass">
             <div class="text-[11px] text-success flex items-center gap-1">
               <Icon icon="tabler:chevron-up" width="11" height="11" />
               <span class="truncate min-w-0 overflow-hidden">{{ formatBytesPerSecond(props.node.net_out ?? 0) }}</span>
             </div>
-            <div class="text-[11px] text-blue-600 flex items-center gap-1">
+            <div class="text-[11px] text-blue-600 dark:text-sky-400 flex items-center gap-1">
               <Icon icon="tabler:chevron-down" width="11" height="11" />
               <span class="truncate min-w-0 overflow-hidden">{{ formatBytesPerSecond(props.node.net_in ?? 0) }}</span>
             </div>
@@ -482,8 +575,8 @@ function hasRegion(region: string | null | undefined): boolean {
           <div
             v-if="appStore.connectionCountsVisible"
             data-node-connections
-            class="grid gap-0.5 rounded-lg bg-slate-500/5 min-w-0 overflow-hidden"
-            :class="[nodeCardMetricBoxClass, appStore.returnRouteHomeTileEnabled ? 'grid-rows-[auto_auto] content-center' : 'grid-rows-2']"
+            class="grid grid-rows-2 gap-0.5 rounded-lg bg-slate-500/5 min-w-0 overflow-hidden"
+            :class="nodeCardMetricBoxClass"
           >
             <div v-if="appStore.showTcpConnections" data-node-connection="tcp" class="text-[11px] text-muted-foreground flex items-center justify-between gap-1">
               <span class="shrink-0">TCP</span>
@@ -495,9 +588,6 @@ function hasRegion(region: string | null | undefined): boolean {
             </div>
           </div>
           <!-- /TCP/UDP connection counts -->
-          <!-- Homepage return-route tile -->
-          <NodeReturnRouteTile v-if="appStore.returnRouteHomeTileEnabled" :uuid="props.node.uuid" :class="nodeCardMetricBoxClass" />
-          <!-- /Homepage return-route tile -->
         </div>
 
         <!-- 联通 / 电信 / 移动三网延迟 + 丢包 -->

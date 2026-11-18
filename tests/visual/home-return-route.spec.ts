@@ -47,9 +47,9 @@ for (const width of [390, 1440]) {
       expect(await tile.locator('[data-route-tile-carrier]').evaluateAll(els => els.map(e => e.getAttribute('data-route-tile-carrier')))).toEqual(['mobile', 'unicom', 'telecom'])
       const a = (await card.locator('[data-node-connections]').boundingBox())!
       const b = (await tile.boundingBox())!
-      expect(Math.abs(a.y - b.y)).toBeLessThan(1)
-      expect(Math.abs(b.width - (a.width * 2 + 6))).toBeLessThan(2)
       expect(b.x).toBeGreaterThan(a.x)
+      expect(a.y).toBeGreaterThan(b.y)
+      expect(a.y + a.height).toBeLessThanOrEqual(b.y + b.height + 2)
       await expect(card.locator('[data-node-ping-bars=latency]')).toContainText('ms')
       expect(await page.locator('html').evaluate(e => e.scrollWidth)).toBe(width)
       mkdirSync('test-results/previews/0.0.3', { recursive: true })
