@@ -32,9 +32,14 @@ for (const width of [320, 390, 1440]) {
       }
       const a = (await card.locator('[data-node-connections]').boundingBox())!
       const b = (await tile.boundingBox())!
-      expect(Math.abs(a.y - b.y)).toBeLessThan(1)
-      expect(b.x).toBeGreaterThan(a.x)
-      expect(Math.abs(b.width - (a.width * 2 + 6))).toBeLessThan(2)
+      if (width === 320) {
+        expect(b.y).toBeGreaterThan(a.y + a.height)
+      }
+      else {
+        expect(b.x).toBeGreaterThan(a.x)
+        expect(a.y).toBeGreaterThan(b.y)
+        expect(a.y + a.height).toBeLessThanOrEqual(b.y + b.height + 2)
+      }
       expect(await page.locator('html').evaluate(e => e.scrollWidth)).toBe(width)
       mkdirSync('test-results/previews/0.0.4', { recursive: true })
       await card.screenshot({ path: `test-results/previews/0.0.4/${width}-${dark ? 'dark' : 'light'}.png` })

@@ -24,7 +24,7 @@ const formattedServerVersion = computed(() => serverVersion.value?.version ?? ''
 </script>
 
 <template>
-  <footer class="w-full max-w-[1280px] mx-auto p-4">
+  <footer class="w-full max-w-[1720px] mx-auto p-4">
     <div class="flex w-full flex-row justify-between gap-4 text-xs text-muted-foreground">
       <div class="flex gap-1 items-center">
         Powered by

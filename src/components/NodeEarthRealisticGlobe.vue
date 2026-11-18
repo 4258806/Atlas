@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { GlobeInstance } from 'globe.gl'
-import type { MeshPhongMaterial, Texture } from 'three'
+import type { Material, MeshPhongMaterial, ShaderMaterial, Texture } from 'three'
 import type { NodeData } from '@/stores/nodes'
 import {
   useDocumentVisibility,
@@ -21,6 +21,9 @@ const EARTH_NIGHT_TEXTURE = '/images/earth/earth-night.jpg'
 const EARTH_BUMP_MAP = '/images/earth/earth-topology.png'
 const EARTH_SPECULAR_MAP = '/images/earth/earth-water.png'
 const CHINA_COORD: [number, number] = [35.8617, 104.1954]
+const MAX_FLAG_BOXES = 64
+const FLAG_CLEARANCE_PX = 5
+const DEFAULT_FLAG_SIZE_PX = 19.2
 
 const appStore = useAppStore()
 
@@ -191,9 +194,41 @@ function applyArcStyle() {
   if (!globe)
     return
   globe
-    .arcDashLength(persistentEarthArcs.value ? 1 : 0.48)
-    .arcDashGap(persistentEarthArcs.value ? 0 : 1.4)
-    .arcDashAnimateTime(persistentEarthArcs.value ? 0 : 2600)
+    .arcDashLength(persistentEarthArcs.value ? 1 : 0.06)
+    .arcDashGap(persistentEarthArcs.value ? 0 : 0.03)
+    .arcDashAnimateTime(persistentEarthArcs.value ? 0 : 1800)
+}
+
+interface GlobeSceneObject {
+  __globeObjType?: string
+  element?: HTMLElement
+  children?: Array<{ material?: Material }>
+}
+
+function patchArcMaterialForFlagAvoidance(
+  material: Material | undefined,
+  sharedUniforms: {
+    uFlagCount: { value: number }
+    uFlagBoxes: { value: unknown[] }
+    uFlagRadius: { value: number }
+  },
+) {
+  const shaderMat = material as ShaderMaterial | undefined
+  if (!shaderMat || !shaderMat.fragmentShader || shaderMat.userData.__atlasFlagAvoidancePatched)
+    return
+  if (!shaderMat.fragmentShader.includes('gl_FragColor'))
+    return
+
+  shaderMat.userData.__atlasFlagAvoidancePatched = true
+  shaderMat.uniforms.uFlagCount = sharedUniforms.uFlagCount
+  shaderMat.uniforms.uFlagBoxes = sharedUniforms.uFlagBoxes
+  shaderMat.uniforms.uFlagRadius = sharedUniforms.uFlagRadius
+  shaderMat.fragmentShader = shaderMat.fragmentShader
+    .replace(
+      'void main() {',
+      `uniform int uFlagCount;\nuniform vec4 uFlagBoxes[${MAX_FLAG_BOXES}];\nuniform float uFlagRadius;\nvoid main() {\n  for (int i = 0; i < ${MAX_FLAG_BOXES}; i++) {\n    if (i >= uFlagCount) break;\n    vec4 box = uFlagBoxes[i];\n    vec2 d = abs(gl_FragCoord.xy - box.xy) - box.zw;\n    float dist = length(max(d, 0.0)) + min(max(d.x, d.y), 0.0) - uFlagRadius;\n    if (dist < 0.0) discard;\n  }`,
+    )
+  shaderMat.needsUpdate = true
 }
 
 async function startGlobe() {
@@ -245,9 +280,9 @@ async function startGlobe() {
       .arcColor(() => appStore.isDark ? 'rgba(56, 189, 248, 0.82)' : 'rgba(2, 132, 199, 0.72)')
       .arcAltitudeAutoScale(0.22)
       .arcStroke(0.45)
-      .arcDashLength(persistentEarthArcs.value ? 1 : 0.48)
-      .arcDashGap(persistentEarthArcs.value ? 0 : 1.4)
-      .arcDashAnimateTime(persistentEarthArcs.value ? 0 : 2600)
+      .arcDashLength(persistentEarthArcs.value ? 1 : 0.06)
+      .arcDashGap(persistentEarthArcs.value ? 0 : 0.03)
+      .arcDashAnimateTime(persistentEarthArcs.value ? 0 : 1800)
       .arcsTransitionDuration(500)
       .htmlElementsData(labelsData.value)
       .htmlLat('lat')
@@ -255,10 +290,58 @@ async function startGlobe() {
       .htmlAltitude(0.012)
       .htmlElement(createLabelElement)
       .htmlElementVisibilityModifier((el: HTMLElement, isVisible: boolean) => {
+        el.dataset.globeVisible = isVisible ? '1' : '0'
         el.style.opacity = isVisible ? '1' : '0'
         el.style.filter = isVisible ? 'blur(0)' : 'blur(14px)'
       })
       .htmlTransitionDuration(500)
+
+    const drawSize = new THREE.Vector2()
+    const projVec = new THREE.Vector3()
+    const flagBoxes: InstanceType<typeof THREE.Vector4>[] = []
+    for (let i = 0; i < MAX_FLAG_BOXES; i++)
+      flagBoxes.push(new THREE.Vector4())
+    const sharedFlagUniforms = {
+      uFlagCount: { value: 0 },
+      uFlagBoxes: { value: flagBoxes },
+      uFlagRadius: { value: 4 },
+    }
+    const scene = globe.scene()
+    scene.onBeforeRender = (renderer, currentScene, camera) => {
+      renderer.getDrawingBufferSize(drawSize)
+      const clientW = renderer.domElement.clientWidth || drawSize.x
+      const clientH = renderer.domElement.clientHeight || drawSize.y
+      const scaleX = drawSize.x / clientW
+      const scaleY = drawSize.y / clientH
+      sharedFlagUniforms.uFlagRadius.value = 3.5 * scaleX
+
+      let flagCount = 0
+      currentScene.traverse((node) => {
+        const sceneObj = node as unknown as GlobeSceneObject & { getWorldPosition?: (target: typeof projVec) => typeof projVec }
+        if (sceneObj.__globeObjType === 'html') {
+          const el = sceneObj.element
+          if (!el || el.dataset.globeVisible !== '1' || flagCount >= MAX_FLAG_BOXES || !sceneObj.getWorldPosition)
+            return
+          sceneObj.getWorldPosition(projVec).project(camera)
+          if (projVec.z < -1 || projVec.z > 1)
+            return
+          const flagImg = el.firstElementChild as HTMLElement | null
+          const cssW = flagImg?.offsetWidth || DEFAULT_FLAG_SIZE_PX
+          const cssH = flagImg?.offsetHeight || DEFAULT_FLAG_SIZE_PX
+          const cx = (projVec.x * 0.5 + 0.5) * drawSize.x
+          const cy = (projVec.y * 0.5 + 0.5) * drawSize.y
+          const halfW = (cssW * 0.5 + FLAG_CLEARANCE_PX - 3.5) * scaleX
+          const halfH = (cssH * 0.5 + FLAG_CLEARANCE_PX - 3.5) * scaleY
+          sharedFlagUniforms.uFlagBoxes.value[flagCount]!.set(cx, cy, Math.max(1, halfW), Math.max(1, halfH))
+          flagCount++
+          return
+        }
+        if (sceneObj.__globeObjType === 'arc' && sceneObj.children?.length) {
+          patchArcMaterialForFlagAvoidance(sceneObj.children[0]?.material, sharedFlagUniforms)
+        }
+      })
+      sharedFlagUniforms.uFlagCount.value = flagCount
+    }
 
     const renderer = globe.renderer()
     renderer.setClearColor(0x000000, 0)
@@ -304,6 +387,7 @@ function stopGlobe() {
   if (!globe)
     return
 
+  globe.scene().onBeforeRender = () => {}
   globe.pauseAnimation()
   globe._destructor()
   globe = null

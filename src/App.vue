@@ -77,7 +77,7 @@ onUnmounted(() => {
     >
       <div v-if="!appStore.loading" class="app-shell">
         <main class="min-h-screen overflow-hidden">
-          <div v-if="appStore.connectionError" class="relative z-10 mx-auto max-w-[1280px] px-4 pt-4">
+          <div v-if="appStore.connectionError" class="relative z-10 mx-auto max-w-[1720px] px-4 pt-4">
             <Alert variant="destructive" class="!pr-28 border-none bg-destructive/10 backdrop-blur-xs rounded-md">
               <Icon icon="tabler:plug-connected-x" />
               <AlertTitle>RPC 服务错误</AlertTitle>
@@ -90,7 +90,7 @@ onUnmounted(() => {
               </AlertAction>
             </Alert>
           </div>
-          <div class="max-w-[1280px] mx-auto">
+          <div class="max-w-[1720px] mx-auto">
             <RouterView v-slot="{ Component }">
               <Transition
                 :css="!appStore.disablePageAnimation"
