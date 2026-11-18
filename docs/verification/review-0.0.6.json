@@ -1,0 +1,94 @@
+{
+  "version": "0.0.6",
+  "status": "passed",
+  "source_commit": "2c52f00eb3079de71a4bebb7536d3166748d6c8f",
+  "reviewedPR": "https://github.com/MagnetOscar/Atlas/pull/22",
+  "reviewedUICommit": "054af85f8b8fe6050f81c8f1d580741f8c29e301",
+  "review": {
+    "blockingCodeDefectsFound": 0,
+    "scope": "Only realistic/Cobe globe fixes from PR22; historical 0.0.5 contract restored and two-file additive 0.0.6 contract added",
+    "areas": [
+      "arc geometry settings",
+      "fading flag lifetime and render callback",
+      "unchanged runtime outside the two globe files",
+      "historical contract preservation and manifest defaults"
+    ]
+  },
+  "ciReused": {
+    "reason": "Executable source equals PR22 original passing head; avoid duplicate local full suites per user instruction. Final-head mandatory Linux CI remains required before merge.",
+    "quality": "https://github.com/MagnetOscar/Atlas/actions/runs/44337711307",
+    "visual": "https://github.com/MagnetOscar/Atlas/actions/runs/44337710079"
+  },
+  "local": {
+    "lint": "passed",
+    "uiContractCasesPassed": 80,
+    "releaseScopeCasesPassed": 7,
+    "typesAndProductionBuild": "passed",
+    "fullLinuxUnitAndBrowser": "Final-head CI required; native Windows does not cover unchanged Linux fcntl fixtures",
+    "physicalGPUCoverage": "Not exhaustive"
+  },
+  "package": {
+    "file": "komari-theme-Atlas-build-2c52f00.zip",
+    "sha256": "a0b55893ff765ef4adceeae4dcf7ddba3cfa0637f652b12035cae7fed785888e",
+    "version": "0.0.6",
+    "source": "2c52f00eb3079de71a4bebb7536d3166748d6c8f",
+    "dirty": false,
+    "mode": "production",
+    "nativeThemeOnly": true
+  },
+  "native": {
+    "kind": "official-Komari-1.6.1-loopback-native-reset-acceptance",
+    "productionTouched": false,
+    "history": "explicit synthetic SQL fixture",
+    "backendSHA256": "0c6e73c42ac166d34562e57037007a21692599e9e868ddae18217691e0f5d932",
+    "baselineSHA256": "54ef15efe37707109ce721ed22608745a575b3683038951b02b05d1724d3ff17",
+    "candidateSHA256": "a0b55893ff765ef4adceeae4dcf7ddba3cfa0637f652b12035cae7fed785888e",
+    "checks": [
+      {
+        "name": "fresh official backend and verified native administrator session",
+        "status": "passed"
+      },
+      {
+        "name": "install exact baseline, upgrade candidate and preserve settings",
+        "status": "passed"
+      },
+      {
+        "name": "administrator editor persists independent timezone, day and minute on desktop and mobile",
+        "status": "passed"
+      },
+      {
+        "name": "native carrier order and display switches persist on desktop/mobile without changing billing or reset settings",
+        "status": "passed"
+      },
+      {
+        "name": "native per-metric retention and tier configuration read back without disabling metrics",
+        "status": "passed"
+      },
+      {
+        "name": "native persisted minute edge and hourly body sum exactly without history mutation",
+        "status": "passed"
+      },
+      {
+        "name": "Atlas 0.0.1 downgrade and 0.0.2 re-upgrade preserve all display and reset preferences",
+        "status": "passed"
+      },
+      {
+        "name": "rollback restores baseline plus exact legacy settings; re-upgrade never overwrites saved Atlas configuration",
+        "status": "passed"
+      },
+      {
+        "name": "native node billing stays in its own currency while the header selects one currency",
+        "status": "passed"
+      }
+    ],
+    "rateNetworkDiagnostics": [],
+    "syntheticRows": 14496,
+    "status": "passed"
+  },
+  "actualNativeDowngradeVersion": "0.0.5",
+  "actualNativeReupgradeVersion": "0.0.6",
+  "inheritedTestTitlesAreHistorical": true,
+  "productionTouched": false,
+  "serverBackupsCreated": false,
+  "companionCodeUnchanged": true
+}

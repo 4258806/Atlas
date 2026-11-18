@@ -1,0 +1,48 @@
+{
+  "version": "0.0.6",
+  "status": "passed",
+  "source_commit": "2c52f00eb3079de71a4bebb7536d3166748d6c8f",
+  "baseline_commit": "579b70b1d6b4f445ba6fa44299734a84c88b2d47",
+  "scope": "globe-arcs-pr22",
+  "branding": {
+    "name": "Atlas"
+  },
+  "checks": {
+    "engineering": {
+      "status": "passed",
+      "evidence": "docs/verification/review-0.0.6.json"
+    },
+    "reset": {
+      "status": "passed",
+      "evidence": "docs/verification/review-0.0.6.json"
+    },
+    "finance": {
+      "status": "passed",
+      "evidence": "docs/verification/review-0.0.6.json"
+    },
+    "sorting": {
+      "status": "passed",
+      "evidence": "docs/verification/review-0.0.6.json"
+    },
+    "display": {
+      "status": "passed",
+      "evidence": "docs/verification/review-0.0.6.json"
+    },
+    "return-route": {
+      "status": "passed",
+      "evidence": "docs/verification/review-0.0.6.json"
+    },
+    "ui-review": {
+      "status": "passed",
+      "evidence": "docs/verification/review-0.0.6.json"
+    },
+    "integration": {
+      "status": "passed",
+      "evidence": "docs/verification/review-0.0.6.json"
+    },
+    "package": {
+      "status": "passed",
+      "evidence": "docs/verification/review-0.0.6.json"
+    }
+  }
+}
