@@ -10,6 +10,29 @@ BRANDING_BASELINE = "92e6f827b5cdef105149e096365aebef28fdad74"
 ATLAS_001 = "31c69e80cb629a5ccdb0144dabf4164583a54405"
 ATLAS_002 = "aae95c6f96360ccbc1ff07e4ecfc833c70ce4e43"
 ATLAS_003 = "1762647c7762efb22d5dfac3807d572c95d668db"
+ATLAS_004 = "192e4245dfbfe9656eb1e73c443e07e1b67d3f5c"
+UI_005 = {
+    "src/App.vue", "src/components/Footer.vue", "src/components/Header.vue",
+    "src/components/NodeCard.vue", "src/components/NodeHeaderTags.vue",
+    "src/components/NodeReturnRouteTile.vue", "src/views/HomeView.vue",
+    "src/components/NodeEarthRealisticGlobe.vue", "src/components/NodeEarthTiledMap.vue",
+}
+
+
+def audit_ui_scope(source):
+    for path in git("diff", "--name-only", ATLAS_004, source).splitlines():
+        if path.startswith("src/") and not path.endswith(".md") and path not in UI_005:
+            raise ValueError(f"Out-of-scope 0.0.5 runtime: {path}")
+        if path.startswith(("public/", "companion/")) or path in {"package.json", "bun.lock"}:
+            raise ValueError(f"0.0.5 cannot change assets, collectors or dependencies: {path}")
+    before = json.loads(git("show", f"{ATLAS_004}:komari-theme.json"))
+    after = json.loads(git("show", f"{source}:komari-theme.json"))
+    if after.get("version") != "0.0.5":
+        raise ValueError("Expected 0.0.5 source")
+    validate_manifest(before, after)
+    contract = json.loads(git("show", f"{source}:tests/fixtures/home-ui-0.0.5.json"))
+    if set(contract["components"]) != UI_005 or set(contract["protectedFiles"]) != {"src/components/NodeEarthRealisticGlobe.vue", "src/components/NodeEarthTiledMap.vue"}:
+        raise ValueError("UI contract exceeds the nine reviewed PR20 surfaces")
 QUALITY_RUNTIME = {
     "src/components/NodeCard.vue", "src/components/NodeReturnRouteTile.vue",
     "src/composables/useNodeReturnRoutes.ts", "src/utils/routeProbeSnapshot.ts",
@@ -228,6 +251,11 @@ def main():
             raise SystemExit("0.0.4 is limited to the Komari attachment and reference return-route panel")
         audit_quality_scope(source)
         stages = ("engineering", "reset", "finance", "sorting", "display", "tcpquality", "hourly-schedule", "license", "integration", "package", "previews", "production-trial")
+    elif version == "0.0.5":
+        if report.get("scope") != "antigravity-ui-pr20" or report.get("baseline_commit") != ATLAS_004:
+            raise SystemExit("0.0.5 is limited to the reviewed Antigravity UI change")
+        audit_ui_scope(source)
+        stages = ("engineering", "reset", "finance", "sorting", "display", "return-route", "ui-review", "integration", "package")
     else:
         stages = ("reset", "finance", "sorting", "display", "return-route", "integration")
     for stage in stages:
