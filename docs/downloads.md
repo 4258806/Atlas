@@ -2,6 +2,10 @@
 
 普通安装只下载原生主题 ZIP，在 Komari 1.6.1 后台主题管理上传并启用 Atlas。GitHub 自动 Source code 不是安装包；插件在[独立组件页](components.md)。
 
+## Atlas v0.0.7
+
+[下载主题 ZIP 与查看 SHA256](https://github.com/MagnetOscar/Atlas/releases/tag/atlas-v0.0.7)。本版仅修复写实地球飞线节奏，安装包与校验值由正式发布流程生成，不重打包插件。
+
 ## Atlas v0.0.6
 
 [下载主题 ZIP](https://github.com/MagnetOscar/Atlas/releases/download/atlas-v0.0.6/komari-theme-Atlas-build-e0039b2.zip) · [Release](https://github.com/MagnetOscar/Atlas/releases/tag/atlas-v0.0.6)

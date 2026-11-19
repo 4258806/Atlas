@@ -194,9 +194,9 @@ function applyArcStyle() {
   if (!globe)
     return
   globe
-    .arcDashLength(persistentEarthArcs.value ? 1 : 0.06)
-    .arcDashGap(persistentEarthArcs.value ? 0 : 0.03)
-    .arcDashAnimateTime(persistentEarthArcs.value ? 0 : 1800)
+    .arcDashLength(persistentEarthArcs.value ? 1 : 0.48)
+    .arcDashGap(persistentEarthArcs.value ? 0 : 1.4)
+    .arcDashAnimateTime(persistentEarthArcs.value ? 0 : 2600)
 }
 
 interface GlobeSceneObject {
@@ -280,9 +280,9 @@ async function startGlobe() {
       .arcColor(() => appStore.isDark ? 'rgba(56, 189, 248, 0.82)' : 'rgba(2, 132, 199, 0.72)')
       .arcAltitudeAutoScale(0.42)
       .arcStroke(0.45)
-      .arcDashLength(persistentEarthArcs.value ? 1 : 0.06)
-      .arcDashGap(persistentEarthArcs.value ? 0 : 0.03)
-      .arcDashAnimateTime(persistentEarthArcs.value ? 0 : 1800)
+      .arcDashLength(persistentEarthArcs.value ? 1 : 0.48)
+      .arcDashGap(persistentEarthArcs.value ? 0 : 1.4)
+      .arcDashAnimateTime(persistentEarthArcs.value ? 0 : 2600)
       .arcsTransitionDuration(500)
       .htmlElementsData(labelsData.value)
       .htmlLat('lat')

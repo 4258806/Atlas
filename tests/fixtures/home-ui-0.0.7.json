@@ -1,0 +1,9 @@
+{
+  "authorization": "User 2026-11-19: review PR23 and publish Atlas v0.0.7 with its baseline globe pulse timing only.",
+  "components": {
+    "src/components/NodeEarthRealisticGlobe.vue": "3af76a348021ee5773fdd72040fa94d9ee6b67dcd277d641785ceff1e584e2ec"
+  },
+  "protectedFiles": {
+    "src/components/NodeEarthRealisticGlobe.vue": "00952c0f548868d23342245f9a5385d02699b09efcb2ca7270ca8f4a2549e7f8"
+  }
+}
