@@ -1,0 +1,9 @@
+{
+  "authorization": "User 2026-11-19: PR only; preserve paid expiry/value and existing layout, show Long-term/Free for zero or explicit-free prices instead of duplicate CPU load.",
+  "components": {
+    "src/components/NodeCard.vue": "3b574de8cd03f6f789523757add75f78b882d7009614dccf22b1472a576a0146"
+  },
+  "protectedFiles": {
+    "src/components/NodeCard.vue": "65e196ac426851eb0f1de8883148a648f1632a6b958eed84e4452049afef54de"
+  }
+}

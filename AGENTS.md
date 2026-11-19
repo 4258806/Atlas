@@ -4,7 +4,7 @@ Read [docs/development.md](docs/development.md), [docs/releasing.md](docs/releas
 
 ## Scope and compatibility
 
-- Current task (2026-11-19): review/merge PR #23 and publish Atlas v0.0.7 with only its realistic-globe pulse timing change. Keep released UI contracts immutable with a new 0.0.7 overlay. Use the existing single-ZIP workflow with inline SHA256 and separate component links. No production deployment, additional functionality or component rebuilds.
+- Current task (2026-11-19): submit a PR only for the homepage billing mini tile: preserve paid-node expiry/value, display Long-term/Free for zero-price or existing free-price nodes, and keep CPU load in its existing CPU section. Do not change templates/styles, financial calculations, defaults, dependencies, version, server configuration or published artifacts. No merge, release or deployment is authorized.
 - Use Atlas for current project names. Retain copyrights/notices, vendored bytes, upstream links/history and fork baseline 0332d5f7c73f7994ba21c01e4b739d04835120b1.
 - Preserve legacy Enhanced configuration, plugin IDs/paths, dependency names and per-node authentication; do not blindly rename compatibility identifiers or third-party source.
 - Preserve accepted UI and data semantics. Further UI changes require explicit authorization and an additive contract under [the UI SOP](docs/ui-contract-sop.md).
