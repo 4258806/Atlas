@@ -1,9 +1,7 @@
 # Atlas v0.0.5
 
-合入经审查的 Antigravity [PR #20](https://github.com/MagnetOscar/Atlas/pull/20)：放宽页面容器、调整响应式卡片列数和等高布局；头部标签保持单行；启用首页回程时，改为网络概览与三网回程双栏；线路与分级使用统一胶囊；真实地球连续流光和地图连线增加国旗避让。
+- 合入 PR #20：响应式卡片、宽容器与单行头部标签。
+- 首页网络概览／回程双栏，统一线路和等级胶囊；地球／地图连线避让国旗。
+- PR #21 仅补版本、说明和验收材料，没有额外 UI 修改。
 
-保留原有本币金额／顶栏汇率、独立流量重置、三网排序、显示开关、回程数据来源、采集频率、权限和配置默认值。原生插件及 TcpQuality 附件没有变更，可继续使用 0.0.4 的独立安装材料，无需重装或另启探测。
-
-**主题管理只上传 `komari-theme-Atlas-build-*.zip`。** ZIP 仅含 `komari-theme.json`、`preview.png` 和 `dist/`；不包含 TQ、后端插件、安装脚本、rootfs 或私有配置。保留旧 ZIP 和配置即可通过原生主题管理回滚。
-
-兼容 Komari 1.6.1。完整检查、原生升级／回滚和实际下载校验见本 Release 验证附件。自动化页面检查不代表所有实体 GPU／浏览器均已验证。本次发布不自动替换生产主题。
+已验证兼容 Komari Server 1.6.1。主题 ZIP 只包含原生皮肤；插件／TcpQuality 在[组件页](components.md)单独下载。精确源码、SHA256、安装和回滚说明见 [Release](https://github.com/MagnetOscar/Atlas/releases/tag/atlas-v0.0.5) 与[下载索引](downloads.md)。

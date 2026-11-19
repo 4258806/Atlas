@@ -1,0 +1,317 @@
+{
+  "description": "Existing Atlas theme release provenance. Only download presentation changes; original theme assets and tags remain unchanged.",
+  "releases": [
+    {
+      "version": "0.0.1",
+      "tag": "atlas-v0.0.1",
+      "publishedAt": "2026-11-17T10:18:50Z",
+      "sourceCommit": "31c69e80cb629a5ccdb0144dabf4164583a54405",
+      "theme": {
+        "name": "komari-theme-Atlas-build-31c69e8.zip",
+        "size": 7350818,
+        "sha256": "86c4a718e916211194185c1a6d70968a1b553011d4dbd03412c1a0e07b8ebaa6",
+        "assetId": 758576830
+      },
+      "reports": {
+        "theme-build-verification.json": {
+          "version": "0.0.1",
+          "commit": "31c69e80cb629a5ccdb0144dabf4164583a54405",
+          "dirty": false,
+          "mode": "production",
+          "sha256": "86c4a718e916211194185c1a6d70968a1b553011d4dbd03412c1a0e07b8ebaa6",
+          "file": "komari-theme-Atlas-build-31c69e8.zip",
+          "entries": 784
+        }
+      },
+      "installationRecord": {
+        "originalAssetSHA256": "4609947528a102a8ed2dbd64720f06beb7cf37fb889a2a09835d5d821820b093",
+        "originalKeys": [
+          "kind",
+          "date",
+          "version",
+          "name",
+          "short",
+          "status",
+          "scope",
+          "release",
+          "package",
+          "ci",
+          "native_installation",
+          "branding",
+          "handoff"
+        ],
+        "publicSourceEvidence": "https://github.com/MagnetOscar/Atlas/tree/atlas-v0.0.1/docs/verification",
+        "note": "Existing source acceptance is retained at the immutable theme tag. Deployment-specific attachment fields are not copied into repository documentation."
+      }
+    },
+    {
+      "version": "0.0.2",
+      "tag": "atlas-v0.0.2",
+      "publishedAt": "2026-11-17T13:12:09Z",
+      "sourceCommit": "aae95c6f96360ccbc1ff07e4ecfc833c70ce4e43",
+      "theme": {
+        "name": "komari-theme-Atlas-build-aae95c6.zip",
+        "size": 7355003,
+        "sha256": "5a21440ff77a20a073b4fed0f69c012cb6d0ecc9fb7a955111ddcb31348c4d2b",
+        "assetId": 759123858
+      },
+      "reports": {
+        "theme-build-verification.json": {
+          "version": "0.0.2",
+          "commit": "aae95c6f96360ccbc1ff07e4ecfc833c70ce4e43",
+          "dirty": false,
+          "mode": "production",
+          "sha256": "5a21440ff77a20a073b4fed0f69c012cb6d0ecc9fb7a955111ddcb31348c4d2b",
+          "file": "komari-theme-Atlas-build-aae95c6.zip",
+          "entries": 785
+        }
+      },
+      "installationRecord": {
+        "originalAssetSHA256": "8db6db470524ab61ff8bf7838c56ccdf2bec1632395f4cb363a3f7b1a6c2f434",
+        "originalKeys": [
+          "version",
+          "status",
+          "tag",
+          "release",
+          "published_at",
+          "source_commit",
+          "accepted_runtime_source",
+          "diff",
+          "run",
+          "package",
+          "validation",
+          "previews",
+          "productionTouched",
+          "previousReleasesPreserved"
+        ],
+        "publicSourceEvidence": "https://github.com/MagnetOscar/Atlas/tree/atlas-v0.0.2/docs/verification",
+        "note": "Existing source acceptance is retained at the immutable theme tag. Deployment-specific attachment fields are not copied into repository documentation."
+      }
+    },
+    {
+      "version": "0.0.3",
+      "tag": "atlas-v0.0.3",
+      "publishedAt": "2026-11-17T17:26:27Z",
+      "sourceCommit": "1762647c7762efb22d5dfac3807d572c95d668db",
+      "theme": {
+        "name": "komari-theme-Atlas-build-1762647.zip",
+        "size": 7357122,
+        "sha256": "2a4bd9dead758317dd5c5378125e211d327fb946579993e3f48fd0c783618636",
+        "assetId": 759973664
+      },
+      "reports": {
+        "theme-build-verification.json": {
+          "version": "0.0.3",
+          "commit": "1762647c7762efb22d5dfac3807d572c95d668db",
+          "dirty": false,
+          "mode": "production",
+          "sha256": "2a4bd9dead758317dd5c5378125e211d327fb946579993e3f48fd0c783618636",
+          "file": "komari-theme-Atlas-build-1762647.zip",
+          "entries": 785
+        },
+        "companion-build-verification.json": {
+          "source": "1762647c7762efb22d5dfac3807d572c95d668db",
+          "dirty": false,
+          "pluginRuntimeMatchesTrialSource": "a0b39e9dffdb9e4a3f105b5fd1aa4062590410d9",
+          "helperRuntimeMatchesTrialSource": "df41985f6374e892121a73726c211755543e180d",
+          "files": [
+            {
+              "file": "atlas-route-plugin-0.3.1.zip",
+              "sha256": "084c7f68b3bf5c6c18b2934ef609b1ab6ddf30c3a32f94970531119a4da64939"
+            },
+            {
+              "file": "atlas-route-helper-0.3.1.zip",
+              "sha256": "0160af6c914962e2e0dd05e19d727f7aafe5b6a1122e68a0d087c9041714f26b"
+            }
+          ]
+        }
+      },
+      "installationRecord": {
+        "originalAssetSHA256": "0c530c0638dc17a37c0c6b1b2033543fbd43cea553300aa252149cd889100504",
+        "originalKeys": [
+          "version",
+          "status",
+          "tag",
+          "release",
+          "published_at",
+          "source_commit",
+          "accepted_source",
+          "tested_runtime_source",
+          "diff",
+          "package",
+          "companions",
+          "validation",
+          "production",
+          "previews",
+          "productionBrowserVisualReview",
+          "temporary520",
+          "previousReleasesPreserved"
+        ],
+        "publicSourceEvidence": "https://github.com/MagnetOscar/Atlas/tree/atlas-v0.0.3/docs/verification",
+        "note": "Existing source acceptance is retained at the immutable theme tag. Deployment-specific attachment fields are not copied into repository documentation."
+      }
+    },
+    {
+      "version": "0.0.4",
+      "tag": "atlas-v0.0.4",
+      "publishedAt": "2026-11-17T19:35:55Z",
+      "sourceCommit": "192e4245dfbfe9656eb1e73c443e07e1b67d3f5c",
+      "theme": {
+        "name": "komari-theme-Atlas-build-192e424.zip",
+        "size": 7360180,
+        "sha256": "4177f2823b30054e80f3af54877d10a4cd50f261c7f7f505d9ac1a341bb59e48",
+        "assetId": 760366519
+      },
+      "reports": {
+        "theme-build-verification.json": {
+          "version": "0.0.4",
+          "commit": "192e4245dfbfe9656eb1e73c443e07e1b67d3f5c",
+          "dirty": false,
+          "mode": "production",
+          "sha256": "4177f2823b30054e80f3af54877d10a4cd50f261c7f7f505d9ac1a341bb59e48",
+          "file": "komari-theme-Atlas-build-192e424.zip",
+          "entries": 785
+        },
+        "companion-build-verification.json": {
+          "source": "192e4245dfbfe9656eb1e73c443e07e1b67d3f5c",
+          "dirty": false,
+          "runtimeMatchesTrialSource": "0c25c2ef9f1ddcfd385fae229eb7d36d0facdabd",
+          "separateGPLAttachment": true,
+          "upstreamCommit": "db52fc60523320fc4a34b5c369f28be38df21d13",
+          "files": [
+            {
+              "file": "atlas-route-plugin-0.4.0.zip",
+              "sha256": "3cd2fceee4f7436c371fe0fbf221024c12cd1564de7764741a2a0fe15d908ef2"
+            },
+            {
+              "file": "atlas-komari-tcpquality-0.4.0.tar.gz",
+              "sha256": "2d1877758dff4833063ff85ce8f05c90becbd25d46d8b4f07f19ec493cee4817"
+            },
+            {
+              "file": "atlas-tcpquality-installation-0.4.0.md",
+              "sha256": "f4507b7f22e9ec45fbe62a2960f6b4be565b610bf71e67ab3fe9c4813b33aec2"
+            }
+          ]
+        }
+      },
+      "installationRecord": {
+        "originalAssetSHA256": "5ac80f5594ab70bcbacef3a1731b3a6f5263214194edff2a5dfd07235e7bdff0",
+        "originalKeys": [
+          "version",
+          "status",
+          "tag",
+          "release",
+          "published_at",
+          "source_commit",
+          "accepted_source",
+          "diff",
+          "package",
+          "companions",
+          "validation",
+          "production",
+          "previews",
+          "previousReleasesPreserved"
+        ],
+        "publicSourceEvidence": "https://github.com/MagnetOscar/Atlas/tree/atlas-v0.0.4/docs/verification",
+        "note": "Existing source acceptance is retained at the immutable theme tag. Deployment-specific attachment fields are not copied into repository documentation."
+      }
+    },
+    {
+      "version": "0.0.5",
+      "tag": "atlas-v0.0.5",
+      "publishedAt": "2026-11-18T14:40:42Z",
+      "sourceCommit": "579b70b1d6b4f445ba6fa44299734a84c88b2d47",
+      "theme": {
+        "name": "komari-theme-Atlas-build-579b70b.zip",
+        "size": 7362052,
+        "sha256": "1f63eb5e989b97e3fa4a6acaa31b9020ffa48786bd961fc80188b67adeef8820",
+        "assetId": 763752382
+      },
+      "reports": {
+        "theme-build-verification.json": {
+          "version": "0.0.5",
+          "commit": "579b70b1d6b4f445ba6fa44299734a84c88b2d47",
+          "dirty": false,
+          "mode": "production",
+          "sha256": "1f63eb5e989b97e3fa4a6acaa31b9020ffa48786bd961fc80188b67adeef8820",
+          "file": "komari-theme-Atlas-build-579b70b.zip",
+          "entries": 785
+        },
+        "theme-code-verification.json": {
+          "version": "0.0.5",
+          "source_commit": "579b70b1d6b4f445ba6fa44299734a84c88b2d47",
+          "reviewedUICommit": "6916928b765c416b45cb7ae510cdece012aebb02",
+          "pullRequests": [
+            "https://github.com/MagnetOscar/Atlas/pull/20",
+            "https://github.com/MagnetOscar/Atlas/pull/21"
+          ],
+          "package": {
+            "version": "0.0.5",
+            "commit": "579b70b1d6b4f445ba6fa44299734a84c88b2d47",
+            "dirty": false,
+            "mode": "production",
+            "sha256": "1f63eb5e989b97e3fa4a6acaa31b9020ffa48786bd961fc80188b67adeef8820",
+            "file": "komari-theme-Atlas-build-579b70b.zip",
+            "entries": 785
+          },
+          "publicBuild": "https://github.com/MagnetOscar/Atlas/actions/runs/44324307370",
+          "acceptedSourceRecord": "https://github.com/MagnetOscar/Atlas/blob/atlas-v0.0.5/docs/verification/review-0.0.5.json",
+          "packageContract": [
+            "komari-theme.json",
+            "preview.png",
+            "dist/"
+          ],
+          "companionCodeChanged": false
+        }
+      }
+    },
+    {
+      "version": "0.0.6",
+      "tag": "atlas-v0.0.6",
+      "publishedAt": "2026-11-18T16:12:46Z",
+      "sourceCommit": "e0039b2f323114977fc1e94de054bd90f4f3e3b7",
+      "theme": {
+        "name": "komari-theme-Atlas-build-e0039b2.zip",
+        "size": 7362068,
+        "sha256": "a83800a68320ed12f4cafdfe001cfcf33f9f0cbf63dec5ca8c4dcc6e42de9196",
+        "assetId": 764066534
+      },
+      "reports": {
+        "theme-build-verification.json": {
+          "version": "0.0.6",
+          "commit": "e0039b2f323114977fc1e94de054bd90f4f3e3b7",
+          "dirty": false,
+          "mode": "production",
+          "sha256": "a83800a68320ed12f4cafdfe001cfcf33f9f0cbf63dec5ca8c4dcc6e42de9196",
+          "file": "komari-theme-Atlas-build-e0039b2.zip",
+          "entries": 785
+        },
+        "theme-code-verification.json": {
+          "version": "0.0.6",
+          "source_commit": "e0039b2f323114977fc1e94de054bd90f4f3e3b7",
+          "reviewedUICommit": "054af85f8b8fe6050f81c8f1d580741f8c29e301",
+          "pullRequests": [
+            "https://github.com/MagnetOscar/Atlas/pull/22"
+          ],
+          "package": {
+            "version": "0.0.6",
+            "commit": "e0039b2f323114977fc1e94de054bd90f4f3e3b7",
+            "dirty": false,
+            "mode": "production",
+            "sha256": "a83800a68320ed12f4cafdfe001cfcf33f9f0cbf63dec5ca8c4dcc6e42de9196",
+            "file": "komari-theme-Atlas-build-e0039b2.zip",
+            "entries": 785
+          },
+          "publicBuild": "https://github.com/MagnetOscar/Atlas/actions/runs/44342325874",
+          "acceptedSourceRecord": "https://github.com/MagnetOscar/Atlas/blob/atlas-v0.0.6/docs/verification/review-0.0.6.json",
+          "packageContract": [
+            "komari-theme.json",
+            "preview.png",
+            "dist/"
+          ],
+          "companionCodeChanged": false
+        }
+      }
+    }
+  ]
+}
