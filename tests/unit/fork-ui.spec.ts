@@ -12,10 +12,16 @@ const homeUi005Contract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/
 const globeContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-ui-0.0.6.json'), 'utf8')) as { components: Record<string, string>, protectedFiles: Record<string, string> }
 const pulseContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-ui-0.0.7.json'), 'utf8')) as { components: Record<string, string>, protectedFiles: Record<string, string> }
 const billingContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-billing-ui-20261119.json'), 'utf8')) as { components: Record<string, string>, protectedFiles: Record<string, string> }
+const routeSpacingContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-ui-0.0.9.json'), 'utf8')) as { components: Record<string, string>, protectedFiles: Record<string, string> }
 const homeUiContract = {
-  components: { ...homeUi005Contract.components, ...globeContract.components, ...pulseContract.components, ...billingContract.components },
-  protectedFiles: { ...homeUi005Contract.protectedFiles, ...globeContract.protectedFiles, ...pulseContract.protectedFiles, ...billingContract.protectedFiles },
+  components: { ...homeUi005Contract.components, ...globeContract.components, ...pulseContract.components, ...billingContract.components, ...routeSpacingContract.components },
+  protectedFiles: { ...homeUi005Contract.protectedFiles, ...globeContract.protectedFiles, ...pulseContract.protectedFiles, ...billingContract.protectedFiles, ...routeSpacingContract.protectedFiles },
 }
+
+test('0.0.9 UI exception covers only the return-route tile expanded spacing fix', () => {
+  expect(Object.keys(routeSpacingContract.components)).toEqual(['src/components/NodeReturnRouteTile.vue'])
+  expect(Object.keys(routeSpacingContract.protectedFiles)).toEqual([])
+})
 
 test('free billing exception preserves the accepted NodeCard layout and all other surfaces', () => {
   const path = 'src/components/NodeCard.vue'

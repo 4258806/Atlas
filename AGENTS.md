@@ -4,7 +4,7 @@ Read [docs/development.md](docs/development.md), [docs/releasing.md](docs/releas
 
 ## Scope and compatibility
 
-- Current task (2026-11-19): check PR27, merge after final-head CI passes, publish Atlas v0.0.8 with one native theme ZIP and inline SHA256, then install that verified theme on CA. Runtime scope remains the homepage free-node billing mini tile only; preserve templates/styles, paid billing, defaults, dependencies, collectors, schedules and server protection. Avoid redundant tests or backups.
+- Current task (2026-11-19): integrate the remaining PR26 into Atlas 0.0.8, merge after final-head CI passes, publish Atlas v0.0.9 with one native theme ZIP and inline SHA256, then install that verified theme on CA. Runtime scope is only return-route carrier spacing when details expand. Preserve 0.0.8 billing, all other UI, defaults, dependencies, collectors, schedules and server protection. Avoid redundant tests or backups.
 - Use Atlas for current project names. Retain copyrights/notices, vendored bytes, upstream links/history and fork baseline 0332d5f7c73f7994ba21c01e4b739d04835120b1.
 - Preserve legacy Enhanced configuration, plugin IDs/paths, dependency names and per-node authentication; do not blindly rename compatibility identifiers or third-party source.
 - Preserve accepted UI and data semantics. Further UI changes require explicit authorization and an additive contract under [the UI SOP](docs/ui-contract-sop.md).

@@ -31,14 +31,14 @@ const at = computed(() => quality.value?.collectedAt ?? ordered.value.find(e => 
 
 <template>
   <section v-if="visible" data-node-route-tile class="@container/route-tile flex min-w-0 flex-col rounded-xl border border-slate-400/20 dark:border-white/10 bg-slate-500/5 text-[11px] text-muted-foreground shadow-inner backdrop-blur-sm" aria-label="三网回程观测" @click.stop @keydown.stop>
-    <details class="flex min-w-0 flex-1 flex-col">
-      <summary class="flex flex-1 cursor-pointer list-none flex-col [&::-webkit-details-marker]:hidden" aria-label="查看三网回程摘要详情">
+    <details class="group flex min-w-0 flex-1 flex-col">
+      <summary class="flex flex-1 group-open:flex-none cursor-pointer list-none flex-col [&::-webkit-details-marker]:hidden" aria-label="查看三网回程摘要详情">
         <span class="flex items-center justify-between gap-1.5 border-b border-slate-400/20 dark:border-white/10 px-2.5 @max-[180px]/route-tile:px-2 py-1.5">
           <span class="font-medium text-foreground/90">三网回程</span>
           <time v-if="at" :datetime="at" class="shrink-0 text-[10px] opacity-70" :title="returnRouteTime(at)">{{ qualityAge(at, app.returnRouteNow) }}</time>
           <span v-else class="shrink-0 text-[10px] opacity-70">未测</span>
         </span>
-        <span class="grid flex-1 content-evenly gap-2 px-2.5 @max-[180px]/route-tile:px-2 py-2">
+        <span class="grid min-h-[6.75rem] flex-1 content-evenly gap-3 px-2.5 @max-[180px]/route-tile:px-2 py-3">
           <span v-for="entry in ordered" :key="entry.carrier" :data-route-tile-carrier="entry.carrier" :data-route-status="entry.status" class="flex min-w-0 items-center gap-1.5 @max-[180px]/route-tile:gap-1" :title="`${entry.label} · ${returnRouteTime(entry.at)} · ${entry.detail}`">
             <span class="flex shrink-0 items-center gap-1 text-foreground/85"><span class="mr-0.5 size-1.5 rounded-full ring-[3px]" :class="colors[entry.carrier]" aria-hidden="true" />{{ RETURN_CARRIER_NAMES[entry.carrier] }}</span>
             <svg class="h-3 w-3.5 shrink-0 opacity-60 @max-[180px]/route-tile:hidden" :class="entry.carrier === 'telecom' ? 'text-blue-400' : entry.carrier === 'unicom' ? 'text-rose-400' : 'text-emerald-400'" viewBox="0 0 20 12" fill="none" aria-hidden="true"><circle cx="3" cy="6" r="2" stroke="currentColor" /><path d="M6 6h10m-3-3 3 3-3 3" stroke="currentColor" /></svg>

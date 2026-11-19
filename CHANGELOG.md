@@ -2,6 +2,14 @@
 
 日期为北京时间。仅记录已发布的 Atlas 软件版本；未合并 PR 不算发布内容。上游历史见[归档](docs/archive/upstream-changelog.md)。
 
+## 0.0.9 — 2026-11-19
+
+- 合入 PR #26：三网回程展开详情后保持三条运营商行间距，避免摘要区域收缩。
+- 保留 0.0.8 的免费节点“长期／免费”显示，以及付费账单、独立重置时间和其他功能。
+- 仅提供主题 ZIP，SHA256 写入 Release 说明；回程组件与采集时间不变。
+
+[Release](https://github.com/MagnetOscar/Atlas/releases/tag/atlas-v0.0.9) · [完整差异](https://github.com/MagnetOscar/Atlas/compare/atlas-v0.0.8...atlas-v0.0.9)
+
 ## 0.0.8 — 2026-11-19
 
 - 合入 PR #27：首页网络概览的到期／费用格统一显示账单信息；零价及既有免费标记节点显示“长期／免费”。

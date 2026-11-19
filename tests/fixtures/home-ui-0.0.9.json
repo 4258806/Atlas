@@ -1,0 +1,7 @@
+{
+  "authorization": "User 2026-11-19 PR #26: preserve return-route carrier row spacing when details are expanded.",
+  "components": {
+    "src/components/NodeReturnRouteTile.vue": "2ba7743dccabfc8c7b176b17f6934cf14eeb6f1d405982d9a01e21e0d20cffbe"
+  },
+  "protectedFiles": {}
+}

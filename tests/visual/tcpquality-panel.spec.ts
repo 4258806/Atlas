@@ -21,10 +21,15 @@ for (const width of [320, 390, 1440]) {
       const card = page.getByRole('button', { name: '查看节点 主控-洛杉矶 详情', exact: true })
       const tile = card.locator('[data-node-route-tile]')
       await expect(tile.locator('[data-route-tile-carrier]')).toHaveCount(3)
-      const rows = await tile.locator('[data-route-tile-carrier]').evaluateAll(elements => elements.map(e => ({ carrier: e.getAttribute('data-route-tile-carrier'), y: e.getBoundingClientRect().y })))
+      const rows = await tile.locator('[data-route-tile-carrier]').evaluateAll(elements => elements.map((e) => {
+        const rect = e.getBoundingClientRect()
+        return { carrier: e.getAttribute('data-route-tile-carrier'), y: rect.y, bottom: rect.bottom }
+      }))
       expect(rows.map(r => r.carrier)).toEqual(['mobile', 'unicom', 'telecom'])
       expect(rows[0]!.y).toBeLessThan(rows[1]!.y)
       expect(rows[1]!.y).toBeLessThan(rows[2]!.y)
+      const collapsedGap1 = rows[1]!.y - rows[0]!.bottom
+      const collapsedGap2 = rows[2]!.y - rows[1]!.bottom
       await expect(tile.locator('summary')).toContainText('三网回程')
       for (const carrier of ['mobile', 'unicom', 'telecom']) {
         await expect(tile.locator(`[data-route-tile-carrier=${carrier}]`)).toContainText('CN2GIA')
@@ -45,6 +50,12 @@ for (const width of [320, 390, 1440]) {
       await card.screenshot({ path: `test-results/previews/0.0.4/${width}-${dark ? 'dark' : 'light'}.png` })
       await tile.locator('summary').click()
       await expect(tile.locator('[data-quality-variant]')).toHaveCount(5)
+      const expandedRows = await tile.locator('[data-route-tile-carrier]').evaluateAll(elements => elements.map((e) => {
+        const rect = e.getBoundingClientRect()
+        return { y: rect.y, bottom: rect.bottom }
+      }))
+      expect(expandedRows[1]!.y - expandedRows[0]!.bottom).toBeGreaterThanOrEqual(collapsedGap1 - 1)
+      expect(expandedRows[2]!.y - expandedRows[1]!.bottom).toBeGreaterThanOrEqual(collapsedGap2 - 1)
       await expect(tile.locator('[data-quality-variant=ipv6]')).toContainText('不可用')
       await expect(tile.locator('[data-quality-variant=large4]')).toContainText('163->4837')
       await expect(tile).toContainText('上海')

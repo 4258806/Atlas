@@ -1,7 +1,8 @@
 # Atlas 当前交接
 
-- 当前授权：PR #27 最终 CI 全过后合并，发布 Atlas v0.0.8，并把正式主题 ZIP 安装到 CA；不改变采集器、时间计划、节点设置或保护。
-- 本版仅将首页免费节点的到期／费用格统一为“长期／免费”，保留付费行为、CPU 下方负载和全部模板／样式；已有功能保持原状。
-- PR27 原始提交 373aea6fe508ea3890f1f1d55c26d79ce2447e57 的 Code Quality、Visual Regression 均通过。最终版本材料提交仍需必需检查。
-- 发布资料见 CHANGELOG、docs/release-notes-atlas-0.0.8.md；最终原生 ZIP 和源码验收见 docs/verification/。
+- 当前授权：合并剩余 PR #26，发布 Atlas v0.0.9，并将正式主题 ZIP 安装到 CA。保留已发布的 0.0.8；不覆盖其 ZIP 或标签。
+- 本版仅修复回程详情展开后的运营商行距缩紧；基线为 0.0.8 ec86564949c757c7318f1909976c1dd065fae008，免费节点账单显示及其他功能完整保留。
+- 原 PR26 的 Code Quality 与完整 Visual Regression 已通过。整合后的最终源码仍须必需 CI；本地 Windows 检查不替代 Linux。
+- UI 契约移至未发布的 0.0.9，保留全部历史发布契约；同时保留 PR27 免费账单契约和回归测试。
+- 发布记录见 CHANGELOG、docs/release-notes-atlas-0.0.9.md；仅主题 ZIP、SHA256 在说明、组件单独提供。
 - 旧过程见[历史索引](docs/archive/README.md)。
