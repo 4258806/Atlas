@@ -12,6 +12,29 @@ ATLAS_002 = "aae95c6f96360ccbc1ff07e4ecfc833c70ce4e43"
 ATLAS_003 = "1762647c7762efb22d5dfac3807d572c95d668db"
 ATLAS_004 = "192e4245dfbfe9656eb1e73c443e07e1b67d3f5c"
 ATLAS_005 = "579b70b1d6b4f445ba6fa44299734a84c88b2d47"
+ATLAS_006 = "e0039b2f323114977fc1e94de054bd90f4f3e3b7"
+UI_007 = {"src/components/NodeEarthRealisticGlobe.vue"}
+
+
+def audit_pulse_scope(source):
+    for path in git("diff", "--name-only", ATLAS_006, source).splitlines():
+        if path.startswith("src/") and not path.endswith(".md") and path not in UI_007:
+            raise ValueError(f"Out-of-scope 0.0.7 runtime: {path}")
+        if path.startswith("public/") or (path.startswith("companion/") and not path.endswith(".md")) or path in {"package.json", "bun.lock"}:
+            raise ValueError(f"0.0.7 cannot change assets, collectors or dependencies: {path}")
+    before = json.loads(git("show", f"{ATLAS_006}:komari-theme.json"))
+    after = json.loads(git("show", f"{source}:komari-theme.json"))
+    if after.get("version") != "0.0.7":
+        raise ValueError("Expected 0.0.7 source")
+    validate_manifest(before, after)
+    for historic in ("tests/fixtures/home-ui-0.0.5.json", "tests/fixtures/home-ui-0.0.6.json"):
+        if git("show", f"{ATLAS_006}:{historic}") != git("show", f"{source}:{historic}"):
+            raise ValueError("Preserve published UI contracts")
+    contract = json.loads(git("show", f"{source}:tests/fixtures/home-ui-0.0.7.json"))
+    if set(contract["components"]) != UI_007 or set(contract["protectedFiles"]) != UI_007:
+        raise ValueError("0.0.7 UI contract is limited to PR23 pulse timing")
+
+
 UI_006 = {"src/components/NodeEarthRealisticGlobe.vue", "src/components/NodeEarthCobeGlobe.vue"}
 
 
@@ -283,6 +306,11 @@ def main():
         if report.get("scope") != "globe-arcs-pr22" or report.get("baseline_commit") != ATLAS_005:
             raise SystemExit("0.0.6 is limited to the reviewed PR22 globe fixes")
         audit_globe_scope(source)
+        stages = ("engineering", "reset", "finance", "sorting", "display", "return-route", "ui-review", "integration", "package")
+    elif version == "0.0.7":
+        if report.get("scope") != "globe-pulse-pr23" or report.get("baseline_commit") != ATLAS_006:
+            raise SystemExit("0.0.7 is limited to the reviewed PR23 pulse timing")
+        audit_pulse_scope(source)
         stages = ("engineering", "reset", "finance", "sorting", "display", "return-route", "ui-review", "integration", "package")
     else:
         stages = ("reset", "finance", "sorting", "display", "return-route", "integration")

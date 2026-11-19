@@ -10,10 +10,17 @@ const homeRouteContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/
 const qualityContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-route-ui-0.0.4.json'), 'utf8')) as { components: Record<string, string> }
 const homeUi005Contract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-ui-0.0.5.json'), 'utf8')) as { components: Record<string, string>, protectedFiles: Record<string, string> }
 const globeContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-ui-0.0.6.json'), 'utf8')) as { components: Record<string, string>, protectedFiles: Record<string, string> }
+const pulseContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-ui-0.0.7.json'), 'utf8')) as { components: Record<string, string>, protectedFiles: Record<string, string> }
 const homeUiContract = {
-  components: { ...homeUi005Contract.components, ...globeContract.components },
-  protectedFiles: { ...homeUi005Contract.protectedFiles, ...globeContract.protectedFiles },
+  components: { ...homeUi005Contract.components, ...globeContract.components, ...pulseContract.components },
+  protectedFiles: { ...homeUi005Contract.protectedFiles, ...globeContract.protectedFiles, ...pulseContract.protectedFiles },
 }
+
+test('0.0.7 UI exception covers only the reviewed PR23 pulse timing', () => {
+  const paths = ['src/components/NodeEarthRealisticGlobe.vue']
+  expect(Object.keys(pulseContract.components)).toEqual(paths)
+  expect(Object.keys(pulseContract.protectedFiles)).toEqual(paths)
+})
 
 test('0.0.6 UI exception covers only the two reviewed PR22 globe renderers', () => {
   const paths = ['src/components/NodeEarthCobeGlobe.vue', 'src/components/NodeEarthRealisticGlobe.vue']

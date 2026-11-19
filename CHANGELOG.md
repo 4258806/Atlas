@@ -2,6 +2,14 @@
 
 日期为北京时间。仅记录已发布的 Atlas 软件版本；未合并 PR 不算发布内容。上游历史见[归档](docs/archive/upstream-changelog.md)。
 
+## 0.0.7 — 2026-11-19
+
+- 合入 PR #23，写实地球恢复原始基线的长线段接续脉冲节奏；常驻实线模式不变。
+- 保留 0.0.6 的跨洋连线高度、国旗避让与点阵地球裁切修复。
+- 按新流程仅提供原生主题 ZIP，SHA256 写入 Release 说明；插件／TcpQuality 继续单独下载。
+
+[Release](https://github.com/MagnetOscar/Atlas/releases/tag/atlas-v0.0.7) · [完整差异](https://github.com/MagnetOscar/Atlas/compare/atlas-v0.0.6...atlas-v0.0.7)
+
 ## 0.0.6 — 2026-11-19
 
 - 合入 PR #22：修复真实地球长距离连线被球面遮挡，保留国旗淡出期间的连线避让。
