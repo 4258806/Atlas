@@ -11,15 +11,24 @@ const qualityContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/ho
 const homeUi005Contract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-ui-0.0.5.json'), 'utf8')) as { components: Record<string, string>, protectedFiles: Record<string, string> }
 const globeContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-ui-0.0.6.json'), 'utf8')) as { components: Record<string, string>, protectedFiles: Record<string, string> }
 const pulseContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-ui-0.0.7.json'), 'utf8')) as { components: Record<string, string>, protectedFiles: Record<string, string> }
-const routeSpacingContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-ui-0.0.8.json'), 'utf8')) as { components: Record<string, string>, protectedFiles: Record<string, string> }
+const billingContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-billing-ui-20261119.json'), 'utf8')) as { components: Record<string, string>, protectedFiles: Record<string, string> }
+const routeSpacingContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-ui-0.0.9.json'), 'utf8')) as { components: Record<string, string>, protectedFiles: Record<string, string> }
 const homeUiContract = {
-  components: { ...homeUi005Contract.components, ...globeContract.components, ...pulseContract.components, ...routeSpacingContract.components },
-  protectedFiles: { ...homeUi005Contract.protectedFiles, ...globeContract.protectedFiles, ...pulseContract.protectedFiles, ...routeSpacingContract.protectedFiles },
+  components: { ...homeUi005Contract.components, ...globeContract.components, ...pulseContract.components, ...billingContract.components, ...routeSpacingContract.components },
+  protectedFiles: { ...homeUi005Contract.protectedFiles, ...globeContract.protectedFiles, ...pulseContract.protectedFiles, ...billingContract.protectedFiles, ...routeSpacingContract.protectedFiles },
 }
 
-test('0.0.8 UI exception covers only the return-route tile expanded spacing fix', () => {
+test('0.0.9 UI exception covers only the return-route tile expanded spacing fix', () => {
   expect(Object.keys(routeSpacingContract.components)).toEqual(['src/components/NodeReturnRouteTile.vue'])
   expect(Object.keys(routeSpacingContract.protectedFiles)).toEqual([])
+})
+
+test('free billing exception preserves the accepted NodeCard layout and all other surfaces', () => {
+  const path = 'src/components/NodeCard.vue'
+  expect(Object.keys(billingContract.components)).toEqual([path])
+  expect(Object.keys(billingContract.protectedFiles)).toEqual([path])
+  expect(billingContract.components[path]).toBe(homeUi005Contract.components[path])
+  expect(digest(protectedContent(path, readFileSync(resolve(root, path))))).toBe(billingContract.protectedFiles[path])
 })
 
 test('0.0.7 UI exception covers only the reviewed PR23 pulse timing', () => {

@@ -302,8 +302,9 @@ test('free node pricing stays semantic across home, finance, and detail', async 
   await openStablePage(page)
 
   const nodeCard = page.getByRole('button', { name: `查看节点 ${freeNodeName} 详情` })
-  await expect(nodeCard.getByText('免费', { exact: true })).toBeVisible()
-  await expect(nodeCard.getByText('无', { exact: true })).toBeVisible()
+  await expect(nodeCard.getByText('免费', { exact: true })).toHaveCount(2)
+  await expect(nodeCard.getByText('长期', { exact: true })).toBeVisible()
+  await expect(nodeCard.getByText('无', { exact: true })).toHaveCount(0)
   await expect(nodeCard.getByText('免费 / 年', { exact: true })).toHaveCount(0)
 
   await page.getByRole('button', { name: '查看剩余价值明细' }).click()
