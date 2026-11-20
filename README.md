@@ -18,11 +18,11 @@ Atlas 是基于 Komari 的毛玻璃监控主题，在原有节点监控、三网
 | 回程线路信息         | 可选接入 TcpQuality，分别展示 IPv4、IPv6、UDP 和 IPv4 大包结果，明确标记未测、混合与过期状态。 |
 | 首页信息密度         | 响应式卡片整合网络概览、连接数和三网回程，保留毛玻璃、地球及地图展示。                         |
 
-基础资源监控、三网延迟、毛玻璃和地球展示来自上游，以上列出 Atlas 重点完善的部分。主题只展示数据，自动回程采集需要另装可选组件。
+以上优先列出 Atlas 在多币种账单、独立流量周期、三网显示选项和回程集成方面的改进。下方展示同时包含继承的资源监控、CPU 型号分级、历史图表、毛玻璃及地球等基础能力，不将其列为 Atlas 原创功能。主题只展示数据，自动回程采集需要另装可选组件。
 
 ## 界面与功能展示
 
-> 以下展示图均为统一演示数据渲染，用于呈现 Atlas v0.0.10 的多模式布局与功能细节；其中 [主题头图](docs/preview.png) 同时作为 Komari 主题包的内置 `preview.png` 封面。
+> 以下展示图均为统一演示数据渲染，用于呈现 Atlas v0.0.10 的多模式布局与功能细节；其中 [主题头图](docs/preview.png) 用于 README 与主题市场展示，已发布的 0.0.10 ZIP 内置封面保持原样。
 
 ### 1. 三网回程、延迟与丢包可视化
 
@@ -56,6 +56,8 @@ Atlas 是基于 Komari 的毛玻璃监控主题，在原有节点监控、三网
 
 已验证兼容 **Komari Server 1.6.1**。普通主题安装无需 Bun、Node.js 或 Python；GitHub 自动生成的 Source code 不是主题安装包。各版 SHA256 见 Release 说明与[下载索引](docs/downloads.md)。
 
+完整周期统计需在 Komari 后端保留至少 **36 天流量历史**；安装主题不会自动修改该设置。配置方法见[流量周期说明](docs/traffic-cycles.md)。
+
 升级时保留原 ZIP 与主题配置。旧 Enhanced 配置仅在 Atlas 配置缺失／为空且管理员已登录时迁移；已有 Atlas 配置不会被覆盖。[流量周期](docs/traffic-cycles.md) · [费用与汇率](docs/finance.md)
 
 ## 可选回程采集
@@ -70,4 +72,4 @@ Atlas 是基于 Komari 的毛玻璃监控主题，在原有节点监控、三网
 
 ## 来源与许可
 
-由 MagnetOscar 基于 [Glassmorphism Enhanced v1.2.1](https://github.com/casiuna/Glassmorphism-Enhanced) 维护，保留原作者与第三方署名。主题沿用 [MIT License](LICENSE)；可选 TcpQuality 上游源码为 GPL-3.0-only。详见[项目来源](FORK.md)和[第三方声明](THIRD_PARTY.md)。
+Atlas 由 MagnetOscar 基于 casiuna 的 [Glassmorphism Enhanced v1.2.1](https://github.com/casiuna/Glassmorphism-Enhanced) 二次开发；该项目源自 sanrokamlan-prog 的 [komari-theme-Glassmorphism](https://github.com/sanrokamlan-prog/komari-theme-Glassmorphism)。保留上游版权、原作者与第三方署名。主题沿用 [MIT License](LICENSE)；可选 TcpQuality 上游源码为 GPL-3.0-only，第三方组件遵循各自许可证。详见[项目来源](FORK.md)和[第三方声明](THIRD_PARTY.md)。
