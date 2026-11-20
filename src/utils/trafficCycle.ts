@@ -12,7 +12,7 @@ const MAX_SAMPLE_BYTES = 64 * 1024 ** 3
 
 export interface TrafficCycleConfig { version: 2, timeZone?: string, nodes: Record<string, ResetSchedule>, [key: string]: unknown }
 export interface TrafficPeriod { start: number, end: number }
-export type TrafficCycleStatus = 'loading' | 'ready' | 'insufficient' | 'unsupported' | 'error'
+export type TrafficCycleStatus = 'loading' | 'ready' | 'partial' | 'insufficient' | 'unsupported' | 'error'
 export interface TrafficCycleSnapshot {
   status: TrafficCycleStatus
   period: TrafficPeriod
@@ -20,6 +20,8 @@ export interface TrafficCycleSnapshot {
   up: number | null
   down: number | null
   reason: string
+  /** Earliest returned increment, not a claim of continuous coverage. */
+  observedFrom?: number
 }
 interface Point { time: number, value: number, count: number }
 
@@ -89,12 +91,24 @@ export function trafficSnapshot(status: TrafficCycleStatus, period: TrafficPerio
   return { status, period, asOf, up: null, down: null, reason }
 }
 
-/** Query only the first partial hour at minute precision; the rest is hourly. */
+/** Keep recent unsealed buckets at minute precision and closed history below the hour tier. */
 export function trafficQueryRanges(period: TrafficPeriod, asOf: number): Array<{ start: number, end: number, maxPoints: number }> {
   const split = Math.ceil(period.start / HOUR) * HOUR
-  const edges = period.start % HOUR !== 0 && split < asOf
-    ? [[period.start, split, 60000], [split, asOf, HOUR]]
-    : [[period.start, asOf, period.start % HOUR === 0 ? HOUR : 60000]]
+  const edges: number[][] = []
+  let cursor = period.start
+  if (split > cursor && split < asOf) {
+    edges.push([cursor, split, 60000])
+    cursor = split
+  }
+  // Komari selects a materialized backing tier. A newly extended retention
+  // policy need not have any hour rows yet. Half-hour output uses the durable
+  // five-minute tier; the two-hour tail also avoids its ten-minute seal grace.
+  const closed = Math.floor((asOf - 2 * HOUR) / HOUR) * HOUR
+  if (closed > cursor) {
+    edges.push([cursor, closed, HOUR / 2])
+    cursor = closed
+  }
+  edges.push([cursor, asOf, 60000])
   return edges.map(([start, end, width]) => ({ start: start!, end: end!, maxPoints: Math.max(1, Math.ceil((end! - start! + HOUR) / width!)) }))
 }
 
@@ -104,18 +118,28 @@ export function combineTrafficSnapshots(snapshots: TrafficCycleSnapshot[], perio
   let cursor = period.start
   let up = 0
   let down = 0
+  let observed = 0
+  let partial = false
+  let observedFrom = Number.POSITIVE_INFINITY
   for (const part of snapshots) {
-    if (part.status !== 'ready' || part.up === null || part.down === null)
-      return trafficSnapshot(part.status, period, asOf, part.reason)
     if (part.period.start !== cursor || part.asOf !== part.period.end)
       return trafficSnapshot('insufficient', period, asOf, '周期分段存在缺口或重叠')
-    up += part.up
-    down += part.down
+    if ((part.status === 'ready' || part.status === 'partial') && part.up !== null && part.down !== null) {
+      if (!Number.isSafeInteger(part.up) || !Number.isSafeInteger(part.down) || part.up < 0 || part.down < 0)
+        return trafficSnapshot('insufficient', period, asOf, '周期分段包含无效增量')
+      up += part.up
+      down += part.down
+      observed++
+      observedFrom = Math.min(observedFrom, part.observedFrom ?? part.period.start)
+    }
+    partial ||= part.status !== 'ready'
     cursor = part.asOf
   }
   if (cursor !== asOf || !Number.isSafeInteger(up + down))
     return trafficSnapshot('insufficient', period, asOf, '周期分段不完整或超出安全精度')
-  return { status: 'ready', period, asOf, up, down, reason: '原生增量：分钟边缘与完整小时分段求和' }
+  if (!observed)
+    return trafficSnapshot('insufficient', period, asOf, snapshots[0]!.reason)
+  return { status: partial ? 'partial' : 'ready', period, asOf, up, down, observedFrom, reason: partial ? `周期历史不完整；仅显示自 ${new Date(observedFrom).toISOString()} 起已记录的原生增量，缺失时段及剩余额度未知` : '原生增量：重置边缘、闭合历史与近期分钟分段求和' }
 }
 /**
  * Only native, summable, reset-aware deltas. Counter snapshots prove coverage;
@@ -133,8 +157,9 @@ export function resolveTrafficMetrics(raw: unknown, uuid: string, period: Traffi
     const points = new Map<string, Point[]>()
     let interval = 1000
     for (const metric of data.series) {
-      const row = metric as { metric_key: string, entity_id: string, points: Array<{ time: string, value: unknown, count?: number }>, downsampled?: boolean, downsample_algorithm?: string, interval_seconds?: number }
-      if (row.entity_id !== uuid || !TRAFFIC_METRICS.includes(row.metric_key as typeof TRAFFIC_METRICS[number]) || points.has(row.metric_key) || !Array.isArray(row.points) || row.points.length > 200000)
+      const row = metric as { metric_key: string, entity_id: string, points: Array<{ time: string, value: unknown, count?: number }> | null, count?: number, downsampled?: boolean, downsample_algorithm?: string, interval_seconds?: number }
+      const empty = row.points === null && row.count === 0
+      if (row.entity_id !== uuid || !TRAFFIC_METRICS.includes(row.metric_key as typeof TRAFFIC_METRICS[number]) || points.has(row.metric_key) || (!Array.isArray(row.points) && !empty) || (row.points?.length ?? 0) > 200000)
         return missing('历史节点身份或指标不一致')
       const step = row.downsampled ? Number(row.interval_seconds) * 1000 : 1000
       if (!Number.isFinite(step) || step <= 0 || step > HOUR || HOUR % step !== 0)
@@ -146,7 +171,7 @@ export function resolveTrafficMetrics(raw: unknown, uuid: string, period: Traffi
       interval = Math.max(interval, step)
       const seen = new Set<number>()
       const normalized: Point[] = []
-      for (const point of row.points) {
+      for (const point of row.points ?? []) {
         const time = Date.parse(point.time)
         const count = point.count ?? 1
         if (!Number.isFinite(time) || typeof point.value !== 'number' || !Number.isSafeInteger(point.value) || point.value < 0 || !Number.isSafeInteger(count) || count < 1 || seen.has(time))
@@ -160,19 +185,21 @@ export function resolveTrafficMetrics(raw: unknown, uuid: string, period: Traffi
     }
     if (points.size !== TRAFFIC_METRICS.length)
       return missing('缺少可靠的上传、下载或周期起点历史')
-    for (const key of ['net.total.up', 'net.total.down']) {
-      if (!points.get(key)!.some(p => p.time <= period.start && p.time >= period.start - HOUR))
-        return missing('周期起点缺少可靠历史；未假设起点为零')
-    }
+    const baseline = ['net.total.up', 'net.total.down'].every(key => points.get(key)!.some(p => p.time <= period.start && p.time >= period.start - HOUR))
     if (asOf === period.start)
-      return { status: 'ready', period, asOf, up: 0, down: 0, reason: '有可靠起点的新周期空区间' }
+      return baseline ? { status: 'ready', period, asOf, up: 0, down: 0, reason: '有可靠起点的新周期空区间' } : missing('周期起点缺少可靠历史；未假设起点为零')
     const totals: number[] = []
+    let complete = baseline
+    let observedFrom = Number.POSITIVE_INFINITY
     for (const key of ['traffic.up', 'traffic.down']) {
       const records = points.get(key)!.filter(p => p.time >= period.start && p.time < asOf)
-      if (!records.length || records[0]!.time > period.start + HOUR || asOf - records.at(-1)!.time > interval + 90000)
-        return missing('当前周期历史缺失或采样已过期')
+      if (!records.length)
+        return missing('当前周期没有已记录的上传或下载增量')
+      observedFrom = Math.min(observedFrom, records[0]!.time)
+      if (records[0]!.time > period.start + HOUR || asOf - records.at(-1)!.time > interval + 90000)
+        complete = false
       if (records.some((point, index) => index > 0 && point.time - records[index - 1]!.time > HOUR + 90000))
-        return missing('当前周期历史存在中断；未将缺失时段当作零流量')
+        complete = false
       const sum = records.reduce((value, p) => value + p.value, 0)
       if (!Number.isSafeInteger(sum))
         return missing('累计增量超出安全精度')
@@ -180,7 +207,7 @@ export function resolveTrafficMetrics(raw: unknown, uuid: string, period: Traffi
     }
     if (!Number.isSafeInteger(totals[0]! + totals[1]!))
       return missing('累计增量超出安全精度')
-    return { status: 'ready', period, asOf, up: totals[0]!, down: totals[1]!, reason: 'Komari 原生流量增量（保留重启/回绕处理）' }
+    return { status: complete ? 'ready' : 'partial', period, asOf, up: totals[0]!, down: totals[1]!, observedFrom, reason: complete ? 'Komari 原生流量增量（保留重启/回绕处理）' : '周期起点、内部或近期历史不完整；仅显示已记录的原生增量，不计算完整周期配额' }
   }
   catch {
     return missing('流量历史无效；未更改累计计数器')

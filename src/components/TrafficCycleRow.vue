@@ -12,7 +12,7 @@ import { formatScheduleTime, validTimeZone } from '@/utils/resetSchedule'
 const props = defineProps<{ node: NodeData }>()
 const app = useAppStore()
 const traffic = useNodeTraffic(() => props.node)
-const { schedule, resetDay, ready, snapshot, used, basis, up, down, percentage, remaining } = traffic
+const { schedule, resetDay, available, label, snapshot, used, basis, up, down, percentage, remaining } = traffic
 const selectedDay = ref('')
 const selectedZone = ref('Asia/Shanghai')
 const selectedTime = ref('00:00')
@@ -80,8 +80,8 @@ async function save() {
       {{ dateTime(snapshot?.period.end) }}
     </td>
     <td class="px-2 py-3">
-      <span data-cycle-used :data-traffic-basis="basis" :data-traffic-used="ready ? used : null" :data-traffic-percentage="ready ? percentage : null" :data-traffic-remaining="remaining">{{ ready && used !== null ? formatBytesWithConfig(used, app.byteDecimals) : resetDay ? snapshot?.status === 'loading' || !snapshot ? '读取中' : '数据不足' : '未设置' }}</span>
-      <span v-if="ready" data-cycle-breakdown class="mt-1 block text-[10px] text-muted-foreground">↑ {{ formatBytesWithConfig(up ?? 0, app.byteDecimals) }} / ↓ {{ formatBytesWithConfig(down ?? 0, app.byteDecimals) }}</span>
+      <span data-cycle-used :data-traffic-basis="basis" :data-traffic-used="resetDay ? used : null" :data-traffic-percentage="resetDay ? percentage : null" :data-traffic-remaining="remaining">{{ !resetDay ? '未设置' : available && used !== null ? `${basis === 'billing-cycle-partial' ? `${label} ` : ''}${formatBytesWithConfig(used, app.byteDecimals)}` : label }}</span>
+      <span v-if="available && resetDay" data-cycle-breakdown class="mt-1 block text-[10px] text-muted-foreground">↑ {{ formatBytesWithConfig(up ?? 0, app.byteDecimals) }} / ↓ {{ formatBytesWithConfig(down ?? 0, app.byteDecimals) }}</span>
       <span v-if="remaining !== null && percentage !== null" data-cycle-quota class="mt-1 block text-[10px] text-muted-foreground">剩余 {{ formatBytesWithConfig(remaining, app.byteDecimals) }} · {{ percentage.toFixed(1) }}%</span>
       <span class="mt-1 block max-w-52 text-[10px] text-muted-foreground">{{ snapshot?.reason ?? '仅保留原始累计流量，不假定每月 1 日' }}</span>
     </td>

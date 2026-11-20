@@ -12,10 +12,11 @@ const homeUi005Contract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/
 const globeContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-ui-0.0.6.json'), 'utf8')) as { components: Record<string, string>, protectedFiles: Record<string, string> }
 const pulseContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-ui-0.0.7.json'), 'utf8')) as { components: Record<string, string>, protectedFiles: Record<string, string> }
 const billingContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-billing-ui-20261119.json'), 'utf8')) as { components: Record<string, string>, protectedFiles: Record<string, string> }
+const trafficDataContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/traffic-data-20261120.json'), 'utf8')) as { components: Record<string, string>, protectedFiles: Record<string, string> }
 const routeSpacingContract = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/home-ui-0.0.9.json'), 'utf8')) as { components: Record<string, string>, protectedFiles: Record<string, string> }
 const homeUiContract = {
   components: { ...homeUi005Contract.components, ...globeContract.components, ...pulseContract.components, ...billingContract.components, ...routeSpacingContract.components },
-  protectedFiles: { ...homeUi005Contract.protectedFiles, ...globeContract.protectedFiles, ...pulseContract.protectedFiles, ...billingContract.protectedFiles, ...routeSpacingContract.protectedFiles },
+  protectedFiles: { ...homeUi005Contract.protectedFiles, ...globeContract.protectedFiles, ...pulseContract.protectedFiles, ...billingContract.protectedFiles, ...routeSpacingContract.protectedFiles, ...trafficDataContract.protectedFiles },
 }
 
 test('0.0.9 UI exception covers only the return-route tile expanded spacing fix', () => {
@@ -28,7 +29,14 @@ test('free billing exception preserves the accepted NodeCard layout and all othe
   expect(Object.keys(billingContract.components)).toEqual([path])
   expect(Object.keys(billingContract.protectedFiles)).toEqual([path])
   expect(billingContract.components[path]).toBe(homeUi005Contract.components[path])
-  expect(digest(protectedContent(path, readFileSync(resolve(root, path))))).toBe(billingContract.protectedFiles[path])
+  expect(digest(protectedContent(path, readFileSync(resolve(root, path))))).toBe(trafficDataContract.protectedFiles[path])
+})
+
+test('traffic data correction preserves every accepted element, style and visual attribute', () => {
+  expect(Object.keys(trafficDataContract.protectedFiles)).toEqual(['src/components/NodeCard.vue'])
+  for (const [path, expected] of Object.entries(trafficDataContract.components))
+    expect(presentation(readFileSync(resolve(root, path), 'utf8')), path).toBe(expected)
+  expect(trafficDataContract.components['src/components/NodeCard.vue']).toBe(billingContract.components['src/components/NodeCard.vue'])
 })
 
 test('0.0.7 UI exception covers only the reviewed PR23 pulse timing', () => {

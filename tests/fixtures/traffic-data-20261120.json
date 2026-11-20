@@ -1,0 +1,12 @@
+{
+  "authorization": "2026-11-20: correct traffic accounting and show genuine observed partial usage while preserving the accepted UI layout and attributes.",
+  "components": {
+    "src/components/NodeCard.vue": "3b574de8cd03f6f789523757add75f78b882d7009614dccf22b1472a576a0146",
+    "src/components/NodeTrafficCell.vue": "800bcb93840cfb2f773cef15579a345f893c333ac043128fb927321b41195f9d",
+    "src/components/TrafficCycleRow.vue": "a986adf5996e94cd896fe7ba6152a854fee5339f63b6c6debde008bcbd6d26a0",
+    "src/views/InstanceDetail.vue": "b959a95bbc8ad9f0f14bf6456d90f102fef5400308e275b1687d5d7d5fef7352"
+  },
+  "protectedFiles": {
+    "src/components/NodeCard.vue": "4ef4883a73cc5490db5dfafeb0e3cc13ac12e72aca7fe9b323051f65da975ebf"
+  }
+}

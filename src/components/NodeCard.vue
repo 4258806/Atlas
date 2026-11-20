@@ -117,10 +117,11 @@ const { carrierDisplays, isTransit } = useNodeCarrierPingSource(
   () => props.pingEnabled && (!isSupported.value || pingVisible.value),
 )
 
-const { used: trafficUsed, percentage, remaining: trafficRemaining, label: trafficLabel, up: trafficUp, down: trafficDown, available: trafficReady, basis: trafficBasis } = useNodeTraffic(() => props.node)
+const { used: trafficUsed, percentage, remaining: trafficRemaining, label: trafficLabel, up: trafficUp, down: trafficDown, available: trafficAvailable, basis: trafficBasis, snapshot: trafficSnapshot } = useNodeTraffic(() => props.node)
+const trafficReady = computed(() => trafficAvailable.value && trafficBasis.value !== 'billing-cycle-partial')
 const trafficUsedPercentage = computed(() => percentage.value ?? 0)
 const trafficPercentageText = computed(() => !trafficReady.value ? '—' : hasTrafficLimit(props.node) ? `${trafficUsedPercentage.value.toFixed(1)}%` : '∞')
-const trafficTooltip = computed(() => trafficBasis.value === 'machine-cumulative' ? '未设置流量周期；比例仅为累计参考，不是周期配额，不计算周期剩余额度' : !trafficReady.value ? '周期历史数据不足，未估算剩余额度' : trafficRemaining.value === null ? '本周期用量；未设置流量上限' : `本周期剩余 ${formatBytes(trafficRemaining.value)}`)
+const trafficTooltip = computed(() => trafficBasis.value === 'machine-cumulative' ? '未设置流量周期；比例仅为累计参考，不是周期配额，不计算周期剩余额度' : trafficBasis.value === 'billing-cycle-partial' ? trafficSnapshot.value!.reason : !trafficReady.value ? '周期历史数据不足，未估算剩余额度' : trafficRemaining.value === null ? '本周期用量；未设置流量上限' : `本周期剩余 ${formatBytes(trafficRemaining.value)}`)
 
 const nodeMessage = computed(() => props.node.message?.trim() ?? '')
 const nodeMessageTooltip = computed(() => {

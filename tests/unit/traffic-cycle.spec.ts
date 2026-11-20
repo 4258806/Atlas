@@ -159,8 +159,8 @@ test('native reset-aware incremental history survives raw counter reset and pres
 for (const [mode, expected] of [['up', 100], ['down', 300], ['min', 100], ['max', 300], ['sum', 400], ['unknown-old-mode', 400]] as const) {
   test(`original billing mode ${mode} is unchanged`, () => expect(trafficByMode(100, 300, mode)).toBe(expected))
 }
-test('missing starting history never becomes a fake 0 GB or lifetime total', () => {
-  expect(resolveTrafficMetrics(metrics(A, false), A, period, now)).toMatchObject({ status: 'insufficient', up: null, down: null })
+test('missing starting history keeps observed increments separate from full-cycle quota', () => {
+  expect(resolveTrafficMetrics(metrics(A, false), A, period, now)).toMatchObject({ status: 'partial', up: 150, down: 150 })
   const result = resolveTrafficMetrics({ series: [] }, A, period, now)
   expect(result.status).toBe('insufficient')
   expect(result.up).toBeNull()
@@ -194,12 +194,12 @@ test('zero measured increments remain legitimate zero, not missing data', () => 
   }
   expect(resolveTrafficMetrics(data, A, period, now)).toMatchObject({ status: 'ready', up: 0, down: 0 })
 })
-test('an internal history hole is insufficient; measured zero buckets restore coverage without changing usage', () => {
+test('an internal history hole preserves a partial subtotal; measured zero buckets restore coverage', () => {
   const data = metrics()
   const later = period.start + 4 * 3600000
   for (const series of data.series.filter(s => s.metric_key.startsWith('traffic.')))
     series.points.at(-1)!.time = iso(later - 1000)
-  expect(resolveTrafficMetrics(data, A, period, later)).toMatchObject({ status: 'insufficient', up: null, down: null })
+  expect(resolveTrafficMetrics(data, A, period, later)).toMatchObject({ status: 'partial', up: 150, down: 150 })
   for (const series of data.series.filter(s => s.metric_key.startsWith('traffic.'))) {
     for (const hour of [1, 2, 3])
       series.points.push({ time: iso(period.start + hour * 3600000), value: 0, count: 1 })
@@ -234,27 +234,68 @@ test('hour rollups crossing a minute boundary are insufficient, never prorated',
   expect(resolveTrafficMetrics({ series }, A, p, end).status).toBe('ready')
 })
 
-test('minute edge and hourly body form a bounded, contiguous query plan', () => {
+test('minute edge, closed history and minute tail form a bounded contiguous query plan', () => {
   const start = at('2026-12-08T15:10:00Z')
   const end = at('2027-01-07T15:11:00Z')
   const p = { start, end: at('2027-01-08T15:10:00Z') }
   const ranges = trafficQueryRanges(p, end)
-  expect(ranges).toHaveLength(2)
+  expect(ranges).toHaveLength(3)
   expect(ranges[0]).toEqual({ start, end: at('2026-12-08T16:00:00Z'), maxPoints: 110 })
   expect(ranges[1]!.start).toBe(ranges[0]!.end)
-  expect(ranges[1]!.end).toBe(end)
-  expect(ranges[1]!.maxPoints).toBeLessThan(800)
+  expect(ranges[1]!.end).toBe(at('2027-01-07T13:00:00Z'))
+  expect(ranges[1]!.maxPoints).toBeLessThan(1500)
+  expect(ranges[2]!.start).toBe(ranges[1]!.end)
+  expect(ranges[2]!.end).toBe(end)
+  expect(ranges[2]!.maxPoints).toBeLessThan(241)
   const parts = ranges.map(range => ({ status: 'ready' as const, period: { start: range.start, end: range.end }, asOf: range.end, up: 10, down: 20, reason: 'explicit offline segment' }))
-  expect(combineTrafficSnapshots(parts, p, end)).toMatchObject({ status: 'ready', up: 20, down: 40 })
+  expect(combineTrafficSnapshots(parts, p, end)).toMatchObject({ status: 'ready', up: 30, down: 60 })
   expect(combineTrafficSnapshots([parts[0]!, parts[0]!], p, end).status).toBe('insufficient')
   expect(combineTrafficSnapshots([], p, start).status).toBe('insufficient')
   expect(combineTrafficSnapshots([{ ...parts[0]!, status: 'insufficient', up: null, down: null }], p, end).up).toBeNull()
-  expect(trafficQueryRanges({ start: ranges[1]!.start, end: p.end }, end)).toHaveLength(1)
+  expect(trafficQueryRanges({ start: ranges[2]!.start, end: p.end }, end)).toHaveLength(1)
+})
+
+test('native null empty series remain missing observations, never fabricated zero bytes', () => {
+  const data = { series: TRAFFIC_METRICS.map(metric_key => ({ metric_key, entity_id: A, count: 0, points: null, downsampled: true, interval_seconds: 60, downsample_algorithm: metric_key.startsWith('traffic.') ? 'sum' : 'last' })) }
+  expect(resolveTrafficMetrics(data, A, period, now)).toMatchObject({ status: 'insufficient', up: null, down: null })
+  expect(trafficQueryRanges(period, now)).toEqual([{ start: period.start, end: now, maxPoints: 61 }])
 })
 test('duplicate samples and unsupported coarse aggregation cannot double count', () => {
   const data = metrics()
   data.series[0]!.points.push({ ...data.series[0]!.points[0]! })
   expect(resolveTrafficMetrics(data, A, period, now).status).toBe('insufficient')
+})
+
+test('a missing minute edge does not hide observed hourly traffic or certify the full period', () => {
+  const start = at('2026-11-08T15:10:00Z')
+  const split = at('2026-11-08T16:00:00Z')
+  const end = at('2026-11-20T06:00:00Z')
+  const p = { start, end: at('2026-12-08T15:10:00Z') }
+  const missing = { status: 'insufficient' as const, period: { start, end: split }, asOf: split, up: null, down: null, reason: 'Expired minute edge' }
+  const body = { status: 'partial' as const, period: { start: split, end }, asOf: end, up: 12, down: 34, observedFrom: end - 3600000, reason: 'Retained hourly observations' }
+  const result = combineTrafficSnapshots([missing, body], p, end)
+  expect(result).toMatchObject({ status: 'partial', up: 12, down: 34, observedFrom: end - 3600000 })
+  expect(trafficAccounting({ traffic_limit: 100 }, 8, result)).toMatchObject({ basis: 'billing-cycle-partial', used: 46, percentage: null, remaining: null })
+  expect(combineTrafficSnapshots([missing, { ...body, period: { ...body.period, start: split + 1 } }], p, end).up).toBeNull()
+})
+
+for (const mode of ['up', 'down', 'sum', 'min', 'max']) {
+  test(`partial ${mode} traffic exposes only observed bytes without a quota balance`, () => {
+    const snapshot = { ...resolveTrafficMetrics(metrics(A, false), A, period, now), up: 12, down: 34 }
+    const node = { net_total_up: 999999999, net_total_down: 999999999, traffic_limit: 100, traffic_limit_type: mode }
+    expect(trafficAccounting(node, 18, snapshot)).toMatchObject({ basis: 'billing-cycle-partial', ready: false, available: true, up: 12, down: 34, used: trafficByMode(12, 34, mode), percentage: null, remaining: null, label: '已记录（不完整）' })
+    expect(trafficAccounting(node, 18, { ...snapshot, up: 0, down: 0 })).toMatchObject({ used: 0, percentage: null, remaining: null })
+    expect(trafficAccounting(node, 18, { ...snapshot, up: null })).toMatchObject({ basis: 'unavailable', used: null })
+  })
+}
+
+test('December reset uses retained boundary history and excludes the prior cycle observations', () => {
+  const start = at('2026-12-01T00:00:00Z')
+  const end = start + 60000
+  const p = trafficPeriod({ resetDay: 1, timeZone: 'UTC', hour: 0, minute: 0 }, end)
+  const data = { series: TRAFFIC_METRICS.map(key => ({ metric_key: key, entity_id: A, downsampled: false, points: key.startsWith('net.total.') ? [{ time: iso(start - 1000), value: 999999999, count: 1 }] : [{ time: iso(start - 1000), value: 99999, count: 1 }, { time: iso(start + 1000), value: 10, count: 1 }, { time: iso(end - 1000), value: 20, count: 1 }] })) }
+  expect(resolveTrafficMetrics(data, A, p, end)).toMatchObject({ status: 'ready', up: 30, down: 30 })
+  expect(trafficAccounting({ traffic_limit: 100 }, 1, resolveTrafficMetrics(data, A, p, end))).toMatchObject({ basis: 'billing-cycle', used: 60, remaining: 40, percentage: 60 })
 })
 test('five groups preserve every original field and expose the cycle only under nodes', () => {
   expect(ATLAS_SETTINGS_GROUPS.map(g => g.label)).toEqual(['基础与首页', '节点与卡片', '线路与延迟', '外观与背景', '高级设置'])
