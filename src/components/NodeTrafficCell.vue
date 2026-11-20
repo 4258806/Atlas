@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { NodeData } from '@/stores/nodes'
+import { computed } from 'vue'
 import TrafficProgress from '@/components/TrafficProgress.vue'
 import { useNodeTraffic } from '@/composables/useNodeTraffic'
 import { useAppStore } from '@/stores/app'
@@ -7,7 +8,8 @@ import { formatBytesWithConfig } from '@/utils/helper'
 
 const props = defineProps<{ node: NodeData }>()
 const app = useAppStore()
-const { up, down, used, percentage, remaining, label, available, basis } = useNodeTraffic(() => props.node)
+const { up, down, used, percentage, remaining, label, available: observed, basis } = useNodeTraffic(() => props.node)
+const available = computed(() => observed.value && basis.value !== 'billing-cycle-partial')
 const bytes = (value: number | null | undefined) => value === null ? '—' : formatBytesWithConfig(value ?? 0, app.byteDecimals)
 </script>
 
@@ -18,7 +20,7 @@ const bytes = (value: number | null | undefined) => value === null ? '—' : for
         <span class="inline group-hover:hidden">{{ basis === 'machine-cumulative' ? '累计 ' : '' }}{{ percentage !== null ? `${percentage.toFixed(1)}%` : available && node.traffic_limit <= 0 ? '∞' : label }}</span>
         <span class="hidden group-hover:inline">{{ used === null ? label : bytes(used) }} / {{ node.traffic_limit > 0 ? bytes(node.traffic_limit) : '∞' }}</span>
       </div>
-      <TrafficProgress v-if="node.traffic_limit > 0" :upload="up ?? 0" :download="down ?? 0" :traffic-limit="node.traffic_limit" :traffic-limit-type="node.traffic_limit_type || 'sum'" height="4px" :class="!available && 'opacity-30'" :aria-hidden="!available || undefined" />
+      <TrafficProgress v-if="node.traffic_limit > 0" :upload="available ? up ?? 0 : 0" :download="available ? down ?? 0 : 0" :traffic-limit="node.traffic_limit" :traffic-limit-type="node.traffic_limit_type || 'sum'" height="4px" :class="!available && 'opacity-30'" :aria-hidden="!available || undefined" />
     </div>
   </div>
 </template>

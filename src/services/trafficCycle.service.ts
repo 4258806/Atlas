@@ -3,6 +3,7 @@ import type { ResetSchedule } from '@/utils/resetSchedule'
 import type { TrafficCycleSnapshot } from '@/utils/trafficCycle'
 import { shallowRef } from 'vue'
 import { getAuthSession } from '@/services/auth.service'
+import { SharedCache } from '@/services/cache.service'
 import { requestManager } from '@/services/request.service'
 import { validSchedule } from '@/utils/resetSchedule'
 import { getSharedRpc } from '@/utils/rpc'
@@ -11,6 +12,7 @@ import { combineTrafficSnapshots, isNodeUUID, resolveTrafficMetrics, TRAFFIC_MET
 interface Entry { value: ShallowRef<TrafficCycleSnapshot>, refs: number, timer?: ReturnType<typeof setInterval>, requestKey?: string, refreshing: boolean }
 const entries = new Map<string, Entry>()
 const REFRESH_MS = 30000
+const closedRanges = new SharedCache<TrafficCycleSnapshot>({ maxSize: 500, ttl: 3600000 })
 
 export function subscribeTrafficCycle(uuid: string, resetDay: number | ResetSchedule): { snapshot: ShallowRef<TrafficCycleSnapshot>, release: () => void } {
   const schedule = typeof resetDay === 'number' ? { resetDay, timeZone: TRAFFIC_TIME_ZONE, hour: 0, minute: 0 } : resetDay
@@ -40,6 +42,11 @@ export function subscribeTrafficCycle(uuid: string, resetDay: number | ResetSche
       state.value.value = trafficSnapshot('loading', period, now, '正在读取新周期历史')
     try {
       const parts = await requestManager.run(requestKey, signal => Promise.all(trafficQueryRanges(period, end).map(async (range) => {
+        const rangeKey = `${key}:${period.start}:${range.start}:${range.end}:${range.maxPoints}`
+        const cacheable = range.end <= now - 2 * 3600000
+        const cached = cacheable ? closedRanges.get(rangeKey) : undefined
+        if (cached)
+          return cached
         const result = await getSharedRpc().getClient().call('public:queryMetrics', {
           entity_id: uuid,
           metric_keys: [...TRAFFIC_METRICS],
@@ -51,7 +58,10 @@ export function subscribeTrafficCycle(uuid: string, resetDay: number | ResetSche
           max_points: range.maxPoints,
           fill_empty: false,
         }, signal)
-        return resolveTrafficMetrics(result, uuid, { start: range.start, end: range.end }, range.end)
+        const snapshot = resolveTrafficMetrics(result, uuid, { start: range.start, end: range.end }, range.end)
+        if (cacheable && (snapshot.status === 'ready' || snapshot.status === 'partial'))
+          closedRanges.set(rangeKey, snapshot)
+        return snapshot
       })), { retryAttempts: 0, timeout: 20000 })
       if (state.refs && getAuthSession().authenticated === admin)
         state.value.value = combineTrafficSnapshots(parts, period, end)

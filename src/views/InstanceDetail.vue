@@ -375,7 +375,7 @@ function getDetailMetricCard(key: DetailMetricCardKey): MetricCard {
       return {
         key,
         label: trafficBasis.value === 'machine-cumulative' ? '累计参考配额' : '本周期配额',
-        value: trafficUsed.value === null ? trafficLabel.value : nodeHasTrafficLimit && nodeTrafficPercentage !== null ? nodeTrafficPercentage.toFixed(1) : '∞',
+        value: trafficUsed.value === null || trafficBasis.value === 'billing-cycle-partial' ? trafficLabel.value : nodeHasTrafficLimit && nodeTrafficPercentage !== null ? nodeTrafficPercentage.toFixed(1) : '∞',
         unit: nodeHasTrafficLimit && nodeTrafficPercentage !== null ? '%' : undefined,
         icon: 'tabler:gauge',
         tooltip: `${trafficUsageText.value}`,
