@@ -2,7 +2,7 @@ import type { ReturnCarrier } from './returnRouteClassification'
 import type { ReturnRouteDisplay } from './returnRoutes'
 
 export const TCPQUALITY_COMMIT = 'db52fc60523320fc4a34b5c369f28be38df21d13'
-const QUALITY_VERSION = /^0\.4\.0(?:\+git\.[0-9a-f]{7,40})?$/
+const QUALITY_VERSION = /^0\.4\.[01](?:\+git\.[0-9a-f]{7,40})?$/
 const QUALITY_HASH = /^[a-f0-9]{64}$/
 const QUALITY_TIME = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/
 const QUALITY_LABEL = /^[A-Z0-9][\w .+>/-]{0,47}$/i
